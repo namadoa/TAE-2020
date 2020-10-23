@@ -1,0 +1,455 @@
+---
+title: "Trabajo 1 Tae"
+author: "Camila Acosta Ramírez"
+date: "13/10/2020"
+output: html_document
+---
+
+```{r message=FALSE, warning=FALSE}
+setwd("C:/Users/camil/Escritorio/TAE/Trabajo 1")
+library(stringr)
+library(dplyr)
+library(lubridate)
+```
+
+```{r}
+datos_2014 <- read.csv("Incidentes_georreferenciados_2014.csv", 
+                       sep = ",", encoding = "UTF-8")
+datos_2015 <- read.csv("Incidentes_georreferenciados_2015.csv", 
+                       header = T, sep = ",", encoding = "UTF-8")
+datos_2016 <- read.csv("Incidentes_georreferenciados__2016.csv", 
+                       header = T, sep = ",", encoding = "UTF-8")
+datos_2017 <- read.csv("Incidentes_georreferenciados_2017.csv", 
+                       header = T, sep = ",", encoding = "UTF-8")
+datos_2018 <- read.csv("Incidentes_georreferenciados_2018.csv", 
+                       header = T, sep = ",", encoding = "UTF-8")
+```
+
+```{r}
+#UNION DE BASES
+datos <- rbind(datos_2014,datos_2015, datos_2016, datos_2017)
+
+#ELIMINAR COLUMNAS INNECESARIAS
+datos <- datos[,-c(1,2,4,22,21)]
+
+#ARREGLO DE VARIABLE GRAVEDAD
+datos$GRAVEDAD <- as.factor(datos$GRAVEDAD)
+
+#ARREGLO VARIABLE CLASE
+datos$CLASE <- str_replace_all(datos$CLASE,"^\\s|\\s$", "")
+datos$CLASE <- str_replace_all(datos$CLASE, "Ca(í|i)da d?e? ?Ocupante", 
+                               "Caída Ocupante")
+datos[datos$CLASE == "",6] <- "Otro"
+datos$CLASE <- as.factor(datos$CLASE)
+
+#ARREGLO VARIABLE BARRIO
+datos$BARRIO <- str_replace_all(datos$BARRIO, "(.\\sNo\\.)\\s?(\\d)$", 
+                                "\\1\\2")
+datos$BARRIO <- str_replace_all(datos$BARRIO, "B. Cerro ? ?El Volador", 
+                                "B. Cerro El Volador")
+datos$BARRIO <- str_replace_all(datos$BARRIO, "Barrios? de Jesús", 
+                                "Barrios de Jesús")
+datos$BARRIO <- str_replace_all(datos$BARRIO, "Berl(í|i)n", "Berlín")
+datos$BARRIO <- str_replace_all(datos$BARRIO, "L?a? ?Loma de (L|l)os Bernal", 
+                                "La Loma de Los Bernal")
+datos$BARRIO <- str_replace_all(datos$BARRIO, "Nueva Villa de (L|l)a Iguaná", 
+                                "Nueva Villa de La Iguaná")
+datos$BARRIO <- str_replace_all(datos$BARRIO, "Villa Lil?liam", 
+                                "Villa Lilliam")
+datos$BARRIO <- str_replace_all(datos$BARRIO, "9086", 
+                                "Corregimiento de Santa Elena")
+datos$BARRIO <- str_replace_all(datos$BARRIO, "6001",	
+                                "Corregimiento de San Cristóbal")
+x <- which(datos$BARRIO == "")
+datos <- datos[-x,]
+x1 <- which(datos$BARRIO == "Sin Nombre")
+datos <- datos[-x1,]
+datos[datos$BARRIO == "0",12] <- "Corregimiento de San Antonio de Prado"
+datos$BARRIO <- str_replace_all(datos$BARRIO, "AUC1", 
+                                "Cabecera Urbana San Cristobal")
+datos$BARRIO <- str_replace_all(datos$BARRIO, "AUC2", 
+                                "Cabecera San Antonio de Prado")
+datos[datos$BARRIO == "Inst" & datos$COMUNA == "Guayabal", 12] <- "Parque Juan Pablo II"
+datos[datos$BARRIO == "Inst" & datos$COMUNA == "Laureles Estadio", 12] <- "U.D. Atanasio Girardot"
+datos[datos$BARRIO == "Inst" & datos$COMUNA == "La Candelaria", 12] <- "La Alpujarra"
+datos$BARRIO <- str_replace_all(datos$BARRIO, "Suburbano el Tesoro", 
+                                "Las Palmas")
+datos <- datos[-c(datos$BARRIO == "Piedras Blancas"),]
+datos$BARRIO <- str_replace_all(datos$BARRIO, "Piedras Blancas Represa", 
+                                "Ocho de Marzo")
+datos$BARRIO <- str_replace_all(datos$BARRIO, 
+                                "Suburbano Mirador del Poblado", 
+                                "Las Palmas")
+datos$BARRIO <- str_replace_all(datos$BARRIO, "Suburbano Chacaltaya", 
+                                "Las Palmas")
+datos[datos$BARRIO == "Cabecera Urbana San Cristobal" & datos$COMUNA == "AU", 13] <- "Corregimiento de San Cristóbal"
+datos[datos$BARRIO == "Cabecera San Antonio de Prado" & datos$COMUNA == "AU", 13] <- "Corregimiento de San Antonio de Prado"
+datos[(datos$BARRIO == "Inst" & datos$LONGITUD == "-75.5767168" & datos$LATITUD ==	"6.2424361"), 12] <- "La Alpujarra"
+datos[datos$BARRIO == "Inst" & datos$LONGITUD == "-75.58854287" & datos$LATITUD == 	"6.25412485", 12] <- "U.D. Atanasio Girardot"
+datos[datos$BARRIO == "Inst" & datos$LONGITUD == "-75.58783815" & datos$LATITUD == 	"6.253239", 12] <- "U.D. Atanasio Girardot"
+datos[datos$BARRIO == "Inst" & datos$LONGITUD == "-75.57765616" & datos$LATITUD == 	"6.23397437", 12] <- "Cerro Nutibara"
+datos[datos$BARRIO == "Inst" & datos$LONGITUD == "-75.58738011" & datos$LATITUD == 	"6.21304744", 12] <- "Parque Juan Pablo II"
+datos[datos$BARRIO == "Inst" & datos$LONGITUD == "-75.57256594" & datos$LATITUD == 	"6.28029477", 12] <- "Cementerio Universal"
+
+#ARREGLO VARIABLE COMUNA
+datos$COMUNA <- str_replace_all(datos$COMUNA, "0", 
+                                "Corregimiento de San Antonio de Prado")
+datos$COMUNA <- str_replace_all(datos$COMUNA, "Alejandro Echavarría", 
+                                "Buenos Aires")
+datos$COMUNA <- str_replace_all(datos$COMUNA, "Alfonso López", 
+                                "Castilla")
+datos$COMUNA <- str_replace_all(datos$COMUNA, "Altavista", 
+                                "Belén")
+datos$COMUNA <- str_replace_all(datos$COMUNA, "Andalucía", 
+                                "Santa Cruz")
+datos$COMUNA <- str_replace_all(datos$COMUNA, "Antonio Nariño", 
+                                "San Javier")
+datos[datos$BARRIO == "Cabecera Urbana San Cristobal" & datos$COMUNA == "AU", 13] <- "Corregimiento de San Cristóbal"
+datos[datos$BARRIO == "Cabecera Urbana San Antonio de Prado" & datos$COMUNA == "AU", 13] <- "Corregimiento de San Antonio de Prado"
+datos[datos$BARRIO == "La Candelaria" & datos$COMUNA == "Barrio Colón", 12] <- "La Alpujarra"
+datos$COMUNA <- str_replace_all(datos$COMUNA, "Barrio Colón", 
+                                "La Candelaria")
+datos[datos$BARRIO == "Laureles Estadio" & datos$COMUNA == "Bolivariana", 12] <- "Bolivariana"
+datos$COMUNA <- str_replace_all(datos$COMUNA, "Bolivariana", 
+                                "Laureles Estadio")
+datos[datos$BARRIO == "La Candelaria" & datos$COMUNA == "Boston", 12] <- "Boston"
+datos$COMUNA <- str_replace_all(datos$COMUNA, "Boston", 
+                                "La Candelaria")
+datos[datos$BARRIO == "Corregimiento de San Antonio de Prado" & datos$COMUNA == "Cabecera San Antonio de Prado", 12] <- "Cabecera San Antonio de Prado"
+datos$COMUNA <- str_replace_all(datos$COMUNA, 
+                                "Cabecera San Antonio de Prado", 
+                                "Corregimiento de San Antonio de Prado")
+datos[datos$BARRIO == "La América" & datos$COMUNA == "Calasanz", 12] <- "Calasanz"
+datos$COMUNA <- str_replace_all(datos$COMUNA, 
+                                "Calasanz", 
+                                "La América")
+datos[datos$BARRIO == "La Candelaria" & datos$COMUNA == "Calle Nueva", 12] <- "Calle Nueva"
+datos$COMUNA <- str_replace_all(datos$COMUNA, 
+                                "Calle Nueva", 
+                                "La Candelaria")
+datos[datos$BARRIO == "Guayabal" & datos$COMUNA == "Campo Amor", 12] <- "Campo Amor"
+datos$COMUNA <- str_replace_all(datos$COMUNA, 
+                                "Campo Amor", 
+                                "Guayabal")
+datos[datos$BARRIO == "Aranjuez" & datos$COMUNA == "Campo Valdés No.1", 12] <- "Campo Valdés No.1"
+datos$COMUNA <- str_replace_all(datos$COMUNA, 
+                                "Campo Valdés No. 1", 
+                                "Aranjuez")
+datos[datos$BARRIO == "Manrique" & datos$COMUNA == "Campo Valdés No.2", 12] <- "Campo Valdés No.2"
+datos$COMUNA <- str_replace_all(datos$COMUNA, 
+                                "Campo Valdés No. 2", 
+                                "Manrique")
+datos[datos$BARRIO == "Castilla" & datos$COMUNA == "Caribe", 12] <- "Caribe"
+datos$COMUNA <- str_replace_all(datos$COMUNA, 
+                                "Caribe", 
+                                "Castilla")
+datos[datos$BARRIO == "Belén" & datos$COMUNA == "Cerro Nutibara", 12] <- "Cerro Nuribara"
+datos$COMUNA <- str_replace_all(datos$COMUNA, 
+                                "Cerro Nutibara", 
+                                "Belén")
+datos[datos$BARRIO == "La Candelaria" & datos$COMUNA == "Corazón de Jesús", 12] <- "Corazón de Jesús"
+datos$COMUNA <- str_replace_all(datos$COMUNA, 
+                                "Corazón de Jesús", 
+                                "La Candelaria")
+datos[datos$BARRIO == "Guayabal" & datos$COMUNA == "Cristo Rey", 12] <- "Cristo Rey"
+datos$COMUNA <- str_replace_all(datos$COMUNA, 
+                                "Cristo Rey", 
+                                "Guayabal")
+datos[datos$BARRIO == "La Candelaria" & datos$COMUNA == "El Chagualo", 12] <- "El Chagualo"
+datos$COMUNA <- str_replace_all(datos$COMUNA, 
+                                "El Chagualo", 
+                                "La Candelaria")
+datos[datos$BARRIO == "Belén" & datos$COMUNA == "El Nogal-Los Almendros", 12] <- "El Nogal-Los Almendros"
+datos$COMUNA <- str_replace_all(datos$COMUNA, 
+                                "El Nogal-Los Almendros", 
+                                "Belén")
+datos[datos$BARRIO == "Manrique" & datos$COMUNA == "El Raizal", 12] <- "El Raizal"
+datos$COMUNA <- str_replace_all(datos$COMUNA, 
+                                "El Raizal", 
+                                "Manrique")
+datos[datos$BARRIO == "La Candelaria" & datos$COMUNA == "Estación Villa", 12] <- "Estación Villa"
+datos$COMUNA <- str_replace_all(datos$COMUNA, 
+                                "Estación Villa", 
+                                "La Candelaria")
+datos[datos$BARRIO == "Belén" & datos$COMUNA == "Fátima", 12] <- "Fátima"
+datos$COMUNA <- str_replace_all(datos$COMUNA, 
+                                "Fátima", 
+                                "Belén")
+datos[datos$BARRIO == "Laureles Estadio" & datos$COMUNA == "Florida Nueva", 12] <- "Florida Nueva"
+datos$COMUNA <- str_replace_all(datos$COMUNA, 
+                                "Florida Nueva", 
+                                "Laureles Estadio")
+datos[datos$BARRIO == "Castilla" & datos$COMUNA == "Girardot", 12] <- "Girardot"
+datos$COMUNA <- str_replace_all(datos$COMUNA, 
+                                "Girardot", 
+                                "Castilla")
+datos[datos$BARRIO == "La Candelaria" & datos$COMUNA == "Guayaquil", 12] <- "Guayaquil"
+datos$COMUNA <- str_replace_all(datos$COMUNA, 
+                                "Guayaquil", 
+                                "La Candelaria")
+datos[datos$BARRIO == "Castilla" & datos$COMUNA == "Héctor Abad Gómez", 12] <- "Héctor Abad Gómez"
+datos$COMUNA <- str_replace_all(datos$COMUNA, 
+                                "Héctor Abad Gómez", 
+                                "Castilla")
+datos[datos$BARRIO == "La Candelaria" & datos$COMUNA == "Jesús Nazareno", 12] <- "Jesús Nazareno"
+datos$COMUNA <- str_replace_all(datos$COMUNA, 
+                                "Jesús Nazareno", 
+                                "La Candelaria")
+datos[datos$BARRIO == "La Candelaria" & datos$COMUNA == "La Alpujarra", 12] <- "La Alpujarra"
+datos$COMUNA <- str_replace_all(datos$COMUNA, 
+                                "La Alpujarra", 
+                                "La Candelaria")
+datos[datos$BARRIO == "Guayabal" & datos$COMUNA == "La Colina", 12] <- "La Colina"
+datos$COMUNA <- str_replace_all(datos$COMUNA, 
+                                "La Colina", 
+                                "Guayabal")
+datos[datos$BARRIO == "La América" & datos$COMUNA == "La Floresta", 12] <- "La Floresta"
+datos$COMUNA <- str_replace_all(datos$COMUNA, 
+                                "La Floresta", 
+                                "La América")
+datos[datos$BARRIO == "Santa Cruz" & datos$COMUNA == "La Rosa", 12] <- "La Rosa"
+datos$COMUNA <- str_replace_all(datos$COMUNA, 
+                                "La Rosa", 
+                                "Santa Cruz")
+datos[datos$BARRIO == "Aranjuez" & datos$COMUNA == "Las Esmeraldas", 12] <- "Las Esmeraldas"
+datos$COMUNA <- str_replace_all(datos$COMUNA, 
+                                "Las Esmeraldas", 
+                                "Aranjuez")
+datos[datos$BARRIO == "Belén" & datos$COMUNA == "Las Playas", 12] <- "Las Playas"
+datos$COMUNA <- str_replace_all(datos$COMUNA, 
+                                "Las Playas", 
+                                "Belén")
+datos[datos$BARRIO == "Corregimiento de Santa Elena" & datos$COMUNA == "Las Palmas", 12] <- "Las Palmas"
+datos$COMUNA <- str_replace_all(datos$COMUNA, 
+                                "Las Palmas", 
+                                "Corregimiento de Santa Elena")
+datos[datos$BARRIO == "Manrique" & datos$COMUNA == "Las Granjas", 12] <- "Las Granjas"
+datos$COMUNA <- str_replace_all(datos$COMUNA, 
+                                "Las Granjas", 
+                                "Manrique")
+datos[datos$BARRIO == "Laureles Estadio" & datos$COMUNA == "Laureles", 12] <- "Laureles"
+datos$COMUNA <- str_replace_all(datos$COMUNA, 
+                                "Laureles", 
+                                "Laureles Estadio")
+datos$COMUNA <- str_replace_all(datos$COMUNA, 
+                                "Laureles Estadio ?E?s?t?a?d?i?o?",
+                                "Laureles Estadio")
+datos[datos$BARRIO == "Laureles Estadio" & datos$COMUNA == "Los Conquistadores", 12] <- "Los Conquistadores"
+datos$COMUNA <- str_replace_all(datos$COMUNA, 
+                                "Los Conquistadores", 
+                                "Laureles Estadio")
+datos[datos$BARRIO == "Villa Hermosa" & datos$COMUNA == "Los Mangos", 12] <- "Los Mangos"
+datos$COMUNA <- str_replace_all(datos$COMUNA, 
+                                "Los Mangos", 
+                                "Villa Hermosa")
+datos[datos$BARRIO == "Castilla" & datos$COMUNA == "Oleoducto", 12] <- "Oleoducto"
+datos$COMUNA <- str_replace_all(datos$COMUNA, 
+                                "Oleoducto", 
+                                "Castilla")
+datos[datos$BARRIO == "Laureles Estadio" & datos$COMUNA == "Naranjal", 12] <- "Naranjal"
+datos$COMUNA <- str_replace_all(datos$COMUNA, 
+                                "Naranjal", 
+                                "Laureles Estadio")
+datos[datos$BARRIO == "Aranjuez" & datos$COMUNA == "Moravia", 12] <- "Moravia"
+datos$COMUNA <- str_replace_all(datos$COMUNA, 
+                                "Moravia", 
+                                "Aranjuez")
+datos[datos$BARRIO == "Aranjuez" & datos$COMUNA == "Miranda", 12] <- "Miranda"
+datos$COMUNA <- str_replace_all(datos$COMUNA, 
+                                "Miranda", 
+                                "Aranjuez")
+datos[datos$BARRIO == "El Poblado" & datos$COMUNA == "Manila", 12] <- "Manila"
+datos$COMUNA <- str_replace_all(datos$COMUNA, 
+                                "Manila", 
+                                "El Poblado")
+datos[datos$BARRIO == "Guayabal" & datos$COMUNA == "Parque Juan Pablo II", 12] <- "Parque Juan Pablo II"
+datos$COMUNA <- str_replace_all(datos$COMUNA, 
+                                "Parque Juan Pablo II", 
+                                "Guayabal")
+datos[datos$BARRIO == "Popular" & datos$COMUNA == "Villa Guadalupe", 12] <- "Villa Guadalupe"
+datos$COMUNA <- str_replace_all(datos$COMUNA, 
+                                "Villa Guadalupe", 
+                                "Popular")
+datos[datos$BARRIO == "El Poblado" & datos$COMUNA == "Villa Carlota", 12] <- "Villa Carlota"
+datos$COMUNA <- str_replace_all(datos$COMUNA, 
+                                "Villa Carlota", 
+                                "El Poblado")
+datos[datos$BARRIO == "San Javier" & datos$COMUNA == "Veinte de Julio", 12] <- "Veinte de Julio"
+datos$COMUNA <- str_replace_all(datos$COMUNA, 
+                                "Veinte de Julio", 
+                                "San Javier")
+datos[datos$BARRIO == "Aranjuez" & datos$COMUNA == "Universidad de Antioquia", 12] <- "Universidad de Antioquia"
+datos$COMUNA <- str_replace_all(datos$COMUNA, 
+                                "Universidad de Antioquia", 
+                                "Aranjuez")
+datos[datos$BARRIO == "Castilla" & datos$COMUNA == "Toscana", 12] <- "Toscana"
+datos$COMUNA <- str_replace_all(datos$COMUNA, 
+                                "Toscana", 
+                                "Castilla")
+datos[datos$BARRIO == "Laureles Estadio" & datos$COMUNA == "Suramericana", 12] <- "Suramericana"
+datos$COMUNA <- str_replace_all(datos$COMUNA, 
+                                "Suramericana", 
+                                "Laureles Estadio")
+datos[datos$BARRIO == "La América" & datos$COMUNA == "Simón Bolívar", 12] <- "Simón Bolívar"
+datos$COMUNA <- str_replace_all(datos$COMUNA, 
+                                "Simón Bolívar", 
+                                "La América")
+datos[datos$BARRIO == "El Poblado" & datos$COMUNA == "Santa María de los Ángeles", 12] <- "Santa María de los Ángeles"
+datos$COMUNA <- str_replace_all(datos$COMUNA, 
+                                "Santa María de los Ángeles", 
+                                "El Poblado")
+datos[datos$BARRIO == "Manrique" & datos$COMUNA == "Santa Inés", 12] <- "Santa Inés"
+datos$COMUNA <- str_replace_all(datos$COMUNA, 
+                                "Santa Inés", 
+                                "Manrique")
+datos[datos$BARRIO == "Guayabal" & datos$COMUNA == "Santa Fé", 12] <- "Santa Fé"
+datos$COMUNA <- str_replace_all(datos$COMUNA, 
+                                "Santa Fé", 
+                                "Guayabal")
+datos[datos$BARRIO == "Aranjuez" & datos$COMUNA == "San Pedro", 12] <- "San Pedro"
+datos$COMUNA <- str_replace_all(datos$COMUNA, 
+                                "San Pedro", 
+                                "Aranjuez")
+datos[datos$BARRIO == "Belén" & datos$COMUNA == "Rosales", 12] <- "Rosales"
+datos$COMUNA <- str_replace_all(datos$COMUNA, 
+                                "Rosales", 
+                                "Belén")
+datos[datos$BARRIO == "La Candelaria" & datos$COMUNA == "Perpetuo Socorro", 12] <- "Perpetuo Socorro"
+datos$COMUNA <- str_replace_all(datos$COMUNA, 
+                                "Perpetuo Socorro", 
+                                "La Candelaria")
+datos[datos$BARRIO == "El Poblado" & datos$COMUNA == "Patio Bonito", 12] <- "Patio Bonito"
+datos$COMUNA <- str_replace_all(datos$COMUNA, 
+                                "Patio Bonito", 
+                                "El Poblado")
+datos$COMUNA <- str_replace_all(datos$COMUNA, "Laureles Estadio ?E?s?t?a?d?i?o?", 
+                                "Laureles Estadio")
+datos$COMUNA <- str_replace_all(datos$COMUNA, "Corregimiento de Belén", 
+                                "Corregimiento de Altavista")
+datos[datos$BARRIO == "La Alpujarra" & datos$COMUNA == "In", 13] <- "La Candelaria"
+datos[datos$BARRIO == "U.D. Atanasio Girardot" & datos$COMUNA == "In", 13] <- "Laureles Estadio"
+datos[datos$BARRIO == "Cerro Nutibara" & datos$COMUNA == "In", 13] <- "Belén"
+datos[datos$BARRIO == "Parque Juan Pablo II" & datos$COMUNA == "In", 13] <- "Guayabal"
+datos[datos$BARRIO == "Cementerio Universal" & datos$COMUNA == "In", 13] <- "Castilla"
+datos[datos$BARRIO == "Las Palmas" & datos$COMUNA == "La Candelaria", 13] <- "Corregimiento de Santa Elena"
+datos$COMUNA <- as.character(datos$COMUNA)
+datos$COMUNA <- as.factor(datos$COMUNA)
+datos$BARRIO <- as.factor(datos$BARRIO)
+
+#ARREGLO COLUMNA DIA
+datos$DIA <- as.factor(datos$DIA)
+
+#ARREGLO COLUMNA PERIODO
+datos$PERIODO <- as.factor(datos$PERIODO)
+
+#ARREGLO COLUMNA DIRECCION
+datos$DIRECCION <- as.factor(datos$DIRECCION) #no es de importancia ya que tenemos los puntos de latitud y longitud
+#DIRECCION_ENC no es relevante
+
+#ELIMINAR CBML
+datos <- datos[,-9]
+
+#ARREGLO COLUMNA TIPO_GEOCOD
+datos$TIPO_GEOCOD <- as.factor(datos$TIPO_GEOCOD) #PREGUNTAR AL PROFESOR IMPORTANCIA DE LA VARIABLE EN EL TRABAJO POR LO QUE SE REFIERE.
+
+#ARREGLO DE FECHA
+datos$FECHA <- as.Date(datos$FECHA)
+
+#ARREGLO DIA_NOMBRE
+datos$DIA_NOMBRE <- str_replace_all(datos$DIA_NOMBRE,"\\s", "")
+datos$DIA_NOMBRE <- as.factor(datos$DIA_NOMBRE)
+
+#ARREGLO MES
+datos$MES <- as.factor(datos$MES)
+
+#ARREGLO NOMBRE DEL MES
+datos$MES_NOMBRE <- months(datos$FECHA)
+datos$MES_NOMBRE <- as.factor(datos$MES_NOMBRE)
+
+#ARREGLO DE DISEÑO
+datos[datos$DISENO == "",13] <- "Otro"
+datos$DISENO <- as.factor(datos$DISENO)
+
+#ELIMINAR OBJETD YA QUE E EL ID DEL BARRIO O VEREDA
+datos <- datos[,-1]
+
+#ELIMARN VARIABLE HORA
+datos <- datos[,-2]
+
+#ELIMINAR DIRECCIONES
+datos <- datos[,-c(5,6)]
+
+#ELIMINAR TIPO_GEOCOD
+datos <- datos[,-5]
+summary(datos)
+```
+
+```{r}
+#CREACIÓN VARIABLE SEMANA
+datos$SEMANA <- as.factor(week(datos$FECHA))
+datos$DIA2 <- as.factor(day(datos$FECHA))
+```
+
+```{r}
+DIARIOS <- datos %>% group_by(CLASE,BARRIO,GRAVEDAD, COMUNA,DIA, MES) %>% count(name = "NRO_ACC_DIA")
+```
+
+```{r}
+SEMANAL <- datos %>% group_by(CLASE,BARRIO,GRAVEDAD, COMUNA, SEMANA) %>% count(name = "NRO_ACC_SEMANA")
+```
+
+```{r}
+MENSUAL <- datos %>% group_by(CLASE,BARRIO, GRAVEDAD, COMUNA, MES) %>% count(name = "NRO_ACC_MES")
+```
+
+```{r}
+#ELIMINAR VARIABLES 
+datos_2018 <- datos_2018[,-c(1, 2, 3, 4, 6, 10, 11, 12, 13, 21, 22)]
+datos_2018$BARRIO <- str_replace_all(datos_2018$BARRIO,
+                                     "(.\\sNo\\.)\\s?(\\d)$", "\\1\\2")
+x <- which(datos_2018$BARRIO == "")
+datos_2018 <- datos_2018[-x,]
+datos_2018$COMUNA <- str_replace_all(datos_2018$COMUNA, "AU","Corregimiento de San Cristóbal")
+datos_2018$BARRIO <- str_replace_all(datos_2018$BARRIO, "AUC1", "Cabecera Urbana Corregimiento San Cristóbal")
+datos_2018[datos_2018$LONGITUD == "-75.5767168" & datos_2018$LATITUD == "6.2424361", 6] <- "La Alpujarra"
+datos_2018$BARRIO <- str_replace_all(datos_2018$BARRIO, "Inst", 
+                                     "U.D. Atanasio Girardot")
+datos_2018[datos_2018$BARRIO == "La Alpujarra" & datos_2018$COMUNA == "In", 7] <- "La Candelaria"
+datos_2018$COMUNA <- str_replace_all(datos_2018$COMUNA, "In",
+                                     "Laureles Estadio")
+datos_2018$BARRIO <- as.factor(datos_2018$BARRIO)
+datos_2018$COMUNA <- as.factor(datos_2018$COMUNA)
+datos_2018$DIA <- as.factor(datos_2018$DIA)
+datos_2018$PERIODO <- as.factor(datos_2018$PERIODO)
+datos_2018$FECHA <- as.Date(datos_2018$FECHA)
+datos_2018$CLASE <- as.factor(datos_2018$CLASE)
+datos_2018$GRAVEDAD <- as.factor(datos_2018$GRAVEDAD)
+#ARREGLO DE DISEÑO
+datos_2018[datos_2018$DISENO == "",8] <- "Otro"
+datos_2018$DISENO <- as.factor(datos_2018$DISENO)
+datos_2018$DIA_NOMBRE <- str_replace_all(datos_2018$DIA_NOMBRE,"\\s", "")
+datos_2018$DIA_NOMBRE <- as.factor(datos_2018$DIA_NOMBRE)
+datos_2018$MES <- as.factor(datos_2018$MES)
+#ARREGLO NOMBRE DEL MES
+datos_2018$MES_NOMBRE <- months(datos_2018$FECHA)
+datos_2018$MES_NOMBRE <- as.factor(datos_2018$MES_NOMBRE)
+summary(datos_2018)
+```
+
+```{r}
+#CREACIÓN VARIABLE SEMANA 2018
+datos_2018$SEMANA <- as.factor(week(datos_2018$FECHA))
+datos_2018$DIA2 <- as.factor(day(datos_2018$FECHA))
+```
+
+```{r}
+DIARIOS2018 <- datos_2018 %>% group_by(CLASE,BARRIO,GRAVEDAD, COMUNA,DIA, MES) %>% count(name = "NRO_ACC_DIA")
+```
+
+```{r}
+SEMANAL2018 <- datos_2018 %>% group_by(CLASE,BARRIO,GRAVEDAD, COMUNA, SEMANA) %>% count(name = "NRO_ACC_SEMANA")
+```
+
+```{r}
+MENSUAL2018 <- datos_2018 %>% group_by(CLASE,BARRIO, GRAVEDAD, COMUNA, MES) %>% count(name = "NRO_ACC_MES")
+```
