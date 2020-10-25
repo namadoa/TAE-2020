@@ -10,6 +10,8 @@ setwd("C:/Users/camil/Escritorio/TAE/Trabajo 1")
 library(stringr)
 library(dplyr)
 library(lubridate)
+library(ggplot2)
+library(GGally)
 ```
 
 ```{r}
@@ -40,6 +42,8 @@ datos$CLASE <- str_replace_all(datos$CLASE,"^\\s|\\s$", "")
 datos$CLASE <- str_replace_all(datos$CLASE, "Ca(í|i)da d?e? ?Ocupante", 
                                "Caída Ocupante")
 datos[datos$CLASE == "",6] <- "Otro"
+datos$CLASE <- str_replace_all(datos$CLASE, "Choque y Atropello", 
+                               "Otro")
 datos$CLASE <- as.factor(datos$CLASE)
 
 #ARREGLO VARIABLE BARRIO
@@ -382,24 +386,54 @@ datos <- datos[,-c(5,6)]
 #ELIMINAR TIPO_GEOCOD
 datos <- datos[,-5]
 summary(datos)
+
+#CREAR VARIABLE NUEVA PARA IDENTIFICAR EL NUMERO DE COMUNA 
+datos$NUMEROCOMUNA <- 0
+datos[datos$COMUNA == "Popular", 14] <- "1"
+datos[datos$COMUNA == "Santa Cruz", 14] <- "2"
+datos[datos$COMUNA == "Manrique", 14] <- "3"
+datos[datos$COMUNA == "Aranjuez", 14] <- "4"
+datos[datos$COMUNA == "Castilla", 14] <- "5"
+datos[datos$COMUNA == "Doce de Octubre", 14] <- "6"
+datos[datos$COMUNA == "Robledo", 14] <- "7"
+datos[datos$COMUNA == "Villa Hermosa", 14] <- "8"
+datos[datos$COMUNA == "Buenos Aires", 14] <- "9"
+datos[datos$COMUNA == "La Candelaria", 14] <- "10"
+datos[datos$COMUNA == "Laureles Estadio", 14] <- "11"
+datos[datos$COMUNA == "La América", 14] <- "12"
+datos[datos$COMUNA == "San Javier", 14] <- "13"
+datos[datos$COMUNA == "El Poblado", 14] <- "14"
+datos[datos$COMUNA == "Guayabal", 14] <- "15"
+datos[datos$COMUNA == "Belén", 14] <- "16"
+datos[datos$COMUNA == "Corregimiento de San Sebastián de Palmitas", 14] <- "50"
+datos[datos$COMUNA == "Corregimiento de San Cristóbal", 14] <- "60"
+datos[datos$COMUNA == "Corregimiento de Altavista", 14] <- "70"
+datos[datos$COMUNA == "Corregimiento de San Antonio de Prado", 14] <- "80"
+datos[datos$COMUNA == "Corregimiento de Santa Elena", 14] <- "90"
 ```
 
 ```{r}
 #CREACIÓN VARIABLE SEMANA
 datos$SEMANA <- as.factor(week(datos$FECHA))
 datos$DIA2 <- as.factor(day(datos$FECHA))
+
+#CREACION DE LA VARIABLE DIA
+datos$DIAAÑO <- lubridate::yday(datos$FECHA)
 ```
 
 ```{r}
-DIARIOS <- datos %>% group_by(CLASE,BARRIO,GRAVEDAD, COMUNA,DIA, MES) %>% count(name = "NRO_ACC_DIA")
+DIARIOS <- datos %>% group_by(CLASE,BARRIO,GRAVEDAD, COMUNA,NUMEROCOMUNA, DIAAÑO, MES) %>% count(name = "NRO_ACC_DIA")
+
+DIASEMANA <- datos %>% group_by(CLASE, BARRIO, GRAVEDAD, COMUNA, NUMEROCOMUNA,
+                                DIA_NOMBRE, MES) %>% count(name = "NRI_ACC_DIANOMBRE")
 ```
 
 ```{r}
-SEMANAL <- datos %>% group_by(CLASE,BARRIO,GRAVEDAD, COMUNA, SEMANA) %>% count(name = "NRO_ACC_SEMANA")
+SEMANAL <- datos %>% group_by(CLASE,BARRIO,GRAVEDAD, COMUNA,NUMEROCOMUNA, SEMANA) %>% count(name = "NRO_ACC_SEMANA")
 ```
 
 ```{r}
-MENSUAL <- datos %>% group_by(CLASE,BARRIO, GRAVEDAD, COMUNA, MES) %>% count(name = "NRO_ACC_MES")
+MENSUAL <- datos %>% group_by(CLASE,BARRIO, GRAVEDAD, COMUNA,NUMEROCOMUNA, MES) %>% count(name = "NRO_ACC_MES")
 ```
 
 ```{r}
@@ -417,6 +451,43 @@ datos_2018$BARRIO <- str_replace_all(datos_2018$BARRIO, "Inst",
 datos_2018[datos_2018$BARRIO == "La Alpujarra" & datos_2018$COMUNA == "In", 7] <- "La Candelaria"
 datos_2018$COMUNA <- str_replace_all(datos_2018$COMUNA, "In",
                                      "Laureles Estadio")
+datos_2018[datos_2018$BARRIO == "6001", 6] <- "La Loma"
+datos_2018[datos_2018$BARRIO == "0", 6] <- "U.D. Atanasio Girardot"
+datos_2018[datos_2018$BARRIO == "0" & datos_2018$COMUNA == "Robledo", 7] <- "Laureles Estadio"
+
+datos_2018[datos_2018$LONGITUD == "-75.61649033" & datos_2018$LATITUD == "6.22240608", 7] <- "Laureles Estadio"
+datos_2018[datos_2018$LONGITUD == "-75.61649033" & datos_2018$LATITUD == "6.22240608", 6] <- "U.D. Atanasio Girardot"
+
+
+datos_2018[datos_2018$LONGITUD == "-75.62157499" & datos_2018$LATITUD == "6.22172915", 7] <- "Belén"
+datos_2018[datos_2018$LONGITUD == "-75.62157499" & datos_2018$LATITUD == "6.22172915", 6] <- "Cerro Nutibara"
+
+datos_2018[datos_2018$LONGITUD == "-75.61386204" & datos_2018$LATITUD == "6.2217706", 7] <- "Guayabal"
+datos_2018[datos_2018$LONGITUD == "-75.61386204" & datos_2018$LATITUD == "6.2217706", 6] <- "Parque Juan Pablo II"
+
+datos_2018[datos_2018$LONGITUD == "-75.61525323" & datos_2018$LATITUD == "6.22232547", 6] <- "Altavista Sector Central"
+
+datos_2018[datos_2018$LONGITUD == "-75.60717845" & datos_2018$LATITUD == "6.20749185", 6] <- "San José del Manzanillo"
+
+datos_2018[datos_2018$LONGITUD == "-75.63555428" & datos_2018$LATITUD == "6.21827427", 6] <- "Buga Patio Bonito"
+
+datos_2018[datos_2018$LONGITUD == "-75.61666885" & datos_2018$LATITUD == "6.22244955", 6] <- "Área de Expansión Altavista"
+
+datos_2018[datos_2018$LONGITUD == "-75.61529455" & datos_2018$LATITUD == "6.22183086", 6] <- "El Rincón"
+
+datos_2018[datos_2018$LONGITUD == "-75.60535248" & datos_2018$LATITUD == "6.20987334", 7] <- "Belén"
+datos_2018[datos_2018$LONGITUD == "-75.60535248" & datos_2018$LATITUD == "6.20987334", 6] <- "Área de Expansión Altavista"
+
+datos_2018[datos_2018$LONGITUD == "-75.61525323" & datos_2018$LATITUD == "6.22232547", 6] <- "La Esperanza"
+
+datos_2018[datos_2018$LONGITUD == "-75.62464088" & datos_2018$LATITUD == "6.21985834", 6] <- "Las Palmas"
+datos_2018[datos_2018$LONGITUD == "-75.62464088" & datos_2018$LATITUD == "6.21985834", 7] <- "Corregimiento de Santa Elena"
+
+datos_2018[datos_2018$LONGITUD == "-75.54498624" & datos_2018$LATITUD == "6.20562088", 6] <- "La Esperanza"
+datos_2018[datos_2018$LONGITUD == "-75.54498624" & datos_2018$LATITUD == "6.20562088", 7] <- "Corregimiento de Altavista"
+
+datos_2018[datos_2018$LONGITUD == "-75.55537159" & datos_2018$LATITUD == "6.21848341", 6] <- "Las Palmas"
+
 datos_2018$BARRIO <- as.factor(datos_2018$BARRIO)
 datos_2018$COMUNA <- as.factor(datos_2018$COMUNA)
 datos_2018$DIA <- as.factor(datos_2018$DIA)
@@ -439,11 +510,13 @@ summary(datos_2018)
 ```{r}
 #CREACIÓN VARIABLE SEMANA 2018
 datos_2018$SEMANA <- as.factor(week(datos_2018$FECHA))
-datos_2018$DIA2 <- as.factor(day(datos_2018$FECHA))
+
+#CREACIÓN DE LA VARIABLE DIA DEL AÑO
+datos_2018$DIAAÑO <- lubridate::yday(datos_2018$FECHA)
 ```
 
 ```{r}
-DIARIOS2018 <- datos_2018 %>% group_by(CLASE,BARRIO,GRAVEDAD, COMUNA,DIA, MES) %>% count(name = "NRO_ACC_DIA")
+DIARIOS2018 <- datos_2018 %>% group_by(CLASE,BARRIO,GRAVEDAD, COMUNA,DIAAÑO, MES) %>% count(name = "NRO_ACC_DIA")
 ```
 
 ```{r}
@@ -452,4 +525,68 @@ SEMANAL2018 <- datos_2018 %>% group_by(CLASE,BARRIO,GRAVEDAD, COMUNA, SEMANA) %>
 
 ```{r}
 MENSUAL2018 <- datos_2018 %>% group_by(CLASE,BARRIO, GRAVEDAD, COMUNA, MES) %>% count(name = "NRO_ACC_MES")
+```
+
+# Analisis exploratorio datos diario 
+
+```{r}
+ggplot(DIARIOS, aes(x = CLASE, y = NRO_ACC_DIA, col = CLASE)) + geom_boxplot()
+```
+
+```{r}
+ggplot(DIARIOS, aes(x = GRAVEDAD, y = NRO_ACC_DIA, col = GRAVEDAD)) + geom_boxplot()
+```
+```{r}
+ggplot(DIARIOS, aes(x = NUMEROCOMUNA, y = NRO_ACC_DIA, col = NUMEROCOMUNA)) + geom_boxplot() 
+```
+
+```{r}
+ggplot(DIARIOS, aes(x = DIAAÑO, y = NRO_ACC_DIA, col = CLASE)) + geom_boxplot()
+```
+
+```{r}
+ggplot(DIASEMANA, aes(x = DIA_NOMBRE, y = NRI_ACC_DIANOMBRE, col = CLASE)) + geom_boxplot() + xlim(c("LUNES", "MARTES", "MIÉRCOLES","JUEVES","VIERNES", "SÁBADO", "DOMINGO"))
+```
+
+```{r}
+ggplot(DIASEMANA, aes(x = DIA_NOMBRE, y = NRI_ACC_DIANOMBRE, col = GRAVEDAD)) + geom_boxplot() + xlim(c("LUNES", "MARTES", "MIÉRCOLES","JUEVES","VIERNES", "SÁBADO", "DOMINGO"))
+```
+
+```{r}
+ggplot(DIASEMANA, aes(x = DIA_NOMBRE, y = NRI_ACC_DIANOMBRE, col = NUMEROCOMUNA)) + geom_boxplot() + xlim(c("LUNES", "MARTES", "MIÉRCOLES","JUEVES","VIERNES", "SÁBADO", "DOMINGO"))
+```
+
+# Analisis exploratorio datos semanal
+
+```{r}
+ggplot(SEMANAL, aes(x = SEMANA, y = NRO_ACC_SEMANA, col = SEMANA)) + geom_boxplot()
+```
+
+```{r}
+ggplot(SEMANAL, aes(x = CLASE, y = NRO_ACC_SEMANA, col = CLASE)) + geom_boxplot()
+```
+
+```{r}
+ggplot(SEMANAL, aes(x = GRAVEDAD, y = NRO_ACC_SEMANA, col = GRAVEDAD)) + geom_boxplot()
+```
+```{r}
+ggplot(SEMANAL, aes(x = NUMEROCOMUNA, y = NRO_ACC_SEMANA, col = NUMEROCOMUNA)) + geom_boxplot()
+```
+
+
+# Analisis exploratorio datos mensuales 
+
+```{r}
+ggplot(MENSUAL, aes(x = MES, y = NRO_ACC_MES, col = MES)) + geom_boxplot()
+```
+
+```{r}
+ggplot(MENSUAL, aes(x = CLASE, y = NRO_ACC_MES, col = CLASE)) + geom_boxplot()
+```
+
+```{r}
+ggplot(MENSUAL, aes(x = GRAVEDAD, y = NRO_ACC_MES, col = GRAVEDAD)) + geom_boxplot()
+```
+```{r}
+ggplot(MENSUAL, aes(x = NUMEROCOMUNA, y = NRO_ACC_MES, col = NUMEROCOMUNA)) + geom_boxplot()
 ```
