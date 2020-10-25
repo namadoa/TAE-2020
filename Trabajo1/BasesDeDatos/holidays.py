@@ -86,6 +86,7 @@ months = list()
 years = list()
 days = list()
 celebrations = list()
+is_holiday = list()
 # Iterar desde 2014-2018
 for y in range(2014,2019):
     holidays_y = get_colombia_holidays_by_year(y)
@@ -104,6 +105,7 @@ for y in range(2014,2019):
         years.append(year)
         months.append(month)
         days.append(day)
+        is_holiday.append(1)
 
     specials_y = year_dict[y]
 
@@ -120,6 +122,7 @@ for y in range(2014,2019):
                 years.append(year)
                 months.append(month)
                 days.append(day)
+                is_holiday.append(0)
         else:
             date_string = specials_y[celebration]
             [year,month,day] = date_string.split("/")
@@ -128,6 +131,7 @@ for y in range(2014,2019):
             years.append(year)
             months.append(month)
             days.append(day)
+            is_holiday.append(0)
 
 
 values_dict = dict()
@@ -136,8 +140,7 @@ values_dict["celebration"] = celebrations
 values_dict["year"] = years
 values_dict["month"] =  months
 values_dict["day"] = days
-
-
+values_dict["is_holiday"] = is_holiday
 
 df = pd.DataFrame(values_dict)
 
