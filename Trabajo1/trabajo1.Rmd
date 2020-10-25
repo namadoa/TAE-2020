@@ -6,7 +6,7 @@ output: html_document
 ---
 
 ```{r message=FALSE, warning=FALSE}
-setwd("C:/Users/camil/Escritorio/TAE/Trabajo 1")
+#setwd("C:/Users/camil/Escritorio/TAE/Trabajo 1")
 library(stringr)
 library(dplyr)
 library(lubridate)
@@ -15,15 +15,15 @@ library(GGally)
 ```
 
 ```{r}
-datos_2014 <- read.csv("Incidentes_georreferenciados_2014.csv", 
+datos_2014 <- read.csv("./BasesDeDatos/Incidentes_georreferenciados_2014.csv", 
                        sep = ",", encoding = "UTF-8")
-datos_2015 <- read.csv("Incidentes_georreferenciados_2015.csv", 
+datos_2015 <- read.csv("./BasesDeDatos/Incidentes_georreferenciados_2015.csv", 
                        header = T, sep = ",", encoding = "UTF-8")
-datos_2016 <- read.csv("Incidentes_georreferenciados__2016.csv", 
+datos_2016 <- read.csv("./BasesDeDatos/Incidentes_georreferenciados__2016.csv", 
                        header = T, sep = ",", encoding = "UTF-8")
-datos_2017 <- read.csv("Incidentes_georreferenciados_2017.csv", 
+datos_2017 <- read.csv("./BasesDeDatos/Incidentes_georreferenciados_2017.csv", 
                        header = T, sep = ",", encoding = "UTF-8")
-datos_2018 <- read.csv("Incidentes_georreferenciados_2018.csv", 
+datos_2018 <- read.csv("./BasesDeDatos/Incidentes_georreferenciados_2018.csv", 
                        header = T, sep = ",", encoding = "UTF-8")
 ```
 
