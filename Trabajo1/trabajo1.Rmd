@@ -6,7 +6,7 @@ output: html_document
 ---
 
 ```{r message=FALSE, warning=FALSE}
-setwd("C:/Users/camil/Escritorio/TAE/Trabajo 1")
+setwd("e:/Users/camil/Escritorio/TAE/Trabajo 1")
 library(stringr)
 library(dplyr)
 library(lubridate)
@@ -25,6 +25,8 @@ datos_2017 <- read.csv("Incidentes_georreferenciados_2017.csv",
                        header = T, sep = ",", encoding = "UTF-8")
 datos_2018 <- read.csv("Incidentes_georreferenciados_2018.csv", 
                        header = T, sep = ",", encoding = "UTF-8")
+holidays <- read.csv("holidays.csv", header = T, sep=",", encoding = "UTF-8")
+
 ```
 
 ```{r}
@@ -419,6 +421,30 @@ datos$DIA2 <- as.factor(day(datos$FECHA))
 
 #CREACION DE LA VARIABLE DIA
 datos$DIAAÑO <- lubridate::yday(datos$FECHA)
+
+# Se crea la lista de valores para cada fila de 'datos'
+holidays_l <- apply(datos,1,function(x){
+  holiday <- subset(holidays, (year == x["PERIODO"] & day == x["DIA"] & month == x["MES"]), select=c(celebration,is_holiday))
+  
+  if(nrow(holiday) > 0){ # Se revisa que en la fecha del accidente haya un registro en el df 'holidays'
+    holiday <- holiday[1,]
+    is_holiday <- 
+    return(c(1,holiday$is_holiday,holiday$celebration)) 
+    # Se devuelve una lista conteniendo el DIA ESPECIAL, FESTIVO y el nombre de la celebración
+  }else{
+    # Valores nulos en caso de que no se encuentre un registro
+    return(c(0,0,""))
+  }
+})
+
+# Se obtiene la transpuesta de la matrix, para ingresarla como dataframe
+holidays_t <- t(holidays_l)
+
+holidays_df <- data.frame(holidays_t)
+colnames(holidays_df) <- c("DIA_ESPECIAL", "DIA_FESTIVO", "CELEBRACION")
+
+# Se agregan las columnas al DataFrame de 'datos'
+datos <- cbind(datos, holidays_df)
 ```
 
 ```{r}
