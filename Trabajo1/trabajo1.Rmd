@@ -6,16 +6,13 @@ output: html_document
 ---
 
 ```{r message=FALSE, warning=FALSE}
-<<<<<<< HEAD
-setwd("e:/Users/camil/Escritorio/TAE/Trabajo 1")
-=======
-#setwd("C:/Users/camil/Escritorio/TAE/Trabajo 1")
->>>>>>> 4b78e9a9e5cdfdcac95eb3d53b5fd5fdadfc5004
+library(dummies)
 library(stringr)
 library(dplyr)
 library(lubridate)
 library(ggplot2)
 library(GGally)
+library(car)
 ```
 
 ```{r}
@@ -29,7 +26,7 @@ datos_2017 <- read.csv("./BasesDeDatos/Incidentes_georreferenciados_2017.csv",
                        header = T, sep = ",", encoding = "UTF-8")
 datos_2018 <- read.csv("./BasesDeDatos/Incidentes_georreferenciados_2018.csv", 
                        header = T, sep = ",", encoding = "UTF-8")
-holidays <- read.csv("holidays.csv", header = T, sep=",", encoding = "UTF-8")
+holidays <- read.csv("./BasesDeDatos/holidays.csv", header = T, sep=",", encoding = "UTF-8")
 
 ```
 
@@ -393,80 +390,6 @@ datos <- datos[,-c(5,6)]
 datos <- datos[,-5]
 summary(datos)
 
-#CREAR VARIABLE NUEVA PARA IDENTIFICAR EL NUMERO DE COMUNA 
-datos$NUMEROCOMUNA <- 0
-datos[datos$COMUNA == "Popular", 14] <- "1"
-datos[datos$COMUNA == "Santa Cruz", 14] <- "2"
-datos[datos$COMUNA == "Manrique", 14] <- "3"
-datos[datos$COMUNA == "Aranjuez", 14] <- "4"
-datos[datos$COMUNA == "Castilla", 14] <- "5"
-datos[datos$COMUNA == "Doce de Octubre", 14] <- "6"
-datos[datos$COMUNA == "Robledo", 14] <- "7"
-datos[datos$COMUNA == "Villa Hermosa", 14] <- "8"
-datos[datos$COMUNA == "Buenos Aires", 14] <- "9"
-datos[datos$COMUNA == "La Candelaria", 14] <- "10"
-datos[datos$COMUNA == "Laureles Estadio", 14] <- "11"
-datos[datos$COMUNA == "La América", 14] <- "12"
-datos[datos$COMUNA == "San Javier", 14] <- "13"
-datos[datos$COMUNA == "El Poblado", 14] <- "14"
-datos[datos$COMUNA == "Guayabal", 14] <- "15"
-datos[datos$COMUNA == "Belén", 14] <- "16"
-datos[datos$COMUNA == "Corregimiento de San Sebastián de Palmitas", 14] <- "50"
-datos[datos$COMUNA == "Corregimiento de San Cristóbal", 14] <- "60"
-datos[datos$COMUNA == "Corregimiento de Altavista", 14] <- "70"
-datos[datos$COMUNA == "Corregimiento de San Antonio de Prado", 14] <- "80"
-datos[datos$COMUNA == "Corregimiento de Santa Elena", 14] <- "90"
-```
-
-```{r}
-#CREACIÓN VARIABLE SEMANA
-datos$SEMANA <- as.factor(week(datos$FECHA))
-datos$DIA2 <- as.factor(day(datos$FECHA))
-
-#CREACION DE LA VARIABLE DIA
-datos$DIAAÑO <- lubridate::yday(datos$FECHA)
-
-# Se crea la lista de valores para cada fila de 'datos'
-holidays_l <- apply(datos,1,function(x){
-  holiday <- subset(holidays, (year == x["PERIODO"] & day == x["DIA"] & month == x["MES"]), select=c(celebration,is_holiday))
-  
-  if(nrow(holiday) > 0){ # Se revisa que en la fecha del accidente haya un registro en el df 'holidays'
-    holiday <- holiday[1,]
-    is_holiday <- 
-    return(c(1,holiday$is_holiday,holiday$celebration)) 
-    # Se devuelve una lista conteniendo el DIA ESPECIAL, FESTIVO y el nombre de la celebración
-  }else{
-    # Valores nulos en caso de que no se encuentre un registro
-    return(c(0,0,""))
-  }
-})
-
-# Se obtiene la transpuesta de la matrix, para ingresarla como dataframe
-holidays_t <- t(holidays_l)
-
-holidays_df <- data.frame(holidays_t)
-colnames(holidays_df) <- c("DIA_ESPECIAL", "DIA_FESTIVO", "CELEBRACION")
-
-# Se agregan las columnas al DataFrame de 'datos'
-datos <- cbind(datos, holidays_df)
-```
-
-```{r}
-DIARIOS <- datos %>% group_by(CLASE,BARRIO,GRAVEDAD, COMUNA,NUMEROCOMUNA, DIAAÑO, MES) %>% count(name = "NRO_ACC_DIA")
-
-DIASEMANA <- datos %>% group_by(CLASE, BARRIO, GRAVEDAD, COMUNA, NUMEROCOMUNA,
-                                DIA_NOMBRE, MES) %>% count(name = "NRI_ACC_DIANOMBRE")
-```
-
-```{r}
-SEMANAL <- datos %>% group_by(CLASE,BARRIO,GRAVEDAD, COMUNA,NUMEROCOMUNA, SEMANA) %>% count(name = "NRO_ACC_SEMANA")
-```
-
-```{r}
-MENSUAL <- datos %>% group_by(CLASE,BARRIO, GRAVEDAD, COMUNA,NUMEROCOMUNA, MES) %>% count(name = "NRO_ACC_MES")
-```
-
-```{r}
 #ELIMINAR VARIABLES 
 datos_2018 <- datos_2018[,-c(1, 2, 3, 4, 6, 10, 11, 12, 13, 21, 22)]
 datos_2018$BARRIO <- str_replace_all(datos_2018$BARRIO,
@@ -523,7 +446,9 @@ datos_2018$COMUNA <- as.factor(datos_2018$COMUNA)
 datos_2018$DIA <- as.factor(datos_2018$DIA)
 datos_2018$PERIODO <- as.factor(datos_2018$PERIODO)
 datos_2018$FECHA <- as.Date(datos_2018$FECHA)
+datos_2018$CLASE <- str_replace_all(datos_2018$CLASE, "Ca(i|í)da Ocupante", "Caída Ocupante")
 datos_2018$CLASE <- as.factor(datos_2018$CLASE)
+
 datos_2018$GRAVEDAD <- as.factor(datos_2018$GRAVEDAD)
 #ARREGLO DE DISEÑO
 datos_2018[datos_2018$DISENO == "",8] <- "Otro"
@@ -534,27 +459,78 @@ datos_2018$MES <- as.factor(datos_2018$MES)
 #ARREGLO NOMBRE DEL MES
 datos_2018$MES_NOMBRE <- months(datos_2018$FECHA)
 datos_2018$MES_NOMBRE <- as.factor(datos_2018$MES_NOMBRE)
-summary(datos_2018)
+
+datos <- rbind(datos, datos_2018)
+
+#CREAR VARIABLE NUEVA PARA IDENTIFICAR EL NUMERO DE COMUNA 
+datos$NUMEROCOMUNA <- 0
+datos[datos$COMUNA == "Popular", 14] <- "1"
+datos[datos$COMUNA == "Santa Cruz", 14] <- "2"
+datos[datos$COMUNA == "Manrique", 14] <- "3"
+datos[datos$COMUNA == "Aranjuez", 14] <- "4"
+datos[datos$COMUNA == "Castilla", 14] <- "5"
+datos[datos$COMUNA == "Doce de Octubre", 14] <- "6"
+datos[datos$COMUNA == "Robledo", 14] <- "7"
+datos[datos$COMUNA == "Villa Hermosa", 14] <- "8"
+datos[datos$COMUNA == "Buenos Aires", 14] <- "9"
+datos[datos$COMUNA == "La Candelaria", 14] <- "10"
+datos[datos$COMUNA == "Laureles Estadio", 14] <- "11"
+datos[datos$COMUNA == "La América", 14] <- "12"
+datos[datos$COMUNA == "San Javier", 14] <- "13"
+datos[datos$COMUNA == "El Poblado", 14] <- "14"
+datos[datos$COMUNA == "Guayabal", 14] <- "15"
+datos[datos$COMUNA == "Belén", 14] <- "16"
+datos[datos$COMUNA == "Corregimiento de San Sebastián de Palmitas", 14] <- "50"
+datos[datos$COMUNA == "Corregimiento de San Cristóbal", 14] <- "60"
+datos[datos$COMUNA == "Corregimiento de Altavista", 14] <- "70"
+datos[datos$COMUNA == "Corregimiento de San Antonio de Prado", 14] <- "80"
+datos[datos$COMUNA == "Corregimiento de Santa Elena", 14] <- "90"
+
+#CREACIÓN VARIABLE SEMANA
+datos$SEMANA <- as.factor(week(datos$FECHA))
+
+#CREACION DE LA VARIABLE DIA
+datos$DIAAÑO <- lubridate::yday(datos$FECHA)
+
+# Se crea la lista de valores para cada fila de 'datos'
+holidays_l <- apply(datos,1,function(x){
+  holiday <- subset(holidays, (year == x["PERIODO"] & day == x["DIA"] & month == x["MES"]), select=c(celebration,is_holiday))
+  
+  if(nrow(holiday) > 0){ # Se revisa que en la fecha del accidente haya un registro en el df 'holidays'
+    holiday <- holiday[1,]
+    is_holiday <- 
+    return(c(1,holiday$is_holiday,holiday$celebration)) 
+    # Se devuelve una lista conteniendo el DIA ESPECIAL, FESTIVO y el nombre de la celebración
+  }else{
+    # Valores nulos en caso de que no se encuentre un registro
+    return(c(0,0,"Día Normal"))
+  }
+})
+
+# Se obtiene la transpuesta de la matrix, para ingresarla como dataframe
+holidays_t <- t(holidays_l)
+
+holidays_df <- data.frame(holidays_t)
+colnames(holidays_df) <- c("DIA_ESPECIAL", "DIA_FESTIVO", "CELEBRACION")
+
+# Se agregan las columnas al DataFrame de 'datos'
+datos <- cbind(datos, holidays_df)
 ```
 
 ```{r}
-#CREACIÓN VARIABLE SEMANA 2018
-datos_2018$SEMANA <- as.factor(week(datos_2018$FECHA))
+DIARIOS <- datos %>% group_by(CLASE, FECHA, DIA_ESPECIAL) %>% count(name = "NRO_ACC_DIA")
 
-#CREACIÓN DE LA VARIABLE DIA DEL AÑO
-datos_2018$DIAAÑO <- lubridate::yday(datos_2018$FECHA)
+DIASEMANA <- datos %>% group_by(PERIODO, CLASE, BARRIO, GRAVEDAD, COMUNA, NUMEROCOMUNA,
+                                DIA_NOMBRE, MES, DIA_ESPECIAL, DIA_FESTIVO,
+                                CELEBRACION) %>% count(name = "NRI_ACC_DIANOMBRE")
 ```
 
 ```{r}
-DIARIOS2018 <- datos_2018 %>% group_by(CLASE,BARRIO,GRAVEDAD, COMUNA,DIAAÑO, MES) %>% count(name = "NRO_ACC_DIA")
+SEMANAL <- datos %>% group_by(PERIODO, CLASE,BARRIO,GRAVEDAD, COMUNA,NUMEROCOMUNA, SEMANA, DIA_ESPECIAL, DIA_FESTIVO, CELEBRACION, LA) %>% count(name = "NRO_ACC_SEMANA")
 ```
 
 ```{r}
-SEMANAL2018 <- datos_2018 %>% group_by(CLASE,BARRIO,GRAVEDAD, COMUNA, SEMANA) %>% count(name = "NRO_ACC_SEMANA")
-```
-
-```{r}
-MENSUAL2018 <- datos_2018 %>% group_by(CLASE,BARRIO, GRAVEDAD, COMUNA, MES) %>% count(name = "NRO_ACC_MES")
+MENSUAL <- datos %>% group_by(CLASE, MES) %>% count(name = "NRO_ACC_MES")
 ```
 
 # Analisis exploratorio datos diario 
@@ -603,7 +579,6 @@ ggplot(SEMANAL, aes(x = GRAVEDAD, y = NRO_ACC_SEMANA, col = GRAVEDAD)) + geom_bo
 ggplot(SEMANAL, aes(x = NUMEROCOMUNA, y = NRO_ACC_SEMANA, col = NUMEROCOMUNA)) + geom_boxplot()
 ```
 
-
 # Analisis exploratorio datos mensuales 
 
 ```{r}
@@ -620,3 +595,16 @@ ggplot(MENSUAL, aes(x = GRAVEDAD, y = NRO_ACC_MES, col = GRAVEDAD)) + geom_boxpl
 ```{r}
 ggplot(MENSUAL, aes(x = NUMEROCOMUNA, y = NRO_ACC_MES, col = NUMEROCOMUNA)) + geom_boxplot()
 ```
+
+# Planteamiento de modelos
+
+```{r}
+#SEPARAR BASES POR CLASE DE ACCIDENTE 
+#CASO DE ACCIDENTES DIARIOS
+DIAATROPELLO <- DIARIOS[DIARIOS$CLASE == "Atropello", ]
+
+
+mod1 <- lm(NRO_ACC_DIA ~ DIA_ESPECIAL, data = DIAATROPELLO)
+summary(mod1)
+```
+
