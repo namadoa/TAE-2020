@@ -13,6 +13,7 @@ library(lubridate)
 library(ggplot2)
 library(GGally)
 library(car)
+library(wordcloud)
 ```
 
 ```{r}
@@ -526,7 +527,7 @@ DIASEMANA <- datos %>% group_by(PERIODO, CLASE, BARRIO, GRAVEDAD, COMUNA, NUMERO
 ```
 
 ```{r}
-SEMANAL <- datos %>% group_by(PERIODO, CLASE,BARRIO,GRAVEDAD, COMUNA,NUMEROCOMUNA, SEMANA, DIA_ESPECIAL, DIA_FESTIVO, CELEBRACION, LA) %>% count(name = "NRO_ACC_SEMANA")
+SEMANAL <- datos %>% group_by(PERIODO, CLASE,BARRIO,GRAVEDAD, COMUNA,NUMEROCOMUNA, SEMANA, DIA_ESPECIAL, DIA_FESTIVO, CELEBRACION) %>% count(name = "NRO_ACC_SEMANA")
 ```
 
 ```{r}
@@ -595,7 +596,11 @@ ggplot(MENSUAL, aes(x = GRAVEDAD, y = NRO_ACC_MES, col = GRAVEDAD)) + geom_boxpl
 ```{r}
 ggplot(MENSUAL, aes(x = NUMEROCOMUNA, y = NRO_ACC_MES, col = NUMEROCOMUNA)) + geom_boxplot()
 ```
-
+## wordcloud
+```{r}
+datosWordC <- str_replace_all(datos$COMUNA, "\\s", "-")
+wordcloud(datosWordC,colors=brewer.pal(6,"Dark2"),random.order=FALSE)
+```
 # Planteamiento de modelos
 
 ```{r}
