@@ -14,6 +14,7 @@ library(ggplot2)
 library(GGally)
 library(car)
 library(wordcloud)
+library(gplots)
 ```
 
 ```{r}
@@ -594,6 +595,59 @@ ggplot(MENSUAL, aes(x = CLASE, y = NRO_ACC_MES, col = CLASE)) + geom_boxplot()
 ggplot(MENSUAL, aes(x = GRAVEDAD, y = NRO_ACC_MES, col = GRAVEDAD)) + geom_boxplot()
 ```
 ```{r}
+conteo <- datos %>% group_by(PERIODO, MES) %>% count()
+accidentes <- conteo$n
+
+a1 <- datos %>% group_by(BARRIO) %>% count()
+
+```
+
+
+```{r}
+heat <- data.frame(row.names = str_to_title(unique(datos$MES_NOMBRE)),
+                   '2014' = accidentes[1:12],
+                   "2015" = accidentes[13:24],
+                   "2016" = accidentes[25:36],
+                   "2017" = accidentes[37:48],
+                   "2018" = accidentes[49:60])
+heat
+
+```
+
+
+```{r}
+heat <- as.matrix((heat))
+
+```
+
+
+```{r}
+Colors=c("lemonchiffon", "orange","red2")
+Colors=colorRampPalette(Colors)(100)
+heatmap.2(t(heat),
+          scale= "none",
+          Colv = NA,
+          Rowv = NA, 
+          labRow = c("2014","2015", "2016", "2017", "2018"),
+          trace = "none", 
+          density.info = "none",
+          col = Colors,
+          margin= c(7,7),
+          srtCol=45,
+          main = "Accidentes por año y mes",
+          xlab= "Mes",
+          ylab = "Año",
+          
+          )
+```
+
+
+```{r}
+```
+
+
+
+```{r}
 ggplot(MENSUAL, aes(x = NUMEROCOMUNA, y = NRO_ACC_MES, col = NUMEROCOMUNA)) + geom_boxplot()
 ```
 ## wordcloud
@@ -602,6 +656,9 @@ datosWordC <- str_replace_all(datos$COMUNA, "\\s", "-")
 wordcloud(datosWordC,colors=brewer.pal(6,"Dark2"),random.order=FALSE)
 ```
 # Planteamiento de modelos
+```{r}
+
+```
 
 ```{r}
 #SEPARAR BASES POR CLASE DE ACCIDENTE 
