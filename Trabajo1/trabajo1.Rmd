@@ -13,7 +13,19 @@ library(lubridate)
 library(ggplot2)
 library(GGally)
 library(car)
+library(MLmetrics)
+library(qpcR)
+library(olsrr)
+library(gamlss)
 ```
+
+```{r}
+# Función para Calcular el R2 en Modelos lineales generalizados
+custom_R2 <- function(glm){
+  return((glm$null.deviance - glm$deviance)/ glm$null.deviance) 
+}
+```
+
 
 ```{r}
 datos_2014 <- read.csv("./BasesDeDatos/Incidentes_georreferenciados_2014.csv", 
@@ -460,7 +472,7 @@ datos_2018$MES <- as.factor(datos_2018$MES)
 datos_2018$MES_NOMBRE <- months(datos_2018$FECHA)
 datos_2018$MES_NOMBRE <- as.factor(datos_2018$MES_NOMBRE)
 
-datos <- rbind(datos, datos_2018)
+#datos <- rbind(datos, datos_2018)
 
 #CREAR VARIABLE NUEVA PARA IDENTIFICAR EL NUMERO DE COMUNA 
 datos$NUMEROCOMUNA <- 0
@@ -526,7 +538,7 @@ DIASEMANA <- datos %>% group_by(PERIODO, CLASE, BARRIO, GRAVEDAD, COMUNA, NUMERO
 ```
 
 ```{r}
-SEMANAL <- datos %>% group_by(PERIODO, CLASE,BARRIO,GRAVEDAD, COMUNA,NUMEROCOMUNA, SEMANA, DIA_ESPECIAL, DIA_FESTIVO, CELEBRACION, LA) %>% count(name = "NRO_ACC_SEMANA")
+SEMANAL <- datos %>% group_by(PERIODO, CLASE,BARRIO,GRAVEDAD, COMUNA,NUMEROCOMUNA, SEMANA, DIA_ESPECIAL, DIA_FESTIVO, CELEBRACION) %>% count(name = "NRO_ACC_SEMANA")
 ```
 
 ```{r}
@@ -597,14 +609,260 @@ ggplot(MENSUAL, aes(x = NUMEROCOMUNA, y = NRO_ACC_MES, col = NUMEROCOMUNA)) + ge
 ```
 
 # Planteamiento de modelos
+## Hasta acá datos tiene los datos de los años 2014-2017, lo que se usará para el entrenamiento, y se usaran los datos de 2018 para validación
+
 
 ```{r}
-#SEPARAR BASES POR CLASE DE ACCIDENTE 
-#CASO DE ACCIDENTES DIARIOS
-DIAATROPELLO <- DIARIOS[DIARIOS$CLASE == "Atropello", ]
+# Datos para entrenamientos
+# Se crea la lista de valores para cada fila de 'datos_2018'
+holidays_l_2018 <- apply(datos_2018,1,function(x){
+  holiday <- subset(holidays, (year == x["PERIODO"] & day == x["DIA"] & month == x["MES"]), select=c(celebration,is_holiday))
+  
+  if(nrow(holiday) > 0){ # Se revisa que en la fecha del accidente haya un registro en el df 'holidays'
+    holiday <- holiday[1,]
+    return(c(1,holiday$is_holiday,holiday$celebration)) 
+    # Se devuelve una lista conteniendo el DIA ESPECIAL, FESTIVO y el nombre de la celebración
+  }else{
+    # Valores nulos en caso de que no se encuentre un registro
+    return(c(0,0,"Día Normal"))
+  }
+})
 
+# Se obtiene la transpuesta de la matrix, para ingresarla como dataframe
+holidays_t_2018 <- t(holidays_l_2018)
 
-mod1 <- lm(NRO_ACC_DIA ~ DIA_ESPECIAL, data = DIAATROPELLO)
-summary(mod1)
+holidays_df_2018 <- data.frame(holidays_t_2018)
+colnames(holidays_df_2018) <- c("DIA_ESPECIAL", "DIA_FESTIVO", "CELEBRACION")
+
+# Se agregan las columnas al DataFrame de 'datos_2018'
+datos_2018 <- cbind(datos_2018, holidays_df_2018)
+
+# En datos_2018 se encuentra nuestro set de datos de validación
 ```
+
+# Se corre un modelo lineal teniendo en cuenta las variables de DIA_ESPECIAL, DIA_NOMBRE, DISENO
+```{r}
+# Agrupación de los datos para el modelo lineal, cada registro contiene las condiciones únicas de las 4 columnas,y se agrega la variable ded 'NRO_ACC', que son el número de accidentes cuando se cumplen esas condiciones
+datos_lm1 <- datos %>% group_by(FECHA, DIA_ESPECIAL, DIA_NOMBRE, DISENO) %>% count(name = "NRO_ACC") 
+lm1 <- lm(NRO_ACC ~ DIA_ESPECIAL+DIA_NOMBRE+DISENO, data = datos_lm1) # Modelo lineal
+
+summary(lm1) # Se observa que el modelo lineal tiene un buen ajuste de R-cuadrado
+```
+# El análisis de significancia obtenido por el 'summary' sugiere que las variables DIA_ESPECIAL, y DIA_NOMBRE son de mucha
+# significancia
+
+```{r}
+# Se crea el conjunto de datos para la validación
+
+lm1_2018 <- datos_2018 %>% group_by(FECHA, DIA_ESPECIAL, DIA_NOMBRE, DISENO) %>% count(name = "NRO_ACC")
+
+
+predicted <- round(predict(lm1, newdata=lm1_2018))
+actual <- lm1_2018$NRO_ACC
+
+lm1_mse <- MSE(predicted, actual) # MSE
+lm1_mae <- MAE(predicted, actual) # MAE
+lm1_r2 <- R2_Score(predicted, actual) # R2
+
+sprintf("MSE: %f, MAE: %f, R2: %f", lm1_mse, lm1_mae, lm1_r2)
+```
+# El primer modelo tiene buenas métricas, pero tiene un problema al tener la variable DISENO, ya que no tenemos
+# una forma fácil de obtener esta variable para la predicción
+
+```{r}
+# Modelo a partir del anterior teniendo en cuenta el DIA_FESTIVO y no DÍA ESPECIAL
+datos_lm2 <- datos %>% group_by(FECHA,DIA_FESTIVO, DIA_NOMBRE, DISENO) %>% count(name = "NRO_ACC")
+lm2 <- lm(NRO_ACC ~ DIA_FESTIVO+DIA_NOMBRE+DISENO, data = datos_lm2)
+
+summary(lm2)
+
+```
+```{r}
+lm2_2018 <- datos_2018 %>% group_by(FECHA,DIA_FESTIVO, DIA_NOMBRE, DISENO) %>% count(name = "NRO_ACC")
+
+predicted <- round(predict(lm2, newdata=lm2_2018))
+actual <- lm2_2018$NRO_ACC
+
+lm2_mse <- MSE(predicted, actual) # MSE
+lm2_mae <- MAE(predicted, actual) # MAE
+lm2_r2 <- R2_Score(predicted, actual) # R2
+
+sprintf("MSE: %f, MAE: %f, R2: %f", lm2_mse, lm2_mae, lm2_r2)
+```
+```{r}
+# Modelo lineal sin la variable DISENO
+datos_lm3 <- datos %>% group_by(FECHA,DIA_FESTIVO, DIA_NOMBRE) %>% count(name = "NRO_ACC")
+lm3 <- lm(NRO_ACC ~ DIA_FESTIVO+DIA_NOMBRE, data = datos_lm3)
+
+summary(lm3)
+```
+# Se puede notar que el R2 Ajustado baja drásticamente al quitar la variable DISENO
+
+```{r}
+lm3_2018 <- datos_2018 %>% group_by(FECHA,DIA_FESTIVO, DIA_NOMBRE) %>% count(name = "NRO_ACC")
+
+predicted <- round(predict(lm3, newdata=lm3_2018))
+actual <- lm3_2018$NRO_ACC
+
+lm3_mse <- MSE(predicted, actual) # MSE
+lm3_mae <- MAE(predicted, actual) # MAE
+lm3_r2 <- R2_Score(predicted, actual) # R2
+
+sprintf("MSE: %f, MAE: %f, R2: %f", lm3_mse, lm3_mae, lm3_r2)
+```
+# Al quitar la variable las métricas de validación también empeoran
+
+# Se intenta ahora con un modelo lineal generalizado, considerando las variables DIA_NOMBRE, DIA_FESTIVO 
+```{r}
+datos_lm4 <- datos %>% group_by(FECHA,DIA_FESTIVO, DIA_NOMBRE) %>% count(name = "NRO_ACC")
+lm4 <- glm(NRO_ACC ~ DIA_FESTIVO+DIA_NOMBRE, family = "poisson", data = datos_lm4) # Modelo lineal generalizado, con familia poisson
+summary(lm4)
+```
+```{r}
+lm4_2018 <- datos_2018 %>% group_by(FECHA,DIA_FESTIVO, DIA_NOMBRE) %>% count(name = "NRO_ACC")
+
+predicted <- round(predict(lm4, newdata=lm4_2018, type="response")) # Se usa type= 'response' por ser una regresion logística
+actual <- lm4_2018$NRO_ACC
+
+lm4_mse <- MSE(predicted, actual) # MSE
+lm4_mae <- MAE(predicted, actual) # MAE
+lm4_r2 <- R2_Score(predicted, actual) # Pseudo R2
+
+sprintf("MSE: %f, MAE: %f, Pseudo R2: %f", lm4_mse, lm4_mae, lm4_r2)
+```
+# El anterior consituye un modelo logístico similar al modelo lineal # 3, a partir de este se ira puliendo
+# Se agrega la variable clase al siguiente modelo, ya que es necesario predecir el número de accidentes según el tipo
+# Según la salida obtenida, todas las variables son significantes.
+```{r}
+# Modelo linealk generalizado, agregando la variable Clase
+datos_lm5 <- datos %>% group_by(FECHA,DIA_FESTIVO, DIA_NOMBRE,CLASE) %>% count(name = "NRO_ACC")
+lm5 <- glm(NRO_ACC ~ DIA_FESTIVO+DIA_NOMBRE+CLASE, family = "poisson", data = datos_lm5)
+summary(lm5)
+```
+```{r}
+# Análisis sobre los coeficientes
+exp_c <- exp(lm5$coefficients)
+exp_c
+
+# Los días Festivos tienen aproximadamente 0.56 veces el número promedio de accidentes de un día normal
+# El número promedio de Accidentes de Los días Jueves es aproximadamente 1.59 veces el número de accidentes de un Domingo
+# El número promedio de Accidentes de Los días Lunes es aproximadamente 1.63 veces el número de accidentes de un Domingo
+# El número promedio de Accidentes de Los días Martes es aproximadamente 1.62 veces el número de accidentes de un Domingo
+# El número promedio de Accidentes de Los días Miércoles es aproximadamente 1.58 veces el número de accidentes de un Domingo
+# El número promedio de Accidentes de Los días Sábado es aproximadamente 1.49 veces el número de accidentes de un Domingo
+# El número promedio de Accidentes de Los días Viernes es aproximadamente 1.49 veces el número de accidentes de un Domingo
+# El número promedio de Accidentes que son 'Caída Ocupante' es aproximadamente 0.87 veces el número de accidentes que son 'Atropello'
+# El número promedio de Accidentes que son 'Choque' es aproximadamente 6.62 veces el número de accidentes que son 'Atropello'
+# El número promedio de Accidentes que son 'Incendio' es aproximadamente 0.086 veces el número de accidentes que son 'Atropello'
+# El número promedio de Accidentes que son 'Volcamiento' es aproximadamente 0.34 veces el número de accidentes que son 'Atropello'
+# El número promedio de Accidentes que son 'Otro' es aproximadamente 1.07 veces el número de accidentes que son 'Atropello'
+
+```
+
+
+# El modelo se comporta bien porque:
+# - El R2 de Entrenamiento, calculado con la función 'custom_R2' tiene un buen valor, que significa que
+#   el modelo explica el 93% de la variabilidad del número de accidentes por día, de una clase en especifico
+#   en el Valle de Aburrá
+# - La sobredispersión del modelo se encuentra en un valor cercano a 1, es decir, la sobredispersión de los
+#   datos frente al modelo es baja, indicando un ajuste razonable del modelo.
+```{r}
+# Se computan métricas de entrenamiento
+y_train <- round(predict(lm5, newdata= datos_lm5, type="response"))
+y_actual <- datos_lm5$NRO_ACC
+lm5_tmse <- MSE(y_train, y_actual)
+lm5_tmae <-  MAE(y_train, y_actual)
+lm5_tr2 <- custom_R2(lm5)
+lm5_rel <- lm5$deviance/lm5$df.residual # Se obtiene la sobredispersion
+sprintf("Entrenamiento, MSE: %f, MAE: %f, R2 Entrenamiento: %f, Sobredispersión: %f", lm5_tmse, lm5_tmae, lm5_tr2,lm5_rel)
+```
+
+```{r}
+lm5_2018 <- datos_2018 %>% group_by(FECHA,DIA_FESTIVO, DIA_NOMBRE,CLASE) %>% count(name = "NRO_ACC")
+
+predicted <- round(predict(lm5, newdata=lm5_2018, type="response")) # Se usa type= 'response' por ser una regresion logística
+actual <- lm5_2018$NRO_ACC
+
+lm5_mse <- MSE(predicted, actual) # MSE
+lm5_mae <- MAE(predicted, actual) # MAE
+lm5_r2 <- R2_Score(predicted, actual) # Pseudo R2
+
+sprintf("MSE: %f, MAE: %f, Pseudo R2: %f", lm5_mse, lm5_mae, lm5_r2)
+```
+# Este modelo da resultados bastantes prometedores en las métricas utilizadas
+
+```{r}
+# Por ahora nos quedamos con el Modelo 5 que ha mostrado los mejores resultados y computamos más métricas
+
+# Suma de los cuadrados de los residuales
+
+lm5_2018$predicted <- predicted
+
+# TO DO: Mejorar esta gráfica
+lm5_plot <- ggplot(lm5_2018[1:50,]) + geom_point(mapping = aes(c(1:50),NRO_ACC, col="Reales")) + geom_line(mapping = aes(c(1:50),NRO_ACC, col="Reales")) + geom_point(mapping = aes(c(1:50),predicted, col="Predichos")) + geom_line(mapping = aes(c(1:50),predicted, col="Predichos")) + scale_color_manual("Datos", values = c("Predichos" = "red", "Reales" = "darkgreen"))
+
+lm5_plot + ggtitle("Accidentalidad en 2018", subtitle="Clase, Dia Festivo, Dia de la Semana (50 Registros)")+ ylab("No. de Accidentes") + xlab("Registros")
+
+```
+# Por ahora este es un buen modelo
+```{r}
+plot(lm5)
+```
+```{r}
+w <- abs(rstudent(lm5)) < 5 & abs(cooks.distance(lm5)) < 4/nrow(lm5$model)
+lm6 <- update(lm5, weights=as.numeric(w))
+```
+
+```{r}
+summary(lm6)
+```
+```{r}
+# Se computan métricas de entrenamiento
+y_train <- round(predict(lm6, newdata= datos_lm5, type="response"))
+y_actual <- datos_lm5$NRO_ACC
+lm6_tmse <- MSE(y_train, y_actual)
+lm6_tmae <-  MAE(y_train, y_actual)
+lm6_tr2 <- R2_Score(y_train, y_actual)
+sprintf("Entrenamiento, MSE: %f, MAE: %f, Pseudo R2: %f", lm6_tmse, lm6_tmae, lm6_tr2)
+```
+
+```{r}
+predicted <- round(predict(lm6, newdata=lm5_2018, type="response")) # Se usa type= 'response' por ser una regresion logística
+actual <- lm5_2018$NRO_ACC
+
+lm6_mse <- MSE(predicted, actual) # MSE
+lm6_mae <- MAE(predicted, actual) # MAE
+lm6_r2 <- R2_Score(predicted, actual) # Pseudo R2
+
+sprintf("MSE: %f, MAE: %f, Pseudo R2: %f", lm6_mse, lm6_mae, lm6_r2)
+```
+```{r}
+# Modelo lineal con la misma fórmula y datos del modelo lineal generalizado (lm5)
+lm7 <- lm(NRO_ACC ~ DIA_FESTIVO+DIA_NOMBRE+CLASE, data = datos_lm5)
+summary(lm7)
+```
+# La regresión lineal aunque buena, no mejora los resultados del modelo 5
+```{r}
+predicted <- round(predict(lm7, newdata=lm5_2018)) 
+actual <- lm5_2018$NRO_ACC
+
+lm7_mse <- MSE(predicted, actual) # MSE
+lm7_mae <- MAE(predicted, actual) # MAE
+lm7_r2 <- R2_Score(predicted, actual) # R2
+
+sprintf("MSE: %f, MAE: %f, R2: %f", lm7_mse, lm7_mae, lm7_r2)
+```
+```{r}
+
+```
+
+
+
+
+
+
+
+
+
+
 
