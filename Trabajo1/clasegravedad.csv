@@ -1,0 +1,16 @@
+"CLASE","GRAVEDAD","n"
+"Atropello","Herido",20026
+"Atropello","Muerto",629
+"Caída Ocupante","Herido",18461
+"Caída Ocupante","Muerto",59
+"Choque","Herido",47371
+"Choque","Muerto",547
+"Choque","Solo daños",93191
+"Incendio","Herido",12
+"Incendio","Solo daños",12
+"Otro","Herido",21642
+"Otro","Muerto",7
+"Otro","Solo daños",356
+"Volcamiento","Herido",6417
+"Volcamiento","Muerto",3
+"Volcamiento","Solo daños",189

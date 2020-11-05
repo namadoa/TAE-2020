@@ -485,6 +485,9 @@ datos[datos$COMUNA == "Corregimiento de San Cristóbal", 14] <- "60"
 datos[datos$COMUNA == "Corregimiento de Altavista", 14] <- "70"
 datos[datos$COMUNA == "Corregimiento de San Antonio de Prado", 14] <- "80"
 datos[datos$COMUNA == "Corregimiento de Santa Elena", 14] <- "90"
+datos$DIA_NOMBRE <- capitalize(tolower(datos$DIA_NOMBRE))
+datos$MES_NOMBRE <- capitalize(datos$MES_NOMBRE)
+datos$GRAVEDAD <- capitalize(tolower(datos$GRAVEDAD))
 
 #CREACIÓN VARIABLE SEMANA
 datos$SEMANA <- as.factor(week(datos$FECHA))
@@ -526,22 +529,150 @@ DIASEMANA <- datos %>% group_by(PERIODO, CLASE, BARRIO, GRAVEDAD, COMUNA, NUMERO
 ```
 
 ```{r}
-SEMANAL <- datos %>% group_by(PERIODO, CLASE,BARRIO,GRAVEDAD, COMUNA,NUMEROCOMUNA, SEMANA, DIA_ESPECIAL, DIA_FESTIVO, CELEBRACION, LA) %>% count(name = "NRO_ACC_SEMANA")
+SEMANAL <- datos %>% group_by(PERIODO, CLASE,BARRIO,GRAVEDAD, COMUNA,NUMEROCOMUNA, SEMANA, DIA_ESPECIAL, DIA_FESTIVO, CELEBRACION) %>% count(name = "NRO_ACC_SEMANA")
 ```
 
 ```{r}
 MENSUAL <- datos %>% group_by(CLASE, MES) %>% count(name = "NRO_ACC_MES")
 ```
+## Análisis exploratorio
+```{r}
+porcentaje <- function(x){
+  (x*100)/208922
+}
+mis.colores <- colorRampPalette(c("blue", "red"))
+```
 
-# Analisis exploratorio datos diario 
+```{r}
+Comuna <- datos %>% group_by(COMUNA) %>% count()
+Comuna$Porcentaje <- round(porcentaje(Comuna$n),2)
+Comuna <- Comuna %>% arrange(desc(Porcentaje), COMUNA)
+
+ggplot(Comuna, aes(x = reorder(COMUNA, Porcentaje), y = Porcentaje, 
+                   fill = reorder(COMUNA, Porcentaje))) + 
+  geom_bar(stat="identity", show.legend = F) + 
+  coord_flip() + 
+  scale_fill_manual(values=mis.colores(21)) + 
+  xlab("Comuna") + 
+  ylab("Porcentaje [%]") + 
+  ggtitle("Porcentaje de Accidentalidad por Comuna")
+
+
+diarioscomuna <- datos %>% group_by(COMUNA, DIAAÑO) %>% count()
+diarioscomuna <- diarioscomuna %>% arrange(desc(n), COMUNA)
+ggplot(diarioscomuna, aes(x = reorder(COMUNA, n), y = n, col = COMUNA)) + 
+  geom_boxplot(show.legend = F) + 
+  coord_flip() + 
+  scale_fill_manual(values=mis.colores(21)) + 
+  xlab("Comuna") + 
+  ylab("Porcentaje [%]") + 
+  ggtitle("Porcentaje de Accidentalidad por Comuna")
+```
+
+```{r}
+barrio <- datos %>% group_by(BARRIO) %>% count()
+barrio$Porcentaje <- round(porcentaje(barrio$n),2)
+barrio <- barrio %>% arrange(desc(Porcentaje), BARRIO)
+topbarrio <- barrio[1:10, ]
+ggplot(topbarrio, aes(x = reorder(BARRIO, Porcentaje), y = Porcentaje, 
+                   fill = reorder(BARRIO, Porcentaje))) + 
+  geom_bar(stat="identity", show.legend = F) + 
+  coord_flip() + 
+  scale_fill_manual(values=mis.colores(10)) + 
+  xlab("Barrio") + 
+  ylab("Porcentaje [%]") + 
+  ggtitle("Porcentaje de Accidentalidad por barrio")
+```
+
+
+```{r}
+Mes <- datos %>% group_by(MES_NOMBRE) %>% count()
+Mes$Porcentaje <- round(porcentaje(Mes$n),2)
+Mes <- Mes %>% arrange(desc(Porcentaje), MES_NOMBRE)
+ggplot(Mes, aes(x = reorder(MES_NOMBRE, Porcentaje), y = Porcentaje, 
+                   fill = reorder(MES_NOMBRE, Porcentaje))) + 
+  geom_bar(stat="identity", show.legend = F) + 
+  coord_flip() + 
+  scale_fill_manual(values=mis.colores(12)) + 
+  xlab("Mes") + 
+  ylab("Porcentaje [%]") + 
+  ggtitle("Porcentaje de Accidentalidad por mes")
+```
+```{r}
+semana <- datos %>% group_by(SEMANA) %>% count()
+semana$Porcentaje <- round(porcentaje(semana$n),2)
+semana <- semana%>% arrange(desc(Porcentaje), SEMANA)
+semana <- semana[1:20, ]
+mis.colores <- colorRampPalette(c("blue", "red"))
+ggplot(semana, aes(x = reorder(SEMANA, Porcentaje), y = Porcentaje, 
+                   fill = reorder(SEMANA, Porcentaje))) + 
+  geom_bar(stat="identity", show.legend = F, position = "dodge") + 
+  coord_flip() + 
+  scale_fill_manual(values=mis.colores(20)) + 
+  xlab("Semana") + 
+  ylab("Porcentaje [%]") + 
+  ggtitle("Porcentaje de Accidentalidad por semana")
+```
+
+```{r}
+Diasemana <- datos %>% group_by(DIA_NOMBRE) %>% count()
+Diasemana$Porcentaje <- round(porcentaje(Diasemana$n),2)
+Diasemana <- Diasemana %>% arrange(desc(Porcentaje), DIA_NOMBRE)
+ggplot(Diasemana, aes(x = reorder(DIA_NOMBRE, Porcentaje), y = Porcentaje, 
+                   fill = reorder(DIA_NOMBRE, Porcentaje))) + 
+  geom_bar(stat="identity", show.legend = F) + 
+  coord_flip() + 
+  scale_fill_manual(values=mis.colores(7)) + 
+  xlab("Día de la semana") + 
+  ylab("Porcentaje [%]") + 
+  ggtitle("Porcentaje de Accidentalidad por día")
+```
+
+```{r}
+clase <- datos %>% group_by(CLASE) %>% count()
+clase$Porcentaje <- round(porcentaje(clase$n),2)
+clase <- clase %>% arrange(desc(Porcentaje), CLASE)
+ggplot(clase, aes(x = reorder(CLASE, Porcentaje), y = Porcentaje, 
+                   fill = reorder(CLASE, Porcentaje))) + 
+  geom_bar(stat="identity", show.legend = F) + 
+  coord_flip() + 
+  scale_fill_manual(values=mis.colores(6)) + 
+  xlab("Clase del accidente") + 
+  ylab("Porcentaje [%]") + 
+  ggtitle("Porcentaje de Accidentalidad por clase")
+```
+
+```{r}
+clasegravedad <- datos %>% group_by(CLASE, GRAVEDAD) %>% count()
+clasegravedad <- clasegravedad %>% arrange(CLASE, GRAVEDAD)
+mis.colores <- c("#D0002E", "#8B0073","#4500B9")
+ggplot(clasegravedad, aes(x = reorder(CLASE, -n), y = n, 
+                   fill = reorder(GRAVEDAD, -n))) + 
+  geom_bar(stat="identity", show.legend = T, position = "fill") + 
+  scale_fill_manual(values=mis.colores) + 
+  xlab("Clase del accidente") + 
+  ylab("Porcentaje [%]") + 
+  guides(fill=guide_legend(title="Gravedad")) + 
+  ggtitle("Porcentaje de Accidentalidad por clase y gravedad")
+```
+```{r}
+comuna <- write.csv(Comuna, file = "Comuna.csv", row.names = F)
+barrio <- write.csv(barrio, file = "barrio.csv", row.names = F)
+Mes <- write.csv(Mes, file = "Mes.csv", row.names = F)
+semana <- write.csv(semana, file = "semana.csv", row.names = F)
+Diasemana <- write.csv(Diasemana, file = "Diasemana.csv", row.names = F)
+clase <- write.csv(clase, file = "clase.csv", row.names = F)
+clasegravedad <- write.csv(clasegravedad, file = "clasegravedad.csv", 
+                           row.names = F)
+```
+
+
 
 ```{r}
 ggplot(DIARIOS, aes(x = CLASE, y = NRO_ACC_DIA, col = CLASE)) + geom_boxplot()
 ```
 
-```{r}
-ggplot(DIARIOS, aes(x = GRAVEDAD, y = NRO_ACC_DIA, col = GRAVEDAD)) + geom_boxplot()
-```
+
 ```{r}
 ggplot(DIARIOS, aes(x = NUMEROCOMUNA, y = NRO_ACC_DIA, col = NUMEROCOMUNA)) + geom_boxplot() 
 ```
