@@ -1,0 +1,1223 @@
+<?xml version = "1.0" standalone = "no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+
+<svg xmlns="http://www.w3.org/2000/svg" width="1058" height="458" style="box-sizing: inherit; font-family: Calibri;">
+  <rect id="backgroundRect" width="1058" height="458" x="0" y="0" fill="rgb(255,255,255)" fill-opacity="1" style="box-sizing: inherit;" />
+  <defs style="box-sizing: inherit;" />
+  <clipPath id="chartRect311775" style="box-sizing: inherit;">
+    <rect x="-1" y="-1" width="1060" height="460" style="box-sizing: inherit;" />
+  </clipPath>
+  <g class="wj-header" style="box-sizing: inherit; background: rgb(238, 238, 238); color: rgb(68, 68, 68); font-weight: 700;" clip-path="url(#chartRect311775)">
+    <text x="406.2" y="20.0" fill="rgb(68,68,68)" class="wj-title" fill-opacity="1" style="box-sizing: inherit; cursor: default; font-size: 16pt; font-family: Calibri; font-style: normal; font-weight: normal; fill: rgb(68, 68, 68); fill-opacity: 1;">Accidentalidad por día - mes</text>
+  </g>
+  <g class="wj-footer" style="box-sizing: inherit;" clip-path="url(#chartRect311775)" />
+  <clipPath id="legRect267884" style="box-sizing: inherit;">
+    <rect x="1003" y="176" width="56" height="132" style="box-sizing: inherit;" />
+  </clipPath>
+  <g class="wj-legend esri-default-pointer" style="box-sizing: inherit;" clip-path="url(#legRect267884)">
+    <g style="box-sizing: inherit;">
+      <rect fill="rgb(0,0,255)" stroke="rgb(0,0,255)" stroke-width="1" x="1007.7" y="185.0" width="10.0" height="10.0" fill-opacity="1" stroke-opacity="1" style="box-sizing: inherit;" />
+      <text x="1021.7" y="195.0" class="wj-label" fill="rgb(68,68,68)" fill-opacity="1" style="box-sizing: inherit; cursor: default; font-size: 10.8pt; font-family: Calibri; font-style: normal; font-weight: normal; fill: rgb(68, 68, 68); fill-opacity: 1;"> ≤ 436</text>
+    </g>
+    <g style="box-sizing: inherit;">
+      <rect fill="rgb(63,0,190)" stroke="rgb(63,0,190)" stroke-width="1" x="1007.7" y="211.0" width="10.0" height="10.0" fill-opacity="1" stroke-opacity="1" style="box-sizing: inherit;" />
+      <text x="1021.7" y="221.0" class="wj-label" fill="rgb(68,68,68)" fill-opacity="1" style="box-sizing: inherit; cursor: default; font-size: 10.8pt; font-family: Calibri; font-style: normal; font-weight: normal; fill: rgb(68, 68, 68); fill-opacity: 1;"> ≤ 538</text>
+    </g>
+    <g style="box-sizing: inherit;">
+      <rect fill="rgb(128,0,125)" stroke="rgb(128,0,125)" stroke-width="1" x="1007.7" y="237.0" width="10.0" height="10.0" fill-opacity="1" stroke-opacity="1" style="box-sizing: inherit;" />
+      <text x="1021.7" y="247.0" class="wj-label" fill="rgb(68,68,68)" fill-opacity="1" style="box-sizing: inherit; cursor: default; font-size: 10.8pt; font-family: Calibri; font-style: normal; font-weight: normal; fill: rgb(68, 68, 68); fill-opacity: 1;"> ≤ 591</text>
+    </g>
+    <g style="box-sizing: inherit;">
+      <rect fill="rgb(192,0,61)" stroke="rgb(192,0,61)" stroke-width="1" x="1007.7" y="263.0" width="10.0" height="10.0" fill-opacity="1" stroke-opacity="1" style="box-sizing: inherit;" />
+      <text x="1021.7" y="273.0" class="wj-label" fill="rgb(68,68,68)" fill-opacity="1" style="box-sizing: inherit; cursor: default; font-size: 10.8pt; font-family: Calibri; font-style: normal; font-weight: normal; fill: rgb(68, 68, 68); fill-opacity: 1;"> ≤ 639</text>
+    </g>
+    <g style="box-sizing: inherit;">
+      <rect fill="rgb(255,0,0)" stroke="rgb(255,0,0)" stroke-width="1" x="1007.7" y="289.0" width="10.0" height="10.0" fill-opacity="1" stroke-opacity="1" style="box-sizing: inherit;" />
+      <text x="1021.7" y="299.0" class="wj-label" fill="rgb(68,68,68)" fill-opacity="1" style="box-sizing: inherit; cursor: default; font-size: 10.8pt; font-family: Calibri; font-style: normal; font-weight: normal; fill: rgb(68, 68, 68); fill-opacity: 1;"> ≤ 789</text>
+    </g>
+  </g>
+  <g class="wj-plot-area" style="box-sizing: inherit;">
+    <rect fill="#000000" stroke-width="1" x="61.0" y="44.0" width="926.3" height="367.0" fill-opacity="0" style="box-sizing: inherit;" />
+  </g>
+  <g class="wj-axis-x" style="box-sizing: inherit;" clip-path="url(#chartRect311775)">
+    <text x="102.1" y="434.0" fill="rgb(68,68,68)" class="wj-label" fill-opacity="1" style="box-sizing: inherit; cursor: default; font-size: 10.8pt; font-family: Calibri; font-style: normal; font-weight: normal; fill: rgb(68, 68, 68); fill-opacity: 1;">2</text>
+    <text x="161.9" y="434.0" fill="rgb(68,68,68)" class="wj-label" fill-opacity="1" style="box-sizing: inherit; cursor: default; font-size: 10.8pt; font-family: Calibri; font-style: normal; font-weight: normal; fill: rgb(68, 68, 68); fill-opacity: 1;">4</text>
+    <text x="221.6" y="434.0" fill="rgb(68,68,68)" class="wj-label" fill-opacity="1" style="box-sizing: inherit; cursor: default; font-size: 10.8pt; font-family: Calibri; font-style: normal; font-weight: normal; fill: rgb(68, 68, 68); fill-opacity: 1;">6</text>
+    <text x="281.4" y="434.0" fill="rgb(68,68,68)" class="wj-label" fill-opacity="1" style="box-sizing: inherit; cursor: default; font-size: 10.8pt; font-family: Calibri; font-style: normal; font-weight: normal; fill: rgb(68, 68, 68); fill-opacity: 1;">8</text>
+    <text x="337.5" y="434.0" fill="rgb(68,68,68)" class="wj-label" fill-opacity="1" style="box-sizing: inherit; cursor: default; font-size: 10.8pt; font-family: Calibri; font-style: normal; font-weight: normal; fill: rgb(68, 68, 68); fill-opacity: 1;">10</text>
+    <text x="397.3" y="434.0" fill="rgb(68,68,68)" class="wj-label" fill-opacity="1" style="box-sizing: inherit; cursor: default; font-size: 10.8pt; font-family: Calibri; font-style: normal; font-weight: normal; fill: rgb(68, 68, 68); fill-opacity: 1;">12</text>
+    <text x="457.0" y="434.0" fill="rgb(68,68,68)" class="wj-label" fill-opacity="1" style="box-sizing: inherit; cursor: default; font-size: 10.8pt; font-family: Calibri; font-style: normal; font-weight: normal; fill: rgb(68, 68, 68); fill-opacity: 1;">14</text>
+    <text x="516.8" y="434.0" fill="rgb(68,68,68)" class="wj-label" fill-opacity="1" style="box-sizing: inherit; cursor: default; font-size: 10.8pt; font-family: Calibri; font-style: normal; font-weight: normal; fill: rgb(68, 68, 68); fill-opacity: 1;">16</text>
+    <text x="576.6" y="434.0" fill="rgb(68,68,68)" class="wj-label" fill-opacity="1" style="box-sizing: inherit; cursor: default; font-size: 10.8pt; font-family: Calibri; font-style: normal; font-weight: normal; fill: rgb(68, 68, 68); fill-opacity: 1;">18</text>
+    <text x="636.3" y="434.0" fill="rgb(68,68,68)" class="wj-label" fill-opacity="1" style="box-sizing: inherit; cursor: default; font-size: 10.8pt; font-family: Calibri; font-style: normal; font-weight: normal; fill: rgb(68, 68, 68); fill-opacity: 1;">20</text>
+    <text x="696.1" y="434.0" fill="rgb(68,68,68)" class="wj-label" fill-opacity="1" style="box-sizing: inherit; cursor: default; font-size: 10.8pt; font-family: Calibri; font-style: normal; font-weight: normal; fill: rgb(68, 68, 68); fill-opacity: 1;">22</text>
+    <text x="755.8" y="434.0" fill="rgb(68,68,68)" class="wj-label" fill-opacity="1" style="box-sizing: inherit; cursor: default; font-size: 10.8pt; font-family: Calibri; font-style: normal; font-weight: normal; fill: rgb(68, 68, 68); fill-opacity: 1;">24</text>
+    <text x="815.6" y="434.0" fill="rgb(68,68,68)" class="wj-label" fill-opacity="1" style="box-sizing: inherit; cursor: default; font-size: 10.8pt; font-family: Calibri; font-style: normal; font-weight: normal; fill: rgb(68, 68, 68); fill-opacity: 1;">26</text>
+    <text x="875.4" y="434.0" fill="rgb(68,68,68)" class="wj-label" fill-opacity="1" style="box-sizing: inherit; cursor: default; font-size: 10.8pt; font-family: Calibri; font-style: normal; font-weight: normal; fill: rgb(68, 68, 68); fill-opacity: 1;">28</text>
+    <text x="935.1" y="434.0" fill="rgb(68,68,68)" class="wj-label" fill-opacity="1" style="box-sizing: inherit; cursor: default; font-size: 10.8pt; font-family: Calibri; font-style: normal; font-weight: normal; fill: rgb(68, 68, 68); fill-opacity: 1;">30</text>
+    <line stroke="rgb(170,170,170)" stroke-width="1px" x1="61.0" x2="987.3" y1="411.0" y2="411.0" class="wj-line" stroke-opacity="1" stroke-dasharray="none" style="box-sizing: inherit; stroke: rgb(170, 170, 170); stroke-opacity: 1; stroke-width: 1px; stroke-dasharray: none;" />
+    <text x="513.5" y="454.0" fill="rgb(68,68,68)" class="wj-title" fill-opacity="1" style="box-sizing: inherit; cursor: default; font-size: 12pt; font-family: Calibri; font-style: italic; font-weight: normal; fill: rgb(68, 68, 68); fill-opacity: 1;">Día </text>
+  </g>
+  <g class="wj-axis-y" style="box-sizing: inherit;" clip-path="url(#chartRect311775)">
+    <text x="25.8" y="400.7" fill="rgb(68,68,68)" class="wj-label" fill-opacity="1" style="box-sizing: inherit; cursor: default; font-size: 10.8pt; font-family: Calibri; font-style: normal; font-weight: normal; fill: rgb(68, 68, 68); fill-opacity: 1;">Dec</text>
+    <text x="24.1" y="370.1" fill="rgb(68,68,68)" class="wj-label" fill-opacity="1" style="box-sizing: inherit; cursor: default; font-size: 10.8pt; font-family: Calibri; font-style: normal; font-weight: normal; fill: rgb(68, 68, 68); fill-opacity: 1;">Nov</text>
+    <text x="27.3" y="339.5" fill="rgb(68,68,68)" class="wj-label" fill-opacity="1" style="box-sizing: inherit; cursor: default; font-size: 10.8pt; font-family: Calibri; font-style: normal; font-weight: normal; fill: rgb(68, 68, 68); fill-opacity: 1;">Oct</text>
+    <text x="26.2" y="309.0" fill="rgb(68,68,68)" class="wj-label" fill-opacity="1" style="box-sizing: inherit; cursor: default; font-size: 10.8pt; font-family: Calibri; font-style: normal; font-weight: normal; fill: rgb(68, 68, 68); fill-opacity: 1;">Sep</text>
+    <text x="24.0" y="278.4" fill="rgb(68,68,68)" class="wj-label" fill-opacity="1" style="box-sizing: inherit; cursor: default; font-size: 10.8pt; font-family: Calibri; font-style: normal; font-weight: normal; fill: rgb(68, 68, 68); fill-opacity: 1;">Aug</text>
+    <text x="31.5" y="247.8" fill="rgb(68,68,68)" class="wj-label" fill-opacity="1" style="box-sizing: inherit; cursor: default; font-size: 10.8pt; font-family: Calibri; font-style: normal; font-weight: normal; fill: rgb(68, 68, 68); fill-opacity: 1;">Jul</text>
+    <text x="27.2" y="217.2" fill="rgb(68,68,68)" class="wj-label" fill-opacity="1" style="box-sizing: inherit; cursor: default; font-size: 10.8pt; font-family: Calibri; font-style: normal; font-weight: normal; fill: rgb(68, 68, 68); fill-opacity: 1;">Jun</text>
+    <text x="22.0" y="186.6" fill="rgb(68,68,68)" class="wj-label" fill-opacity="1" style="box-sizing: inherit; cursor: default; font-size: 10.8pt; font-family: Calibri; font-style: normal; font-weight: normal; fill: rgb(68, 68, 68); fill-opacity: 1;">May</text>
+    <text x="26.0" y="156.0" fill="rgb(68,68,68)" class="wj-label" fill-opacity="1" style="box-sizing: inherit; cursor: default; font-size: 10.8pt; font-family: Calibri; font-style: normal; font-weight: normal; fill: rgb(68, 68, 68); fill-opacity: 1;">Apr</text>
+    <text x="23.7" y="125.5" fill="rgb(68,68,68)" class="wj-label" fill-opacity="1" style="box-sizing: inherit; cursor: default; font-size: 10.8pt; font-family: Calibri; font-style: normal; font-weight: normal; fill: rgb(68, 68, 68); fill-opacity: 1;">Mar</text>
+    <text x="26.4" y="94.9" fill="rgb(68,68,68)" class="wj-label" fill-opacity="1" style="box-sizing: inherit; cursor: default; font-size: 10.8pt; font-family: Calibri; font-style: normal; font-weight: normal; fill: rgb(68, 68, 68); fill-opacity: 1;">Feb</text>
+    <text x="27.9" y="64.3" fill="rgb(68,68,68)" class="wj-label" fill-opacity="1" style="box-sizing: inherit; cursor: default; font-size: 10.8pt; font-family: Calibri; font-style: normal; font-weight: normal; fill: rgb(68, 68, 68); fill-opacity: 1;">Jan</text>
+    <g transform="rotate(-90.0,9.5,227.5)" style="box-sizing: inherit;">
+      <text x="-4.7" y="233.0" fill="rgb(68,68,68)" class="wj-title" fill-opacity="1" style="box-sizing: inherit; cursor: default; font-size: 12pt; font-family: Calibri; font-style: italic; font-weight: normal; fill: rgb(68, 68, 68); fill-opacity: 1;">Mes</text>
+    </g>
+  </g>
+  <g class="wj-series-group" style="box-sizing: inherit;">
+    <g style="box-sizing: inherit;" clip-path="url(#plotRect957027)">
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(192,0,61)" stroke="#88bde6" x="61.0" y="380.4" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#88bde6" x="90.8" y="380.4" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(192,0,61)" stroke="#88bde6" x="120.7" y="380.4" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#88bde6" x="150.6" y="380.4" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(255,0,0)" stroke="#88bde6" x="180.5" y="380.4" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#88bde6" x="210.4" y="380.4" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(192,0,61)" stroke="#88bde6" x="240.2" y="380.4" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(0,0,255)" stroke="#88bde6" x="270.1" y="380.4" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#88bde6" x="300.0" y="380.4" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#88bde6" x="329.9" y="380.4" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#88bde6" x="359.8" y="380.4" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(255,0,0)" stroke="#88bde6" x="389.6" y="380.4" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(63,0,190)" stroke="#88bde6" x="419.5" y="380.4" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#88bde6" x="449.4" y="380.4" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(192,0,61)" stroke="#88bde6" x="479.3" y="380.4" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(255,0,0)" stroke="#88bde6" x="509.2" y="380.4" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#88bde6" x="539.0" y="380.4" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(192,0,61)" stroke="#88bde6" x="568.9" y="380.4" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(192,0,61)" stroke="#88bde6" x="598.8" y="380.4" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(192,0,61)" stroke="#88bde6" x="628.7" y="380.4" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(192,0,61)" stroke="#88bde6" x="658.6" y="380.4" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(255,0,0)" stroke="#88bde6" x="688.4" y="380.4" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(192,0,61)" stroke="#88bde6" x="718.3" y="380.4" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(63,0,190)" stroke="#88bde6" x="748.2" y="380.4" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(0,0,255)" stroke="#88bde6" x="778.1" y="380.4" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(63,0,190)" stroke="#88bde6" x="808.0" y="380.4" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(63,0,190)" stroke="#88bde6" x="837.8" y="380.4" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(63,0,190)" stroke="#88bde6" x="867.7" y="380.4" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(63,0,190)" stroke="#88bde6" x="897.6" y="380.4" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(63,0,190)" stroke="#88bde6" x="927.5" y="380.4" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(0,0,255)" stroke="#88bde6" x="957.4" y="380.4" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+    </g>
+    <g style="box-sizing: inherit;" clip-path="url(#plotRect957027)">
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#fbb258" x="61.0" y="349.8" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(63,0,190)" stroke="#fbb258" x="90.8" y="349.8" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#fbb258" x="120.7" y="349.8" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#fbb258" x="150.6" y="349.8" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(63,0,190)" stroke="#fbb258" x="180.5" y="349.8" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#fbb258" x="210.4" y="349.8" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#fbb258" x="240.2" y="349.8" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#fbb258" x="270.1" y="349.8" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(63,0,190)" stroke="#fbb258" x="300.0" y="349.8" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#fbb258" x="329.9" y="349.8" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#fbb258" x="359.8" y="349.8" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(63,0,190)" stroke="#fbb258" x="389.6" y="349.8" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(63,0,190)" stroke="#fbb258" x="419.5" y="349.8" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#fbb258" x="449.4" y="349.8" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#fbb258" x="479.3" y="349.8" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#fbb258" x="509.2" y="349.8" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(192,0,61)" stroke="#fbb258" x="539.0" y="349.8" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#fbb258" x="568.9" y="349.8" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#fbb258" x="598.8" y="349.8" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#fbb258" x="628.7" y="349.8" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(192,0,61)" stroke="#fbb258" x="658.6" y="349.8" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#fbb258" x="688.4" y="349.8" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(192,0,61)" stroke="#fbb258" x="718.3" y="349.8" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(192,0,61)" stroke="#fbb258" x="748.2" y="349.8" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(192,0,61)" stroke="#fbb258" x="778.1" y="349.8" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#fbb258" x="808.0" y="349.8" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(192,0,61)" stroke="#fbb258" x="837.8" y="349.8" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(192,0,61)" stroke="#fbb258" x="867.7" y="349.8" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(63,0,190)" stroke="#fbb258" x="897.6" y="349.8" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(63,0,190)" stroke="#fbb258" x="927.5" y="349.8" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(0,0,0)" stroke="rgb(0,0,0)" x="957.4" y="349.8" width="29.9" height="30.6" class="esri-empty-rect" fill-opacity="0" stroke-opacity="0" style="box-sizing: inherit;" />
+      </g>
+    </g>
+    <g style="box-sizing: inherit;" clip-path="url(#plotRect957027)">
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#90cd97" x="61.0" y="319.3" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(192,0,61)" stroke="#90cd97" x="90.8" y="319.3" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(255,0,0)" stroke="#90cd97" x="120.7" y="319.3" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(192,0,61)" stroke="#90cd97" x="150.6" y="319.3" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(192,0,61)" stroke="#90cd97" x="180.5" y="319.3" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(192,0,61)" stroke="#90cd97" x="210.4" y="319.3" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#90cd97" x="240.2" y="319.3" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(63,0,190)" stroke="#90cd97" x="270.1" y="319.3" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#90cd97" x="300.0" y="319.3" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(192,0,61)" stroke="#90cd97" x="329.9" y="319.3" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#90cd97" x="359.8" y="319.3" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(63,0,190)" stroke="#90cd97" x="389.6" y="319.3" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#90cd97" x="419.5" y="319.3" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#90cd97" x="449.4" y="319.3" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(63,0,190)" stroke="#90cd97" x="479.3" y="319.3" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(63,0,190)" stroke="#90cd97" x="509.2" y="319.3" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#90cd97" x="539.0" y="319.3" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#90cd97" x="568.9" y="319.3" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#90cd97" x="598.8" y="319.3" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(192,0,61)" stroke="#90cd97" x="628.7" y="319.3" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#90cd97" x="658.6" y="319.3" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#90cd97" x="688.4" y="319.3" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#90cd97" x="718.3" y="319.3" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(192,0,61)" stroke="#90cd97" x="748.2" y="319.3" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(192,0,61)" stroke="#90cd97" x="778.1" y="319.3" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(63,0,190)" stroke="#90cd97" x="808.0" y="319.3" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(192,0,61)" stroke="#90cd97" x="837.8" y="319.3" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#90cd97" x="867.7" y="319.3" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(192,0,61)" stroke="#90cd97" x="897.6" y="319.3" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(255,0,0)" stroke="#90cd97" x="927.5" y="319.3" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(255,0,0)" stroke="#90cd97" x="957.4" y="319.3" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+    </g>
+    <g style="box-sizing: inherit;" clip-path="url(#plotRect957027)">
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(255,0,0)" stroke="#f6aac9" x="61.0" y="288.7" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#f6aac9" x="90.8" y="288.7" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#f6aac9" x="120.7" y="288.7" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(192,0,61)" stroke="#f6aac9" x="150.6" y="288.7" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(255,0,0)" stroke="#f6aac9" x="180.5" y="288.7" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(192,0,61)" stroke="#f6aac9" x="210.4" y="288.7" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(192,0,61)" stroke="#f6aac9" x="240.2" y="288.7" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(192,0,61)" stroke="#f6aac9" x="270.1" y="288.7" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(63,0,190)" stroke="#f6aac9" x="300.0" y="288.7" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#f6aac9" x="329.9" y="288.7" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(255,0,0)" stroke="#f6aac9" x="359.8" y="288.7" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(255,0,0)" stroke="#f6aac9" x="389.6" y="288.7" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#f6aac9" x="419.5" y="288.7" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(255,0,0)" stroke="#f6aac9" x="449.4" y="288.7" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(255,0,0)" stroke="#f6aac9" x="479.3" y="288.7" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(192,0,61)" stroke="#f6aac9" x="509.2" y="288.7" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(255,0,0)" stroke="#f6aac9" x="539.0" y="288.7" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(255,0,0)" stroke="#f6aac9" x="568.9" y="288.7" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(192,0,61)" stroke="#f6aac9" x="598.8" y="288.7" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(63,0,190)" stroke="#f6aac9" x="628.7" y="288.7" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(192,0,61)" stroke="#f6aac9" x="658.6" y="288.7" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(192,0,61)" stroke="#f6aac9" x="688.4" y="288.7" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#f6aac9" x="718.3" y="288.7" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#f6aac9" x="748.2" y="288.7" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(192,0,61)" stroke="#f6aac9" x="778.1" y="288.7" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(192,0,61)" stroke="#f6aac9" x="808.0" y="288.7" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#f6aac9" x="837.8" y="288.7" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(192,0,61)" stroke="#f6aac9" x="867.7" y="288.7" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(255,0,0)" stroke="#f6aac9" x="897.6" y="288.7" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#f6aac9" x="927.5" y="288.7" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(0,0,0)" stroke="rgb(0,0,0)" x="957.4" y="288.7" width="29.9" height="30.6" class="esri-empty-rect" fill-opacity="0" stroke-opacity="0" style="box-sizing: inherit;" />
+      </g>
+    </g>
+    <g style="box-sizing: inherit;" clip-path="url(#plotRect957027)">
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(255,0,0)" stroke="#bfa554" x="61.0" y="258.1" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(192,0,61)" stroke="#bfa554" x="90.8" y="258.1" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(255,0,0)" stroke="#bfa554" x="120.7" y="258.1" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(255,0,0)" stroke="#bfa554" x="150.6" y="258.1" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(192,0,61)" stroke="#bfa554" x="180.5" y="258.1" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(255,0,0)" stroke="#bfa554" x="210.4" y="258.1" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(0,0,255)" stroke="#bfa554" x="240.2" y="258.1" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(255,0,0)" stroke="#bfa554" x="270.1" y="258.1" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(192,0,61)" stroke="#bfa554" x="300.0" y="258.1" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(192,0,61)" stroke="#bfa554" x="329.9" y="258.1" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(255,0,0)" stroke="#bfa554" x="359.8" y="258.1" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(63,0,190)" stroke="#bfa554" x="389.6" y="258.1" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#bfa554" x="419.5" y="258.1" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(192,0,61)" stroke="#bfa554" x="449.4" y="258.1" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(192,0,61)" stroke="#bfa554" x="479.3" y="258.1" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(192,0,61)" stroke="#bfa554" x="509.2" y="258.1" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#bfa554" x="539.0" y="258.1" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(255,0,0)" stroke="#bfa554" x="568.9" y="258.1" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#bfa554" x="598.8" y="258.1" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(63,0,190)" stroke="#bfa554" x="628.7" y="258.1" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(63,0,190)" stroke="#bfa554" x="658.6" y="258.1" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#bfa554" x="688.4" y="258.1" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#bfa554" x="718.3" y="258.1" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(255,0,0)" stroke="#bfa554" x="748.2" y="258.1" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(192,0,61)" stroke="#bfa554" x="778.1" y="258.1" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#bfa554" x="808.0" y="258.1" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#bfa554" x="837.8" y="258.1" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(255,0,0)" stroke="#bfa554" x="867.7" y="258.1" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(255,0,0)" stroke="#bfa554" x="897.6" y="258.1" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(63,0,190)" stroke="#bfa554" x="927.5" y="258.1" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(63,0,190)" stroke="#bfa554" x="957.4" y="258.1" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+    </g>
+    <g style="box-sizing: inherit;" clip-path="url(#plotRect957027)">
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(63,0,190)" stroke="#bc99c7" x="61.0" y="227.5" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(63,0,190)" stroke="#bc99c7" x="90.8" y="227.5" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(63,0,190)" stroke="#bc99c7" x="120.7" y="227.5" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#bc99c7" x="150.6" y="227.5" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(63,0,190)" stroke="#bc99c7" x="180.5" y="227.5" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(63,0,190)" stroke="#bc99c7" x="210.4" y="227.5" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(192,0,61)" stroke="#bc99c7" x="240.2" y="227.5" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#bc99c7" x="270.1" y="227.5" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(192,0,61)" stroke="#bc99c7" x="300.0" y="227.5" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#bc99c7" x="329.9" y="227.5" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#bc99c7" x="359.8" y="227.5" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#bc99c7" x="389.6" y="227.5" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#bc99c7" x="419.5" y="227.5" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(255,0,0)" stroke="#bc99c7" x="449.4" y="227.5" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(192,0,61)" stroke="#bc99c7" x="479.3" y="227.5" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#bc99c7" x="509.2" y="227.5" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(192,0,61)" stroke="#bc99c7" x="539.0" y="227.5" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(255,0,0)" stroke="#bc99c7" x="568.9" y="227.5" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(192,0,61)" stroke="#bc99c7" x="598.8" y="227.5" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(0,0,255)" stroke="#bc99c7" x="628.7" y="227.5" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(255,0,0)" stroke="#bc99c7" x="658.6" y="227.5" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(63,0,190)" stroke="#bc99c7" x="688.4" y="227.5" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#bc99c7" x="718.3" y="227.5" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#bc99c7" x="748.2" y="227.5" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(192,0,61)" stroke="#bc99c7" x="778.1" y="227.5" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(192,0,61)" stroke="#bc99c7" x="808.0" y="227.5" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(192,0,61)" stroke="#bc99c7" x="837.8" y="227.5" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(255,0,0)" stroke="#bc99c7" x="867.7" y="227.5" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(192,0,61)" stroke="#bc99c7" x="897.6" y="227.5" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#bc99c7" x="927.5" y="227.5" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#bc99c7" x="957.4" y="227.5" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+    </g>
+    <g style="box-sizing: inherit;" clip-path="url(#plotRect957027)">
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#eddd46" x="61.0" y="196.9" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#eddd46" x="90.8" y="196.9" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(255,0,0)" stroke="#eddd46" x="120.7" y="196.9" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(63,0,190)" stroke="#eddd46" x="150.6" y="196.9" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#eddd46" x="180.5" y="196.9" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#eddd46" x="210.4" y="196.9" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(192,0,61)" stroke="#eddd46" x="240.2" y="196.9" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(63,0,190)" stroke="#eddd46" x="270.1" y="196.9" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(192,0,61)" stroke="#eddd46" x="300.0" y="196.9" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#eddd46" x="329.9" y="196.9" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(63,0,190)" stroke="#eddd46" x="359.8" y="196.9" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#eddd46" x="389.6" y="196.9" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(192,0,61)" stroke="#eddd46" x="419.5" y="196.9" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(192,0,61)" stroke="#eddd46" x="449.4" y="196.9" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(63,0,190)" stroke="#eddd46" x="479.3" y="196.9" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#eddd46" x="509.2" y="196.9" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#eddd46" x="539.0" y="196.9" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(192,0,61)" stroke="#eddd46" x="568.9" y="196.9" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(63,0,190)" stroke="#eddd46" x="598.8" y="196.9" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#eddd46" x="628.7" y="196.9" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#eddd46" x="658.6" y="196.9" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#eddd46" x="688.4" y="196.9" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#eddd46" x="718.3" y="196.9" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(63,0,190)" stroke="#eddd46" x="748.2" y="196.9" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#eddd46" x="778.1" y="196.9" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(63,0,190)" stroke="#eddd46" x="808.0" y="196.9" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#eddd46" x="837.8" y="196.9" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(63,0,190)" stroke="#eddd46" x="867.7" y="196.9" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(63,0,190)" stroke="#eddd46" x="897.6" y="196.9" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(63,0,190)" stroke="#eddd46" x="927.5" y="196.9" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(0,0,0)" stroke="rgb(0,0,0)" x="957.4" y="196.9" width="29.9" height="30.6" class="esri-empty-rect" fill-opacity="0" stroke-opacity="0" style="box-sizing: inherit;" />
+      </g>
+    </g>
+    <g style="box-sizing: inherit;" clip-path="url(#plotRect957027)">
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(0,0,255)" stroke="#f07e6e" x="61.0" y="166.3" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(255,0,0)" stroke="#f07e6e" x="90.8" y="166.3" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#f07e6e" x="120.7" y="166.3" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#f07e6e" x="150.6" y="166.3" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(192,0,61)" stroke="#f07e6e" x="180.5" y="166.3" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#f07e6e" x="210.4" y="166.3" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#f07e6e" x="240.2" y="166.3" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#f07e6e" x="270.1" y="166.3" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#f07e6e" x="300.0" y="166.3" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(192,0,61)" stroke="#f07e6e" x="329.9" y="166.3" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(192,0,61)" stroke="#f07e6e" x="359.8" y="166.3" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(255,0,0)" stroke="#f07e6e" x="389.6" y="166.3" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(192,0,61)" stroke="#f07e6e" x="419.5" y="166.3" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(63,0,190)" stroke="#f07e6e" x="449.4" y="166.3" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(192,0,61)" stroke="#f07e6e" x="479.3" y="166.3" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(192,0,61)" stroke="#f07e6e" x="509.2" y="166.3" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#f07e6e" x="539.0" y="166.3" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(63,0,190)" stroke="#f07e6e" x="568.9" y="166.3" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(255,0,0)" stroke="#f07e6e" x="598.8" y="166.3" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(63,0,190)" stroke="#f07e6e" x="628.7" y="166.3" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#f07e6e" x="658.6" y="166.3" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(192,0,61)" stroke="#f07e6e" x="688.4" y="166.3" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(255,0,0)" stroke="#f07e6e" x="718.3" y="166.3" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#f07e6e" x="748.2" y="166.3" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(192,0,61)" stroke="#f07e6e" x="778.1" y="166.3" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(255,0,0)" stroke="#f07e6e" x="808.0" y="166.3" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(63,0,190)" stroke="#f07e6e" x="837.8" y="166.3" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#f07e6e" x="867.7" y="166.3" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(63,0,190)" stroke="#f07e6e" x="897.6" y="166.3" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#f07e6e" x="927.5" y="166.3" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(63,0,190)" stroke="#f07e6e" x="957.4" y="166.3" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+    </g>
+    <g style="box-sizing: inherit;" clip-path="url(#plotRect957027)">
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#8c8c8c" x="61.0" y="135.8" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(63,0,190)" stroke="#8c8c8c" x="90.8" y="135.8" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(63,0,190)" stroke="#8c8c8c" x="120.7" y="135.8" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#8c8c8c" x="150.6" y="135.8" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#8c8c8c" x="180.5" y="135.8" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(192,0,61)" stroke="#8c8c8c" x="210.4" y="135.8" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(192,0,61)" stroke="#8c8c8c" x="240.2" y="135.8" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(255,0,0)" stroke="#8c8c8c" x="270.1" y="135.8" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#8c8c8c" x="300.0" y="135.8" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(192,0,61)" stroke="#8c8c8c" x="329.9" y="135.8" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(192,0,61)" stroke="#8c8c8c" x="359.8" y="135.8" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(192,0,61)" stroke="#8c8c8c" x="389.6" y="135.8" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(63,0,190)" stroke="#8c8c8c" x="419.5" y="135.8" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(63,0,190)" stroke="#8c8c8c" x="449.4" y="135.8" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(63,0,190)" stroke="#8c8c8c" x="479.3" y="135.8" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#8c8c8c" x="509.2" y="135.8" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(63,0,190)" stroke="#8c8c8c" x="539.0" y="135.8" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#8c8c8c" x="568.9" y="135.8" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(63,0,190)" stroke="#8c8c8c" x="598.8" y="135.8" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(192,0,61)" stroke="#8c8c8c" x="628.7" y="135.8" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(192,0,61)" stroke="#8c8c8c" x="658.6" y="135.8" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(63,0,190)" stroke="#8c8c8c" x="688.4" y="135.8" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(192,0,61)" stroke="#8c8c8c" x="718.3" y="135.8" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#8c8c8c" x="748.2" y="135.8" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(192,0,61)" stroke="#8c8c8c" x="778.1" y="135.8" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(192,0,61)" stroke="#8c8c8c" x="808.0" y="135.8" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(192,0,61)" stroke="#8c8c8c" x="837.8" y="135.8" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(255,0,0)" stroke="#8c8c8c" x="867.7" y="135.8" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#8c8c8c" x="897.6" y="135.8" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#8c8c8c" x="927.5" y="135.8" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(0,0,0)" stroke="rgb(0,0,0)" x="957.4" y="135.8" width="29.9" height="30.6" class="esri-empty-rect" fill-opacity="0" stroke-opacity="0" style="box-sizing: inherit;" />
+      </g>
+    </g>
+    <g style="box-sizing: inherit;" clip-path="url(#plotRect957027)">
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(192,0,61)" stroke="#88bde6" x="61.0" y="105.2" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(63,0,190)" stroke="#88bde6" x="90.8" y="105.2" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(192,0,61)" stroke="#88bde6" x="120.7" y="105.2" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#88bde6" x="150.6" y="105.2" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(255,0,0)" stroke="#88bde6" x="180.5" y="105.2" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#88bde6" x="210.4" y="105.2" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(255,0,0)" stroke="#88bde6" x="240.2" y="105.2" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#88bde6" x="270.1" y="105.2" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#88bde6" x="300.0" y="105.2" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(255,0,0)" stroke="#88bde6" x="329.9" y="105.2" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#88bde6" x="359.8" y="105.2" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(192,0,61)" stroke="#88bde6" x="389.6" y="105.2" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#88bde6" x="419.5" y="105.2" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(255,0,0)" stroke="#88bde6" x="449.4" y="105.2" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(192,0,61)" stroke="#88bde6" x="479.3" y="105.2" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(192,0,61)" stroke="#88bde6" x="509.2" y="105.2" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(255,0,0)" stroke="#88bde6" x="539.0" y="105.2" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#88bde6" x="568.9" y="105.2" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(63,0,190)" stroke="#88bde6" x="598.8" y="105.2" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#88bde6" x="628.7" y="105.2" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(192,0,61)" stroke="#88bde6" x="658.6" y="105.2" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(63,0,190)" stroke="#88bde6" x="688.4" y="105.2" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(63,0,190)" stroke="#88bde6" x="718.3" y="105.2" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(63,0,190)" stroke="#88bde6" x="748.2" y="105.2" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(63,0,190)" stroke="#88bde6" x="778.1" y="105.2" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(63,0,190)" stroke="#88bde6" x="808.0" y="105.2" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(63,0,190)" stroke="#88bde6" x="837.8" y="105.2" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(192,0,61)" stroke="#88bde6" x="867.7" y="105.2" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(63,0,190)" stroke="#88bde6" x="897.6" y="105.2" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#88bde6" x="927.5" y="105.2" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#88bde6" x="957.4" y="105.2" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+    </g>
+    <g style="box-sizing: inherit;" clip-path="url(#plotRect957027)">
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(63,0,190)" stroke="#fbb258" x="61.0" y="74.6" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(192,0,61)" stroke="#fbb258" x="90.8" y="74.6" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(255,0,0)" stroke="#fbb258" x="120.7" y="74.6" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(63,0,190)" stroke="#fbb258" x="150.6" y="74.6" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#fbb258" x="180.5" y="74.6" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(255,0,0)" stroke="#fbb258" x="210.4" y="74.6" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(192,0,61)" stroke="#fbb258" x="240.2" y="74.6" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#fbb258" x="270.1" y="74.6" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#fbb258" x="300.0" y="74.6" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(255,0,0)" stroke="#fbb258" x="329.9" y="74.6" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#fbb258" x="359.8" y="74.6" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#fbb258" x="389.6" y="74.6" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(255,0,0)" stroke="#fbb258" x="419.5" y="74.6" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#fbb258" x="449.4" y="74.6" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#fbb258" x="479.3" y="74.6" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#fbb258" x="509.2" y="74.6" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(255,0,0)" stroke="#fbb258" x="539.0" y="74.6" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#fbb258" x="568.9" y="74.6" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#fbb258" x="598.8" y="74.6" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(255,0,0)" stroke="#fbb258" x="628.7" y="74.6" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#fbb258" x="658.6" y="74.6" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#fbb258" x="688.4" y="74.6" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#fbb258" x="718.3" y="74.6" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(192,0,61)" stroke="#fbb258" x="748.2" y="74.6" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#fbb258" x="778.1" y="74.6" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#fbb258" x="808.0" y="74.6" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(192,0,61)" stroke="#fbb258" x="837.8" y="74.6" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#fbb258" x="867.7" y="74.6" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(0,0,255)" stroke="#fbb258" x="897.6" y="74.6" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(0,0,0)" stroke="rgb(0,0,0)" x="927.5" y="74.6" width="29.9" height="30.6" class="esri-empty-rect" fill-opacity="0" stroke-opacity="0" style="box-sizing: inherit;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(0,0,0)" stroke="rgb(0,0,0)" x="957.4" y="74.6" width="29.9" height="30.6" class="esri-empty-rect" fill-opacity="0" stroke-opacity="0" style="box-sizing: inherit;" />
+      </g>
+    </g>
+    <g style="box-sizing: inherit;" clip-path="url(#plotRect957027)">
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(0,0,255)" stroke="#90cd97" x="61.0" y="44.0" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(0,0,255)" stroke="#90cd97" x="90.8" y="44.0" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(0,0,255)" stroke="#90cd97" x="120.7" y="44.0" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(0,0,255)" stroke="#90cd97" x="150.6" y="44.0" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(0,0,255)" stroke="#90cd97" x="180.5" y="44.0" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(0,0,255)" stroke="#90cd97" x="210.4" y="44.0" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(0,0,255)" stroke="#90cd97" x="240.2" y="44.0" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(0,0,255)" stroke="#90cd97" x="270.1" y="44.0" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(0,0,255)" stroke="#90cd97" x="300.0" y="44.0" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(63,0,190)" stroke="#90cd97" x="329.9" y="44.0" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(0,0,255)" stroke="#90cd97" x="359.8" y="44.0" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(0,0,255)" stroke="#90cd97" x="389.6" y="44.0" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#90cd97" x="419.5" y="44.0" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(63,0,190)" stroke="#90cd97" x="449.4" y="44.0" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(63,0,190)" stroke="#90cd97" x="479.3" y="44.0" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(192,0,61)" stroke="#90cd97" x="509.2" y="44.0" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(63,0,190)" stroke="#90cd97" x="539.0" y="44.0" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(63,0,190)" stroke="#90cd97" x="568.9" y="44.0" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#90cd97" x="598.8" y="44.0" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(192,0,61)" stroke="#90cd97" x="628.7" y="44.0" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(63,0,190)" stroke="#90cd97" x="658.6" y="44.0" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#90cd97" x="688.4" y="44.0" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(63,0,190)" stroke="#90cd97" x="718.3" y="44.0" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(63,0,190)" stroke="#90cd97" x="748.2" y="44.0" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(63,0,190)" stroke="#90cd97" x="778.1" y="44.0" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#90cd97" x="808.0" y="44.0" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(192,0,61)" stroke="#90cd97" x="837.8" y="44.0" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(63,0,190)" stroke="#90cd97" x="867.7" y="44.0" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(63,0,190)" stroke="#90cd97" x="897.6" y="44.0" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(63,0,190)" stroke="#90cd97" x="927.5" y="44.0" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+      <g style="box-sizing: inherit;">
+        <rect fill="rgb(128,0,125)" stroke="#90cd97" x="957.4" y="44.0" width="29.9" height="30.6" fill-opacity="1" style="box-sizing: inherit; stroke: rgba(119, 119, 119, 0); stroke-width: 1px; stroke-opacity: 0; stroke-dasharray: none;" />
+      </g>
+    </g>
+  </g>
+  <clipPath id="plotRect957027" style="box-sizing: inherit;">
+    <rect x="60" y="43" width="928" height="369" style="box-sizing: inherit;" />
+  </clipPath>
+</svg>

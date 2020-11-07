@@ -5,7 +5,7 @@ date: "13/10/2020"
 output: html_document
 ---
 
-```{r message=FALSE, warning=FALSE}
+```{r echo=FALSE, message=FALSE, warning=FALSE}
 library(dummies)
 library(stringr)
 library(dplyr)
@@ -19,9 +19,10 @@ library(olsrr)
 library(gamlss)
 library(wordcloud)
 library(gplots)
+library(R.utils)
 ```
 
-```{r}
+```{r echo=FALSE}
 # Función para Calcular el R2 en Modelos lineales generalizados
 custom_R2 <- function(glm){
   return((glm$null.deviance - glm$deviance)/ glm$null.deviance) 
@@ -29,7 +30,7 @@ custom_R2 <- function(glm){
 ```
 
 
-```{r}
+```{r echo=FALSE}
 datos_2014 <- read.csv("./BasesDeDatos/Incidentes_georreferenciados_2014.csv", 
                        sep = ",", encoding = "UTF-8")
 datos_2015 <- read.csv("./BasesDeDatos/Incidentes_georreferenciados_2015.csv", 
@@ -402,7 +403,7 @@ datos <- datos[,-c(5,6)]
 
 #ELIMINAR TIPO_GEOCOD
 datos <- datos[,-5]
-summary(datos)
+
 
 #ELIMINAR VARIABLES 
 datos_2018 <- datos_2018[,-c(1, 2, 3, 4, 6, 10, 11, 12, 13, 21, 22)]
@@ -474,7 +475,7 @@ datos_2018$MES <- as.factor(datos_2018$MES)
 datos_2018$MES_NOMBRE <- months(datos_2018$FECHA)
 datos_2018$MES_NOMBRE <- as.factor(datos_2018$MES_NOMBRE)
 
-#datos <- rbind(datos, datos_2018)
+datos <- rbind(datos, datos_2018)
 
 #CREAR VARIABLE NUEVA PARA IDENTIFICAR EL NUMERO DE COMUNA 
 datos$NUMEROCOMUNA <- 0
@@ -531,7 +532,9 @@ holidays_df <- data.frame(holidays_t)
 colnames(holidays_df) <- c("DIA_ESPECIAL", "DIA_FESTIVO", "CELEBRACION")
 
 # Se agregan las columnas al DataFrame de 'datos'
+datos$SEMANA <- str_replace_all(datos$SEMANA, "53", "52")
 datos <- cbind(datos, holidays_df)
+summary(datos)
 ```
 
 ```{r}
@@ -549,6 +552,7 @@ SEMANAL <- datos %>% group_by(PERIODO, CLASE,BARRIO,GRAVEDAD, COMUNA,NUMEROCOMUN
 ```{r}
 MENSUAL <- datos %>% group_by(CLASE, MES) %>% count(name = "NRO_ACC_MES")
 ```
+
 ## Análisis exploratorio
 ```{r}
 porcentaje <- function(x){
@@ -557,7 +561,7 @@ porcentaje <- function(x){
 mis.colores <- colorRampPalette(c("blue", "red"))
 ```
 
-```{r}
+```{r echo=FALSE}
 Comuna <- datos %>% group_by(COMUNA) %>% count()
 Comuna$Porcentaje <- round(porcentaje(Comuna$n),2)
 Comuna <- Comuna %>% arrange(desc(Porcentaje), COMUNA)
@@ -572,200 +576,45 @@ ggplot(Comuna, aes(x = reorder(COMUNA, Porcentaje), y = Porcentaje,
   ggtitle("Porcentaje de Accidentalidad por Comuna")
 
 
-diarioscomuna <- datos %>% group_by(COMUNA, DIAAÑO) %>% count()
-diarioscomuna <- diarioscomuna %>% arrange(desc(n), COMUNA)
-ggplot(diarioscomuna, aes(x = reorder(COMUNA, n), y = n, col = COMUNA)) + 
-  geom_boxplot(show.legend = F) + 
-  coord_flip() + 
-  scale_fill_manual(values=mis.colores(21)) + 
-  xlab("Comuna") + 
-  ylab("Porcentaje [%]") + 
-  ggtitle("Porcentaje de Accidentalidad por Comuna")
+
 ```
+
+Se observa que la comuna con mayor accidentalidad es La Candelaria que representa aproximadamente el 21%, las comunas Belén y Robledo cada una con $\approx$ 7%,  La América y Manrique poseen comportamientos similares cada una representa $\approx$ 4% de la población,  Doce de Octubre y Villa Hermosa presentan comportamientos similares con  $\approx$ 3% cada una, Popular y Santa Cruz representan un 1.5% de la población, finalmente el Corregimiento de San Sebastián de Palmitas representa un 0.01% lo que indica que presenta la menor cantidad de accidentes, por tanto no es representativo. 
+
+
 
 ```{r}
 barrio <- datos %>% group_by(BARRIO) %>% count()
 barrio$Porcentaje <- round(porcentaje(barrio$n),2)
 barrio <- barrio %>% arrange(desc(Porcentaje), BARRIO)
-topbarrio <- barrio[1:10, ]
+topbarrio <- barrio[1:22, ]
 ggplot(topbarrio, aes(x = reorder(BARRIO, Porcentaje), y = Porcentaje, 
                    fill = reorder(BARRIO, Porcentaje))) + 
   geom_bar(stat="identity", show.legend = F) + 
   coord_flip() + 
-  scale_fill_manual(values=mis.colores(10)) + 
+  scale_fill_manual(values=mis.colores(22)) + 
   xlab("Barrio") + 
   ylab("Porcentaje [%]") + 
   ggtitle("Porcentaje de Accidentalidad por barrio")
 ```
 
-
-```{r}
-Mes <- datos %>% group_by(MES_NOMBRE) %>% count()
-Mes$Porcentaje <- round(porcentaje(Mes$n),2)
-Mes <- Mes %>% arrange(desc(Porcentaje), MES_NOMBRE)
-ggplot(Mes, aes(x = reorder(MES_NOMBRE, Porcentaje), y = Porcentaje, 
-                   fill = reorder(MES_NOMBRE, Porcentaje))) + 
-  geom_bar(stat="identity", show.legend = F) + 
-  coord_flip() + 
-  scale_fill_manual(values=mis.colores(12)) + 
-  xlab("Mes") + 
-  ylab("Porcentaje [%]") + 
-  ggtitle("Porcentaje de Accidentalidad por mes")
-```
-```{r}
-semana <- datos %>% group_by(SEMANA) %>% count()
-semana$Porcentaje <- round(porcentaje(semana$n),2)
-semana <- semana%>% arrange(desc(Porcentaje), SEMANA)
-semana <- semana[1:20, ]
-mis.colores <- colorRampPalette(c("blue", "red"))
-ggplot(semana, aes(x = reorder(SEMANA, Porcentaje), y = Porcentaje, 
-                   fill = reorder(SEMANA, Porcentaje))) + 
-  geom_bar(stat="identity", show.legend = F, position = "dodge") + 
-  coord_flip() + 
-  scale_fill_manual(values=mis.colores(20)) + 
-  xlab("Semana") + 
-  ylab("Porcentaje [%]") + 
-  ggtitle("Porcentaje de Accidentalidad por semana")
-```
-
-```{r}
-Diasemana <- datos %>% group_by(DIA_NOMBRE) %>% count()
-Diasemana$Porcentaje <- round(porcentaje(Diasemana$n),2)
-Diasemana <- Diasemana %>% arrange(desc(Porcentaje), DIA_NOMBRE)
-ggplot(Diasemana, aes(x = reorder(DIA_NOMBRE, Porcentaje), y = Porcentaje, 
-                   fill = reorder(DIA_NOMBRE, Porcentaje))) + 
-  geom_bar(stat="identity", show.legend = F) + 
-  coord_flip() + 
-  scale_fill_manual(values=mis.colores(7)) + 
-  xlab("Día de la semana") + 
-  ylab("Porcentaje [%]") + 
-  ggtitle("Porcentaje de Accidentalidad por día")
-```
-
-```{r}
-clase <- datos %>% group_by(CLASE) %>% count()
-clase$Porcentaje <- round(porcentaje(clase$n),2)
-clase <- clase %>% arrange(desc(Porcentaje), CLASE)
-ggplot(clase, aes(x = reorder(CLASE, Porcentaje), y = Porcentaje, 
-                   fill = reorder(CLASE, Porcentaje))) + 
-  geom_bar(stat="identity", show.legend = F) + 
-  coord_flip() + 
-  scale_fill_manual(values=mis.colores(6)) + 
-  xlab("Clase del accidente") + 
-  ylab("Porcentaje [%]") + 
-  ggtitle("Porcentaje de Accidentalidad por clase")
-```
-
-```{r}
-clasegravedad <- datos %>% group_by(CLASE, GRAVEDAD) %>% count()
-clasegravedad <- clasegravedad %>% arrange(CLASE, GRAVEDAD)
-mis.colores <- c("#D0002E", "#8B0073","#4500B9")
-ggplot(clasegravedad, aes(x = reorder(CLASE, -n), y = n, 
-                   fill = reorder(GRAVEDAD, -n))) + 
-  geom_bar(stat="identity", show.legend = T, position = "fill") + 
-  scale_fill_manual(values=mis.colores) + 
-  xlab("Clase del accidente") + 
-  ylab("Porcentaje [%]") + 
-  guides(fill=guide_legend(title="Gravedad")) + 
-  ggtitle("Porcentaje de Accidentalidad por clase y gravedad")
-```
-```{r}
-comuna <- write.csv(Comuna, file = "Comuna.csv", row.names = F)
-barrio <- write.csv(barrio, file = "barrio.csv", row.names = F)
-Mes <- write.csv(Mes, file = "Mes.csv", row.names = F)
-semana <- write.csv(semana, file = "semana.csv", row.names = F)
-Diasemana <- write.csv(Diasemana, file = "Diasemana.csv", row.names = F)
-clase <- write.csv(clase, file = "clase.csv", row.names = F)
-clasegravedad <- write.csv(clasegravedad, file = "clasegravedad.csv", 
-                           row.names = F)
-```
+En los registros del conjunto de datos existen 307 barrios, para la construcción de este gráfico solo se consideraron los 22 barrios con más accidentalidad, ya que los restantes (285) no llegan a representar el 1% del total de accidentes que se presenta en la ciudad de Medellín. 
+El barrio la candelaria presenta el mayor porcentaje de accidentalidad en todos los barrios de Medellín; Barrio Colón y San Benito presentan $\approx$ 1.6% de accidentalidad cada uno; Terminal de Transporte y Villa Nueva presentan comportamientos similares ya que cada uno representa el 1.4% del total de la población; Corazón de Jesús, Belén y Guayabal representan 1.2% cada uno; finalmente los barrios Villa Carlota y Chagualo son $\approx$ 1%. 
 
 
-
-```{r}
-ggplot(DIARIOS, aes(x = CLASE, y = NRO_ACC_DIA, col = CLASE)) + geom_boxplot()
-```
-
-
-```{r}
-ggplot(DIARIOS, aes(x = NUMEROCOMUNA, y = NRO_ACC_DIA, col = NUMEROCOMUNA)) + geom_boxplot() 
-```
-
-```{r}
-ggplot(DIARIOS, aes(x = DIAAÑO, y = NRO_ACC_DIA, col = CLASE)) + geom_boxplot()
-```
-
-```{r}
-ggplot(DIASEMANA, aes(x = DIA_NOMBRE, y = NRI_ACC_DIANOMBRE, col = CLASE)) + geom_boxplot() + xlim(c("LUNES", "MARTES", "MIÉRCOLES","JUEVES","VIERNES", "SÁBADO", "DOMINGO"))
-```
-
-```{r}
-ggplot(DIASEMANA, aes(x = DIA_NOMBRE, y = NRI_ACC_DIANOMBRE, col = GRAVEDAD)) + geom_boxplot() + xlim(c("LUNES", "MARTES", "MIÉRCOLES","JUEVES","VIERNES", "SÁBADO", "DOMINGO"))
-```
-
-```{r}
-ggplot(DIASEMANA, aes(x = DIA_NOMBRE, y = NRI_ACC_DIANOMBRE, col = NUMEROCOMUNA)) + geom_boxplot() + xlim(c("LUNES", "MARTES", "MIÉRCOLES","JUEVES","VIERNES", "SÁBADO", "DOMINGO"))
-```
-
-# Analisis exploratorio datos semanal
-
-```{r}
-ggplot(SEMANAL, aes(x = SEMANA, y = NRO_ACC_SEMANA, col = SEMANA)) + geom_boxplot()
-```
-
-```{r}
-ggplot(SEMANAL, aes(x = CLASE, y = NRO_ACC_SEMANA, col = CLASE)) + geom_boxplot()
-```
-
-```{r}
-ggplot(SEMANAL, aes(x = GRAVEDAD, y = NRO_ACC_SEMANA, col = GRAVEDAD)) + geom_boxplot()
-```
-```{r}
-ggplot(SEMANAL, aes(x = NUMEROCOMUNA, y = NRO_ACC_SEMANA, col = NUMEROCOMUNA)) + geom_boxplot()
-```
-
-# Analisis exploratorio datos mensuales 
-
-```{r}
-ggplot(MENSUAL, aes(x = MES, y = NRO_ACC_MES, col = MES)) + geom_boxplot()
-```
-
-```{r}
-ggplot(MENSUAL, aes(x = CLASE, y = NRO_ACC_MES, col = CLASE)) + geom_boxplot()
-```
-
-```{r}
-ggplot(MENSUAL, aes(x = GRAVEDAD, y = NRO_ACC_MES, col = GRAVEDAD)) + geom_boxplot()
-```
-```{r}
+```{r echo=FALSE, message=FALSE, warning=FALSE}
 conteo <- datos %>% group_by(PERIODO, MES) %>% count()
 accidentes <- conteo$n
 
 a1 <- datos %>% group_by(BARRIO) %>% count()
-
-```
-
-
-```{r}
 heat <- data.frame(row.names = str_to_title(unique(datos$MES_NOMBRE)),
                    '2014' = accidentes[1:12],
                    "2015" = accidentes[13:24],
                    "2016" = accidentes[25:36],
                    "2017" = accidentes[37:48],
                    "2018" = accidentes[49:60])
-heat
-
-```
-
-
-```{r}
 heat <- as.matrix((heat))
-
-```
-
-
-```{r}
-Colors=c("lemonchiffon", "orange","red2")
+Colors=c("blue", "red")
 Colors=colorRampPalette(Colors)(100)
 heatmap.2(t(heat),
           scale= "none",
@@ -784,20 +633,134 @@ heatmap.2(t(heat),
           )
 ```
 
+En el mes de Enero se presenta la menor cantidad de accidentes para todos los años considerados, el mes de Marzo presento una alta accidentalidad unicamente en el año 2014, en general el mes de Agosto es el mes con mayor accidentes pero fue aún más grave para los años 2016 y 2017, finalmente se observa que el mes de Octubre presento gran acidentalidad para el año 2016, los meses de Junio y Noviembre presentan comportamientos semejantes, el año con mayor cantidad de accidentes es 2016 y el año de menor accidentalidad fue 2018.
+
+```{r echo=FALSE}
+Mes <- datos %>% group_by(MES_NOMBRE) %>% count()
+Mes$Porcentaje <- round(porcentaje(Mes$n),2)
+Mes <- Mes %>% arrange(desc(Porcentaje), MES_NOMBRE)
+ggplot(Mes, aes(x = reorder(MES_NOMBRE, Porcentaje), y = Porcentaje, 
+                   fill = reorder(MES_NOMBRE, Porcentaje))) + 
+  geom_bar(stat="identity", show.legend = F) + 
+  coord_flip() + 
+  scale_fill_manual(values=mis.colores(12)) + 
+  xlab("Mes") + 
+  ylab("Porcentaje [%]") + 
+  ggtitle("Porcentaje de Accidentalidad por mes")
+```
+
+El mes que presenta mayor accidentalidad es Agosto con 8.93% cabe resaltar que este mes se derrolla la tradicional Feria de Flores de Medellín, los meses Septiembre, Mayo, Marzo, Julio y Octubre tienen un comportamiento muy similar con $\approx$ 8.6% cada uno, Noviembre, Febrero y Junio también se comportan de manera semejante con $\approx$ 8% cda uno; finalmente el mes de Enero presenta la menor cantidad de accidentes, esto puede deberse a que la mayoría de personas se encuentran fuera de la ciudad por vacaciones. 
+
+```{r echo=FALSE, fig.align='center'}
+knitr::include_graphics("Graph.svg")
+```
+se confirma que las primeras semanas del año presentan la menor accidentalidad, los días 10 y 14 de Marzo son los más accidentados, los días 30 y 31 de Octubre se presenta gran cantodad de accidentes, entre los días 11 a 18 de Septimebre también se presenta una cantidad alta de incidentes viales esto puede deberse a las celebraciones de amor y amistad, desde el 16 al 23 de Diciembre hay fuerte accidentalidad esto se corrobora con el gráfico semanal.
 
 ```{r}
+semana <- datos %>% group_by(SEMANA) %>% count()
+semana$Porcentaje <- round(porcentaje(semana$n),2)
+semana <- semana%>% arrange(desc(Porcentaje), SEMANA)
+semana <- semana[c(1:10, 42:52), ]
+mis.colores <- colorRampPalette(c("blue", "red"))
+ggplot(semana, aes(x = reorder(SEMANA, Porcentaje), y = Porcentaje, 
+                   fill = reorder(SEMANA, Porcentaje))) + 
+  geom_bar(stat="identity", show.legend = F, position = "dodge") + 
+  coord_flip() + 
+  scale_fill_manual(values=mis.colores(21)) + 
+  xlab("Semana") + 
+  ylab("Porcentaje [%]") + 
+  ggtitle("Porcentaje de Accidentalidad por semana")
+```
+
+La semana 31 que va desde el 29 Julio al 05 de Agosto posee la mayor accidentalidad esto puede deberse a Feria de Flores; sigue la semana 51 comprendida entre el 17 y 23 de Diciembre, la accidentalidad presentada en esta semana puede deberse a las celebraciones de este mes, finalmente se observa que la dos primeras semanas del año son las menos accidentadas. Para este análisis se decidio juntar las semanas 52 y 53 ya que esta última solo comprendia dos días.
+
+```{r}
+Diasemana <- datos %>% group_by(DIA_NOMBRE) %>% count()
+Diasemana$Porcentaje <- round(porcentaje(Diasemana$n),2)
+Diasemana <- Diasemana %>% arrange(desc(Porcentaje), DIA_NOMBRE)
+ggplot(Diasemana, aes(x = reorder(DIA_NOMBRE, Porcentaje), y = Porcentaje, 
+                   fill = reorder(DIA_NOMBRE, Porcentaje))) + 
+  geom_bar(stat="identity", show.legend = F) + 
+  coord_flip() + 
+  scale_fill_manual(values=mis.colores(7)) + 
+  xlab("Día de la semana") + 
+  ylab("Porcentaje [%]") + 
+  ggtitle("Porcentaje de Accidentalidad por día")
+```
+
+Los días Viernes y Martes se presenta la mayor cantidad de accidentes, para el día Viernes esto puede ser ocasionado por el inicio del fin de semana, repecto al día Martes se presenta un comportamiento poco esperado, se puede presentar por múltiples razones algunas de ellas los días festivos y el aforo vehicular por día. El Domingo se presenta 9.5% de accidentes, el menor de todos se siguiere que esto sucede por ser el día de descanso de la mayoría de las personas. 
+
+```{r}
+clase <- datos %>% group_by(CLASE) %>% count()
+clase$Porcentaje <- round(porcentaje(clase$n),2)
+clase <- clase %>% arrange(desc(Porcentaje), CLASE)
+ggplot(clase, aes(x = reorder(CLASE, Porcentaje), y = Porcentaje, 
+                   fill = reorder(CLASE, Porcentaje))) + 
+  geom_bar(stat="identity", show.legend = F) + 
+  coord_flip() + 
+  scale_fill_manual(values=mis.colores(6)) + 
+  xlab("Clase del accidente") + 
+  ylab("Porcentaje [%]") + 
+  ggtitle("Porcentaje de Accidentalidad por clase")
+```
+
+El tipo más frecuente de accidente es Choque con alrededor de 67%, Incendio representa el 0.01% del total de la población, por tanto no es significativo.
+
+```{r echo=FALSE}
+clasegravedad <- datos %>% group_by(CLASE, GRAVEDAD) %>% count()
+clasegravedad <- clasegravedad %>% arrange(CLASE, GRAVEDAD)
+mis.colores <- c("#D0002E", "#8B0073","#4500B9")
+ggplot(clasegravedad, aes(x = reorder(CLASE, -n), y = n, 
+                   fill = reorder(GRAVEDAD, -n))) + 
+  geom_bar(stat="identity", show.legend = T, position = "fill") + 
+  scale_fill_manual(values=mis.colores) + 
+  xlab("Clase del accidente") + 
+  ylab("Porcentaje [%]") + 
+  guides(fill=guide_legend(title="Gravedad")) + 
+  ggtitle("Porcentaje de Accidentalidad por clase y gravedad")
+```
+```{r}
+ggplot(clase, aes(x = reorder(CLASE, -n), y = n, 
+                   fill = reorder(CLASE, n))) + 
+  geom_bar(stat="identity", show.legend = F) + 
+  scale_fill_manual(values=mis.colores(6)) + 
+  xlab("Clase del accidente") + 
+  ylab("Porcentaje [%]") + 
+  ggtitle("Porcentaje de Accidentalidad por clase")
+```
+
+El tipo de accidente Choque en su gran mayoría deja como consecuencia Solo daños alrededor de un 70%, el 30% restante corresponde a Heridos; la clase Atropello y Caída Ocupante en su gran mayoría dejan Heridos con un porcentaje muy bajo de Muertes; respecto a Volcamiento y Otro 
+
+
+
+
+
+```{r}
+gravedadclase <- datos %>% group_by(CLASE, GRAVEDAD) %>% count()
 ```
 
 
-
-```{r}
-ggplot(MENSUAL, aes(x = NUMEROCOMUNA, y = NRO_ACC_MES, col = NUMEROCOMUNA)) + geom_boxplot()
+```{r eval=FALSE, include=FALSE}
+diseñovia <- datos %>% group_by(DISENO) %>% count()
+diseñovia$Porcentaje <- round(porcentaje(diseñovia$n),2)
+diseñovia <- diseñovia %>% arrange(desc(Porcentaje), DISENO)
+ggplot(diseñovia, aes(x = reorder(DISENO, Porcentaje), y = Porcentaje, 
+                   fill = DISENO)) + 
+  geom_bar(stat="identity", show.legend = F) + 
+  scale_fill_manual(values=mis.colores(13)) + 
+  coord_flip() + 
+  xlab("Diseño de la vía") + 
+  ylab("Porcentaje [%]") + 
+  ggtitle("Porcentaje de Accidentalidad por diseño de la vía")
 ```
+La gran parte de los accidentes en la ciudad de Medellín ocurren en Tramo de Via e Intersecciones, algo que es de esperarse ya que estas Intersecciones son de alta preligrosidad. 
+
 ## wordcloud
 ```{r}
 datosWordC <- str_replace_all(datos$COMUNA, "\\s", "-")
 wordcloud(datosWordC,colors=brewer.pal(6,"Dark2"),random.order=FALSE)
 ```
+
 # Planteamiento de modelos
 ## Hasta acá datos tiene los datos de los años 2014-2017, lo que se usará para el entrenamiento, y se usaran los datos de 2018 para validación
 
