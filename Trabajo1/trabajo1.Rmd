@@ -731,15 +731,6 @@ ggplot(clase, aes(x = reorder(CLASE, -n), y = n,
 
 El tipo de accidente Choque en su gran mayoría deja como consecuencia Solo daños alrededor de un 70%, el 30% restante corresponde a Heridos; la clase Atropello y Caída Ocupante en su gran mayoría dejan Heridos con un porcentaje muy bajo de Muertes; respecto a Volcamiento y Otro 
 
-
-
-
-
-```{r}
-gravedadclase <- datos %>% group_by(CLASE, GRAVEDAD) %>% count()
-```
-
-
 ```{r eval=FALSE, include=FALSE}
 diseñovia <- datos %>% group_by(DISENO) %>% count()
 diseñovia$Porcentaje <- round(porcentaje(diseñovia$n),2)
@@ -754,6 +745,34 @@ ggplot(diseñovia, aes(x = reorder(DISENO, Porcentaje), y = Porcentaje,
   ggtitle("Porcentaje de Accidentalidad por diseño de la vía")
 ```
 La gran parte de los accidentes en la ciudad de Medellín ocurren en Tramo de Via e Intersecciones, algo que es de esperarse ya que estas Intersecciones son de alta preligrosidad. 
+
+## Datos históricos
+
+```{r}
+historicos <- datos %>% group_by(PERIODO, MES_NOMBRE, MES, CLASE) %>% 
+  count() %>% mutate(MES=as.integer(MES))
+
+
+data2014 <- historicos[lubridate::year(historicos$FECHA) %in% c(2014), ]
+data2015 <- historicos[lubridate::year(historicos$FECHA) %in% c(2015), ]
+data2016 <- historicos[lubridate::year(historicos$FECHA) %in% c(2016), ]
+data2017 <- historicos[lubridate::year(historicos$FECHA) %in% c(2017), ]
+data2018 <- historicos[lubridate::year(historicos$FECHA) %in% c(2018), ]
+```
+
+```{r}
+for (Clase in unique(historicos$CLASE)) {
+  p <- ggplot(historicos[historicos$CLASE == Clase, ], 
+       aes(x=MES, y=n, col=PERIODO)) + 
+  labs(x = "Mes", y="Cantidad de accidentes", col="Año",
+       title = paste("Cantidad de accidentes de la clase", Clase, "por mes")) +
+  geom_line(size = 1) +
+  scale_x_continuous(breaks = seq(1,12,1))
+  print(p)
+}
+
+```
+
 
 ## wordcloud
 ```{r}
