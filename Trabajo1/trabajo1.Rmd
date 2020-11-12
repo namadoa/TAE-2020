@@ -14,9 +14,6 @@ library(ggplot2)
 library(GGally)
 library(car)
 library(MLmetrics)
-library(qpcR)
-library(olsrr)
-library(gamlss)
 library(wordcloud)
 library(gplots)
 library(R.utils)
@@ -475,6 +472,7 @@ datos_2018$MES <- as.factor(datos_2018$MES)
 datos_2018$MES_NOMBRE <- months(datos_2018$FECHA)
 datos_2018$MES_NOMBRE <- as.factor(datos_2018$MES_NOMBRE)
 
+datos_t <- datos # Datos para entrenamiento, sin el 2018
 datos <- rbind(datos, datos_2018)
 
 #CREAR VARIABLE NUEVA PARA IDENTIFICAR EL NUMERO DE COMUNA 
@@ -783,6 +781,11 @@ wordcloud(datosWordC,colors=brewer.pal(6,"Dark2"),random.order=FALSE)
 # Planteamiento de modelos
 ## Hasta acá datos tiene los datos de los años 2014-2017, lo que se usará para el entrenamiento, y se usaran los datos de 2018 para validación
 
+```{r}
+datos_vl <- subset(datos, (PERIODO == '2018'))
+datos_tr <- subset(datos, (PERIODO != '2018'))
+```
+
 
 ```{r}
 # Datos para entrenamientos
@@ -815,7 +818,7 @@ datos_2018 <- cbind(datos_2018, holidays_df_2018)
 # Se corre un modelo lineal teniendo en cuenta las variables de DIA_ESPECIAL, DIA_NOMBRE, DISENO
 ```{r}
 # Agrupación de los datos para el modelo lineal, cada registro contiene las condiciones únicas de las 4 columnas,y se agrega la variable ded 'NRO_ACC', que son el número de accidentes cuando se cumplen esas condiciones
-datos_lm1 <- datos %>% group_by(FECHA, DIA_ESPECIAL, DIA_NOMBRE, DISENO) %>% count(name = "NRO_ACC") 
+datos_lm1 <- datos_tr %>% group_by(FECHA, DIA_ESPECIAL, DIA_NOMBRE, DISENO) %>% count(name = "NRO_ACC") 
 lm1 <- lm(NRO_ACC ~ DIA_ESPECIAL+DIA_NOMBRE+DISENO, data = datos_lm1) # Modelo lineal
 
 summary(lm1) # Se observa que el modelo lineal tiene un buen ajuste de R-cuadrado
@@ -826,7 +829,7 @@ summary(lm1) # Se observa que el modelo lineal tiene un buen ajuste de R-cuadrad
 ```{r}
 # Se crea el conjunto de datos para la validación
 
-lm1_2018 <- datos_2018 %>% group_by(FECHA, DIA_ESPECIAL, DIA_NOMBRE, DISENO) %>% count(name = "NRO_ACC")
+lm1_2018 <- datos_vl %>% group_by(FECHA, DIA_ESPECIAL, DIA_NOMBRE, DISENO) %>% count(name = "NRO_ACC")
 
 
 predicted <- round(predict(lm1, newdata=lm1_2018))
@@ -838,19 +841,19 @@ lm1_r2 <- R2_Score(predicted, actual) # R2
 
 sprintf("MSE: %f, MAE: %f, R2: %f", lm1_mse, lm1_mae, lm1_r2)
 ```
-# El primer modelo tiene buenas métricas, pero tiene un problema al tener la variable DISENO, ya que no tenemos
-# una forma fácil de obtener esta variable para la predicción
+# El primer modelo tiene buenas métricas, a excepción de la diferencia entre los R2 que indica que existe un sobre ajuste, pero #tiene un problema al tener la variable DISENO, ya que no tenemos una forma fácil de obtener esta variable para la predicción
 
 ```{r}
 # Modelo a partir del anterior teniendo en cuenta el DIA_FESTIVO y no DÍA ESPECIAL
-datos_lm2 <- datos %>% group_by(FECHA,DIA_FESTIVO, DIA_NOMBRE, DISENO) %>% count(name = "NRO_ACC")
+datos_lm2 <- datos_tr %>% group_by(FECHA,DIA_FESTIVO, DIA_NOMBRE, DISENO) %>% count(name = "NRO_ACC")
 lm2 <- lm(NRO_ACC ~ DIA_FESTIVO+DIA_NOMBRE+DISENO, data = datos_lm2)
 
 summary(lm2)
 
 ```
+
 ```{r}
-lm2_2018 <- datos_2018 %>% group_by(FECHA,DIA_FESTIVO, DIA_NOMBRE, DISENO) %>% count(name = "NRO_ACC")
+lm2_2018 <- datos_vl %>% group_by(FECHA,DIA_FESTIVO, DIA_NOMBRE, DISENO) %>% count(name = "NRO_ACC")
 
 predicted <- round(predict(lm2, newdata=lm2_2018))
 actual <- lm2_2018$NRO_ACC
@@ -861,9 +864,10 @@ lm2_r2 <- R2_Score(predicted, actual) # R2
 
 sprintf("MSE: %f, MAE: %f, R2: %f", lm2_mse, lm2_mae, lm2_r2)
 ```
+
 ```{r}
 # Modelo lineal sin la variable DISENO
-datos_lm3 <- datos %>% group_by(FECHA,DIA_FESTIVO, DIA_NOMBRE) %>% count(name = "NRO_ACC")
+datos_lm3 <- datos_tr %>% group_by(FECHA,DIA_FESTIVO, DIA_NOMBRE) %>% count(name = "NRO_ACC")
 lm3 <- lm(NRO_ACC ~ DIA_FESTIVO+DIA_NOMBRE, data = datos_lm3)
 
 summary(lm3)
@@ -871,7 +875,7 @@ summary(lm3)
 # Se puede notar que el R2 Ajustado baja drásticamente al quitar la variable DISENO
 
 ```{r}
-lm3_2018 <- datos_2018 %>% group_by(FECHA,DIA_FESTIVO, DIA_NOMBRE) %>% count(name = "NRO_ACC")
+lm3_2018 <- datos_vl %>% group_by(FECHA,DIA_FESTIVO, DIA_NOMBRE) %>% count(name = "NRO_ACC")
 
 predicted <- round(predict(lm3, newdata=lm3_2018))
 actual <- lm3_2018$NRO_ACC
@@ -886,12 +890,13 @@ sprintf("MSE: %f, MAE: %f, R2: %f", lm3_mse, lm3_mae, lm3_r2)
 
 # Se intenta ahora con un modelo lineal generalizado, considerando las variables DIA_NOMBRE, DIA_FESTIVO 
 ```{r}
-datos_lm4 <- datos %>% group_by(FECHA,DIA_FESTIVO, DIA_NOMBRE) %>% count(name = "NRO_ACC")
+datos_lm4 <- datos_tr %>% group_by(FECHA,DIA_FESTIVO, DIA_NOMBRE) %>% count(name = "NRO_ACC")
 lm4 <- glm(NRO_ACC ~ DIA_FESTIVO+DIA_NOMBRE, family = "poisson", data = datos_lm4) # Modelo lineal generalizado, con familia poisson
 summary(lm4)
 ```
+
 ```{r}
-lm4_2018 <- datos_2018 %>% group_by(FECHA,DIA_FESTIVO, DIA_NOMBRE) %>% count(name = "NRO_ACC")
+lm4_2018 <- datos_vl %>% group_by(FECHA,DIA_FESTIVO, DIA_NOMBRE) %>% count(name = "NRO_ACC")
 
 predicted <- round(predict(lm4, newdata=lm4_2018, type="response")) # Se usa type= 'response' por ser una regresion logística
 actual <- lm4_2018$NRO_ACC
@@ -907,10 +912,11 @@ sprintf("MSE: %f, MAE: %f, Pseudo R2: %f", lm4_mse, lm4_mae, lm4_r2)
 # Según la salida obtenida, todas las variables son significantes.
 ```{r}
 # Modelo linealk generalizado, agregando la variable Clase
-datos_lm5 <- datos %>% group_by(FECHA,DIA_FESTIVO, DIA_NOMBRE,CLASE) %>% count(name = "NRO_ACC")
+datos_lm5 <- datos_tr %>% group_by(FECHA,DIA_FESTIVO, DIA_NOMBRE,CLASE) %>% count(name = "NRO_ACC")
 lm5 <- glm(NRO_ACC ~ DIA_FESTIVO+DIA_NOMBRE+CLASE, family = "poisson", data = datos_lm5)
 summary(lm5)
 ```
+
 ```{r}
 # Análisis sobre los coeficientes
 exp_c <- exp(lm5$coefficients)
@@ -950,7 +956,7 @@ sprintf("Entrenamiento, MSE: %f, MAE: %f, R2 Entrenamiento: %f, Sobredispersión
 ```
 
 ```{r}
-lm5_2018 <- datos_2018 %>% group_by(FECHA,DIA_FESTIVO, DIA_NOMBRE,CLASE) %>% count(name = "NRO_ACC")
+lm5_2018 <- datos_vl %>% group_by(FECHA,DIA_FESTIVO, DIA_NOMBRE,CLASE) %>% count(name = "NRO_ACC")
 
 predicted <- round(predict(lm5, newdata=lm5_2018, type="response")) # Se usa type= 'response' por ser una regresion logística
 actual <- lm5_2018$NRO_ACC
@@ -980,6 +986,7 @@ lm5_plot + ggtitle("Accidentalidad en 2018", subtitle="Clase, Dia Festivo, Dia d
 ```{r}
 plot(lm5)
 ```
+
 ```{r}
 w <- abs(rstudent(lm5)) < 5 & abs(cooks.distance(lm5)) < 4/nrow(lm5$model)
 lm6 <- update(lm5, weights=as.numeric(w))
@@ -988,6 +995,7 @@ lm6 <- update(lm5, weights=as.numeric(w))
 ```{r}
 summary(lm6)
 ```
+
 ```{r}
 # Se computan métricas de entrenamiento
 y_train <- round(predict(lm6, newdata= datos_lm5, type="response"))
@@ -1024,8 +1032,34 @@ lm7_r2 <- R2_Score(predicted, actual) # R2
 
 sprintf("MSE: %f, MAE: %f, R2: %f", lm7_mse, lm7_mae, lm7_r2)
 ```
-```{r}
 
+# Se decide que se usará el Modelo #5, que consiste en un modelo lineal generalizado, de la familia poisson
+# Con las variables CLASE, DIA_NORMAL, DIA_FESTIVO
+```{r}
+datos_model <- datos %>% group_by(FECHA,DIA_FESTIVO, DIA_NOMBRE,CLASE) %>% count(name = "NRO_ACC") #Tomar todos los datos
+
+model <- glm(NRO_ACC ~ DIA_FESTIVO+DIA_NOMBRE+CLASE, family = "poisson", data = datos_model)
+summary(model)
+```
+
+```{r}
+# Se computan métricas de entrenamiento
+y_train <- round(predict(model, newdata= datos_model, type="response"))
+y_actual <- datos_model$NRO_ACC
+model_tmse <- MSE(y_train, y_actual)
+model_tmae <-  MAE(y_train, y_actual)
+model_tr2 <- custom_R2(lm5)
+model_rel <- model$deviance/model$df.residual # Se obtiene la sobredispersion
+sprintf("Entrenamiento, MSE: %f, MAE: %f, R2 Entrenamiento: %f, Sobredispersión: %f", model_tmse, model_tmae, model_tr2,model_rel)
+
+# De no poder agregarse los datos del 2018 para entrenar el modelo final, usar esto
+# model <- lm5
+```
+
+```{r}
+#Guardar el modelo para su uso en la aplicación
+
+save(model, file="model.RData")
 ```
 
 
