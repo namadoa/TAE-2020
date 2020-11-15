@@ -1062,9 +1062,212 @@ sprintf("Entrenamiento, MSE: %f, MAE: %f, R2 Entrenamiento: %f, Sobredispersión
 save(model, file="model.RData")
 ```
 
+## Clustering por latitud y longitud, k = 15. - Visualización previa de la clusterización por comunas.
+
+```{r echo=FALSE, fig.align='center'}
+knitr::include_graphics("Mapa.svg")
+```
+
+## Diagrama de barras - Clusters por numero de puntos.
+
+```{r echo=FALSE, fig.align='center'}
+knitr::include_graphics("Clusters.svg")
+```
+
+## Función para el calculo de distancias de datos geoespaciales, haciendo uso de la libería geosphere
+```{r}
+geo.dist = function(df) {
+  require(geosphere)
+  d <- function(i,z){         # z[1:2] contain long, lat
+    dist <- rep(0,nrow(z))
+    dist[i:nrow(z)] <- distHaversine(z[i:nrow(z),1:2],z[i,1:2])
+    return(dist)
+  }
+  dm <- do.call(cbind,lapply(1:nrow(df),d,df))
+  return(as.dist(dm))
+}
+```
+## Conversión a numerico
+```{r}
+datos_t$LATITUD <- as.numeric(as.character(datos_t$LATITUD))
+datos_t$LONGITUD<- as.numeric(as.character(datos_t$LONGITUD))
+
+```
+
+## Creación nuevo data frame para clusering
+```{r}
+df <- data.frame(long = datos_t$LONGITUD, lat = datos_t$LATITUD, barrios = datos_t$BARRIO)
+
+```
+
+
+## Creación matriz de distancias con la función geo.dist
+```{r}
+df1 <- df[1:1000, ]
+d <- geo.dist(df1)
+hc <- hclust(d)
+plot(hc)
+df1$clust <- cutree(hc, k = 5)
+df1
+
+
+```
 
 
 
+## Mapa de clusterización según latitud y longitud.
+```{r}
+s <- shapefile("C:/Users/ofaa/Documents/data/TAE-2020/Trabajo1/L%C3%ADmite_Catastral_de__Comunas_y_Corregimientos.shp")
+map.df1 <- (s)
+ggplot(map.df1)+
+  geom_path(aes(x=long, y=lat, group=group))+
+  geom_point(data=df1, aes(x=long, y=lat, color=factor(clust)), size=4)+
+  scale_color_discrete("Cluster")+
+  coord_fixed()
+  
+```
+
+## Mapa de clusterización teniendo en cuenta no latitud y longitud, sino numero de accidentes totales según barrio.
+
+
+```{r}
+datos_cluster <- datos_tr %>% group_by(BARRIO) %>% count(name = "TOTAL_ACCIDENTES") ## Numero de accidentes por barrio
+```
+```{r}
+
+df <- as.matrix(table(datos_t$BARRIO, datos_t$GRAVEDAD))  #Numero deaccidentes por barrio segun categoría 
+df <- data.frame(HERIDO = df[,1], MUERTO = df[,2], SOLO_DAÑOS = df[,3])
+df
+```
+## Clustering haciendo uso del algoritmo - k means - busqueda del numero optimo de clusters.
+
+
+```{r}
+#Una vez tenemos los datos preprocesados y el subset de datos seleccionados, procedemos a realizar un scalamiento y centrado del dataset.
+
+scaled_data = as.matrix(scale(df))
+```
+## Clustering haciendo uso del algoritmo - k means - busqueda del numero optimo de clusters.
+
+
+```{r}
+#En un principio seleccionaremos un numero aleatorio de clusters y observaremos como son creados, empezaremos con  k = 3.
+
+kmm = kmeans(scaled_data, 3, nstart = 50, iter.max = 15 )
+kmm
+```
+# En este caso debemos corroborar el valor (between_SS/total_SS), el cual es ~77%. Lo que realmente representa esta proporción es la relación entre la cantidad de la suma de los cuadrados totales de los data points que estan en los clusters. Nosotros queremos aumentar este valor a medida que aumentamos el numero de clusters, sin embargo, tampoco queremos llegar al overfitting, por ejemplo si usaramos un k igual al numero de barrios, tendría serios problemas de sobreajuste.
+
+
+
+
+
+# Metodo del codo (Elbow Method)
+```{r}
+## Encontremos un valor de k para el cual el modelo no se sobreajuste y al mismo tiempo agrupe los datos según la distribución real.
+
+## Este metodo considera el porcentaje de varianza explicada en función del número de grupos (clusters).
+
+## Lo ideal es elegir un número de clusters de tal forma que al agregar uno más, no se obtenga un mejor modelado de los datos.
+
+set.seed(123)
+#Vamos a calcular y gráficar WSS(total within - cluster sum of square) para k = 2 to k = 10
+
+k.max <- 10
+datos <- scaled_data
+wss <- sapply(1:k.max, 
+              function(k){kmeans(datos, k, nstart = 50, iter.max = 15 )$tot.withinss})
+
+plot(1:k.max, wss, 
+     type = "b", pch = 19, frame = FALSE,
+     xlab = "Numero de clusters (k)",
+     ylab = "Total WSS", 
+     main = "Método del codo",
+     sub = "Elbow method")
+```
+
+# En este caso, para k = 4 el between_ss/total_ss ratio tiende a cambiar lentamente y a ser menos cambiante en comparación con otros k, como 1 o 2., k = 5 también parece ser un candidato potencial.
+
+
+# ¿Cómo decidimos cuál será la elección óptima?
+```{r}
+#El modelo k-means es "casi" un modelo de mezcla Gaussiana (Gaussiana mixture model) y se puede construir una probabilidad para el modelo de mezcla gaussiana y, por tanto determinar valores de criterio de información.
+
+d_clust <- Mclust(as.matrix(scaled_data), G = 1:15, modelNames = mclust.options("emModelNames"))
+help("Mclust")
+d_clust$BIC
+plot(d_clust)
+```
+# En este caso, los 3 mejores modelos son para un  k = (7, 8, 12).
+
+
+
+# ¿Cómo decidimos cuál será la elección óptima?
+```{r}
+# Existen otras técnicas para determinar el numero optimo de clusters, el paquete NbClust provee 30 indices para la determinación del número de clusters.
+#install.packages("NbClust",dependencies = TRUE)
+#library(NbClust)
+nb <- NbClust(scaled_data, diss=NULL, distance = "euclidean", 
+              min.nc=4, max.nc=8, method = "kmeans", 
+              index = "all", alphaBeale = 0.1)
+```
+```{r}
+hist(nb$Best.nc[1,], breaks = max(na.omit(nb$Best.nc[1,])))
+#Según este método el mejor sería 5, podrían usarse 4.
+```
+
+## Por último vamos a hacer uso del criterio Calinski.
+```{r}
+#Este criterio es similar a la busqueda de la relación entre la varianza entre-cluster/varianza intra-cluster, se hace uso de la libería vegan.
+
+library(vegan)
+
+model <- cascadeKM(scaled_data, 1, 10, iter = 100)
+plot(model, sortg = TRUE)
+
+model$results[2, ]
+which.max(model$result[2,]) #Según este método los mejores k, serían 2, 3 y 4.
+```
+
+
+```{r}
+#Método de la silueta.
+fviz_nbclust(scaled_data, kmeans, method = c("silhouette"))
+
+```
+```{r}
+#Método del codo.
+fviz_nbclust(scaled_d, kmeans, method = "wss") +
+    geom_vline(xintercept = 4, linetype = 2)+
+  labs(subtitle = "Elbow method")
+
+```
+```{r}
+#Gap statistic.
+set.seed(123)
+fviz_nbclust(scaled_data, kmeans, nstart = 25,  method = "gap_stat", nboot = 50)+
+  labs(subtitle = "Gap statistic method")
+
+```
+## Generación de clusterización según los k optimos 
+```{r}
+# Según los diferentes métodos k = 4, parece ser muy optimo para la generación de la clusterización.
+#Generación de clusterización con k = 4.
+
+kmm = kmeans(scaled_data, 4, nstart = 50, iter.max = 15 )
+kmm
+df_clust <- data.frame(HERIDO = df[,1], MUERTO = df[,2], SOLO_DAÑOS = df[,3], kmm$cluster)
+df_clust
+```
+## Método de la silueta.
+
+```{r}
+library(cluster)
+dis = dist(df)^2
+res = pam(dis, 2)  #Según el método de la silueta el mejor k es 2, sin embargo, 3 y 4 arrojan buenos resultados.
+sil = silhouette(res$clustering, dis)
+plot(sil)
+```
 
 
 
