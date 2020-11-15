@@ -11,6 +11,46 @@ resolveEnd <- function(dateStart, timeUnit, timeWindow){
   return(as.Date(dateStart) + daysToSum)
 }
 
+# Procesa los resultados y los entrega para su visualización, dependiendo de la
+# ventana de tiempo escogida
+processResults <- function(timeUnit, timeWindow, dateStart, dateEnd, results){
+  # Días
+  if(timeUnit == 1){
+    # Si son días, no se tienen que procesar los datos
+    dates <- seq.Date(from = dateStart,to = dateEnd, by = 1)
+    results_df <- data.frame(value = results, fecha = dates)
+    processedResults <- list("timeString" = "Día", "timeStringPlural" = "Días", "results_df" = results_df)
+    
+    return(processedResults)
+  }else{
+    numPoints <- ceiling(length(results)/timeUnit) # Número de puntos
+    newResults <- integer(numPoints) # Arreglo de enteros
+    count <- 1
+    for(i in seq(from = 1, to = length(results), by = timeUnit)){
+      limit <-i+timeUnit
+      if ((limit) > length(results)+1){
+        limit <- length(results)
+      }
+      limit <- limit -1
+      newResults[count] <- sum(results[i:limit])
+      count <- count + 1
+    }
+    dates <- seq.Date(from = dateStart,to = dateEnd, by= timeUnit)
+    results_df <- data.frame(value = newResults, fecha = dates)
+    timeString <- ""
+    timeStringPlural <- ""
+    if (timeUnit == 7){
+      timeString <- "Semana"
+      timeStringPlural <- "Semanas"
+    }else if (timeUnit == 30){
+      timeString <- "Mes"
+      timeStringPlural <- "Meses"
+    }
+    processedResults <- list("timeString" = timeString, "timeStringPlural" = timeStringPlural, "results_df" = results_df)
+    return(processedResults)
+  }
+}
+
 
 ui <- fluidPage(
   
@@ -67,7 +107,7 @@ ui <- fluidPage(
                     label="Ventana de tiempo",
                     min=1,
                     max=50,
-                    value=1
+                    value=7
         ),
         # Tipo de Accidente
         selectInput('accidentClass',
@@ -110,7 +150,7 @@ server <- function(input, output) {
     timeWindow <- as.integer(input$timeWindow)
     dateStart <- as.Date(input$dateStart)
     dateEnd <- resolveEnd(dateStart,timeUnit,timeWindow)
-    
+    dateStart <- dateStart + 1
     # Validar que 'dateEnd' sea menor al 2020-12-31
     if (dateEnd > "2020-12-31"){
       dateEnd = as.Date("2020-12-31")
@@ -125,13 +165,20 @@ server <- function(input, output) {
     
     results <- round(predict(model, newdata= predictionSubset, type="response"))
     
+    pResults <- processResults(timeUnit, timeWindow, dateStart, dateEnd, results)
+    
+    values <- pResults$results_df
+    timeString <- pResults$timeString
+    timeStringP <- pResults$timeStringPlural
+    
+    
     output$accPredictCount <- renderText({
-      x <- sprintf("Número de Accidentes: %i, Promedio de Accidentes por día: %g", sum(results), mean(results))
+      x <- sprintf("Número de Accidentes: %i, Promedio de Accidentes por %s: %g", sum(values$value),timeString,mean(values$value))
     });
     
-    predictionPlot <- ggplot() + geom_point(mapping = aes(c(1:length(results)),results)) + geom_line(mapping = aes(c(1:length(results)),results))
+    predictionPlot <- ggplot() + geom_point(mapping = aes(values$fecha,values$value)) + geom_line(mapping = aes(values$fecha,values$value))
     
-    predictionPlot + ggtitle("Predicción de Accidentalidad en Medellín (2019-2020)", subtitle=sprintf("Con %i Registros",length(results)))+ ylab("No. de Accidentes") + xlab("Registros")
+    predictionPlot + ggtitle("Predicción de Accidentalidad en Medellín (2019-2020)", subtitle=sprintf("Con %i Registros, %i %s",length(results), length(values$value), timeStringP))+ ylab("No. de Accidentes") + xlab("Fecha")
   })
   
 
