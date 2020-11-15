@@ -472,7 +472,6 @@ datos_2018$MES <- as.factor(datos_2018$MES)
 datos_2018$MES_NOMBRE <- months(datos_2018$FECHA)
 datos_2018$MES_NOMBRE <- as.factor(datos_2018$MES_NOMBRE)
 
-datos_t <- datos # Datos para entrenamiento, sin el 2018
 datos <- rbind(datos, datos_2018)
 
 #CREAR VARIABLE NUEVA PARA IDENTIFICAR EL NUMERO DE COMUNA 
@@ -786,35 +785,6 @@ datos_vl <- subset(datos, (PERIODO == '2018'))
 datos_tr <- subset(datos, (PERIODO != '2018'))
 ```
 
-
-```{r}
-# Datos para entrenamientos
-# Se crea la lista de valores para cada fila de 'datos_2018'
-holidays_l_2018 <- apply(datos_2018,1,function(x){
-  holiday <- subset(holidays, (year == x["PERIODO"] & day == x["DIA"] & month == x["MES"]), select=c(celebration,is_holiday))
-  
-  if(nrow(holiday) > 0){ # Se revisa que en la fecha del accidente haya un registro en el df 'holidays'
-    holiday <- holiday[1,]
-    return(c(1,holiday$is_holiday,holiday$celebration)) 
-    # Se devuelve una lista conteniendo el DIA ESPECIAL, FESTIVO y el nombre de la celebración
-  }else{
-    # Valores nulos en caso de que no se encuentre un registro
-    return(c(0,0,"Día Normal"))
-  }
-})
-
-# Se obtiene la transpuesta de la matrix, para ingresarla como dataframe
-holidays_t_2018 <- t(holidays_l_2018)
-
-holidays_df_2018 <- data.frame(holidays_t_2018)
-colnames(holidays_df_2018) <- c("DIA_ESPECIAL", "DIA_FESTIVO", "CELEBRACION")
-
-# Se agregan las columnas al DataFrame de 'datos_2018'
-datos_2018 <- cbind(datos_2018, holidays_df_2018)
-
-# En datos_2018 se encuentra nuestro set de datos de validación
-```
-
 # Se corre un modelo lineal teniendo en cuenta las variables de DIA_ESPECIAL, DIA_NOMBRE, DISENO
 ```{r}
 # Agrupación de los datos para el modelo lineal, cada registro contiene las condiciones únicas de las 4 columnas,y se agrega la variable ded 'NRO_ACC', que son el número de accidentes cuando se cumplen esas condiciones
@@ -1060,6 +1030,62 @@ sprintf("Entrenamiento, MSE: %f, MAE: %f, R2 Entrenamiento: %f, Sobredispersión
 #Guardar el modelo para su uso en la aplicación
 
 save(model, file="model.RData")
+```
+
+```{r}
+
+# Generar el set de datos que usará en producción
+start <- as.Date("2019-01-01")
+end <- as.Date("2020-12-31")
+dates19_20 <- seq.Date(from = start, to = end, by = 1)
+holidays19_20 <-read.csv("./BasesDeDatos/holidays2019-2020.csv", header = T, sep=",", encoding = "UTF-8")
+
+# Función para resolver los nombres de la semana en inglés al español
+weekdays_es <- function(weekday_en){
+  if (weekday_en == 'Monday'){
+    return("Lunes")
+  }else if(weekday_en == 'Tuesday'){
+    return("Martes")
+  }else if(weekday_en == 'Wednesday'){
+    return("Miércoles")
+  }else if(weekday_en == 'Thursday'){
+    return("Jueves")
+  }else if(weekday_en == 'Friday'){
+    return("Viernes")
+  }else if(weekday_en == 'Saturday'){
+    return("Sábado")
+  }else if(weekday_en == 'Sunday'){
+    return("Domingo")
+  }
+}
+```
+
+```{r}
+days_prod <- sapply(dates19_20,function(x_date){
+  holiday <- subset(holidays19_20, (date == format(x_date,"%Y-%m-%d")), select=c(celebration,is_holiday))
+  
+  if(nrow(holiday) > 0){ # Se revisa que en la fecha del accidente haya un registro en el df 'holidays'
+    return(c(format(x_date,"%Y-%m-%d"),1,weekdays_es(weekdays(x_date)))) 
+    # Se devuelve una lista conteniendo el DIA ESPECIAL, FESTIVO y el nombre de la celebración
+  }else{
+    # Valores nulos en caso de que no se encuentre un registro
+    return(c(format(x_date,"%Y-%m-%d"),0,weekdays_es(weekdays(x_date))))
+  }
+})
+
+# Se obtiene la transpuesta de la matrix, para ingresarla como dataframe
+
+days_prod <- t(days_prod)
+days_df <- data.frame(days_prod)
+colnames(days_df) <- c("FECHA", "DIA_FESTIVO", "DIA_NOMBRE")
+clases <- levels(datos_model$CLASE)
+```
+
+
+
+```{r}
+save(days_df, file="days_df.RData")
+save(clases, file="clases.RData")
 ```
 
 
