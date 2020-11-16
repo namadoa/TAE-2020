@@ -716,6 +716,7 @@ ggplot(clasegravedad, aes(x = reorder(CLASE, -n), y = n,
   guides(fill=guide_legend(title="Gravedad")) + 
   ggtitle("Porcentaje de Accidentalidad por clase y gravedad")
 ```
+
 ```{r}
 ggplot(clase, aes(x = reorder(CLASE, -n), y = n, 
                    fill = reorder(CLASE, n))) + 
@@ -1086,6 +1087,12 @@ clases <- levels(datos_model$CLASE)
 ```{r}
 save(days_df, file="days_df.RData")
 save(clases, file="clases.RData")
+```
+
+
+```{r}
+historicos_df <- datos %>% group_by(FECHA, CLASE) %>% count(name = "NRO_ACC")
+save(historicos_df, file="./App/historicos_df.RData")
 ```
 
 
