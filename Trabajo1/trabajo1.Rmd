@@ -1085,14 +1085,14 @@ clases <- levels(datos_model$CLASE)
 
 
 ```{r}
-save(days_df, file="days_df.RData")
-save(clases, file="clases.RData")
+save(days_df, file="days_df.RData") # Días pre-cargados para el modelo en producción
+save(clases, file="clases.RData") # Clases pre-cargadas para el shiny
 ```
 
 
 ```{r}
 historicos_df <- datos %>% group_by(FECHA, CLASE) %>% count(name = "NRO_ACC")
-save(historicos_df, file="./App/historicos_df.RData")
+save(historicos_df, file="./App/historicos_df.RData") # Datos historicos pre-cargados para el shiny
 ```
 
 
