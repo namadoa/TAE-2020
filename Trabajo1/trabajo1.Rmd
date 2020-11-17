@@ -1,6 +1,11 @@
 ---
-title: "Trabajo 1 Tae"
-author: "Camila Acosta Ramírez"
+title: "Trabajo 1 Técnicas en aprendizaje estadístico"
+author: 
+- "Camila Acosta Ramírez"
+- "Sergio Andrés Arboleda Zuluaga"
+- "Esteban Palacio Londoño"
+- "Natalia Ramírez Ossa"
+- "Carlos Alejandro Torres Albarracín"
 date: "13/10/2020"
 output: html_document
 ---
@@ -17,7 +22,16 @@ library(MLmetrics)
 library(wordcloud)
 library(gplots)
 library(R.utils)
+library(tm)
 ```
+
+## Introducción
+
+La alta accidentalidad en Medellín se está convirtiendo en un problema de salud pública (Concejo de Medellín, 2020), los accidentes de tránsito aparecen como la séptima causa de morbilidad en el planeta y más aún, ha sido considerada como la segunda causa que más genera muertes en Colombia (Sistemas y Comunicaciones FODC, s.f.). Esta “epidemia” es la primera causa de muerte de las personas menores de 40 años a escala mundial. (ARL SURA, 2020) 
+
+Gracias a los datos abiertos presentados por la Alcaldía de Medellín, se puede acceder a las bases de datos de Movilidad de forma gratuita, donde muestra los Incidentes de Tránsito Georreferenciados por la Secretaria de Movilidad de la Alcaldía de Medellín, durante un periodo de tiempo de un año especifico. Entendiéndose por accidente de tránsito a un evento, generalmente involuntario, generado al menos por un vehículo en movimiento, que causa daños a personas y bienes involucrados en él, e igualmente afecta la normal circulación de los vehículos que se movilizan por la vía o vías comprendidas en el lugar o dentro de la zona de influencia del hecho (Alcaldía de Medellín, 2020).
+
+El objetivo de este trabajo es que, a partir de técnicas en aprendizaje estadístico, se analicen, se modelen y se evalúen los datos (obtenidos como se mencionó anteriormente), para ello se realizó un análisis descriptivo y exploratorio de los datos, que permitió inferir y ver tendencias en el comportamiento de los mismos. Seguido de esto se crearon modelos estadísticos que predijeron la accidentalidad en Medellín diaria, semanal y mensual, en un periodo de tiempo de 4 años (Del año 2014 al 2017) y con el fin de identificar que los modelos se comportaran correctamente se evaluaron en los datos del año 2018. Finalmente se hizo un análisis de clasificación, donde se agruparon los diferentes barrios de la ciudad de Medellín (presentes en sus 16 comunas y 5 corregimientos) de acuerdo con su accidentalidad. 
 
 ```{r echo=FALSE}
 # Función para Calcular el R2 en Modelos lineales generalizados
@@ -25,7 +39,6 @@ custom_R2 <- function(glm){
   return((glm$null.deviance - glm$deviance)/ glm$null.deviance) 
 }
 ```
-
 
 ```{r echo=FALSE}
 datos_2014 <- read.csv("./BasesDeDatos/Incidentes_georreferenciados_2014.csv", 
@@ -534,24 +547,264 @@ datos <- cbind(datos, holidays_df)
 summary(datos)
 ```
 
-```{r}
-DIARIOS <- datos %>% group_by(CLASE, FECHA, DIA_ESPECIAL) %>% count(name = "NRO_ACC_DIA")
+## Exploración de los datos 
 
-DIASEMANA <- datos %>% group_by(PERIODO, CLASE, BARRIO, GRAVEDAD, COMUNA, NUMEROCOMUNA,
-                                DIA_NOMBRE, MES, DIA_ESPECIAL, DIA_FESTIVO,
-                                CELEBRACION) %>% count(name = "NRI_ACC_DIANOMBRE")
+Se realiza un análisis exploratorio para descubrir las principales características de la información contenida en la base de datos de accidentalidad a través de gráficos.
+
+### Tabla de datos y variables
+
+Se muestran los 10 primeros registros de una de las bases de datos obtenidas de datos abiertos de la Alcaldía de Medellín.
+
+```{r echo=FALSE}
+head(datos_2014, 10)
 ```
 
-```{r}
-SEMANAL <- datos %>% group_by(PERIODO, CLASE,BARRIO,GRAVEDAD, COMUNA,NUMEROCOMUNA, SEMANA, DIA_ESPECIAL, DIA_FESTIVO, CELEBRACION) %>% count(name = "NRO_ACC_SEMANA")
+#### Descripción de las variables
+
+La base de datos que proporciona la Alcaldía de Medellín, (Alcaldía de Medellín, 2020), inicialmente proporciona 24 variables que están conformadas así:
+
+•	**X**: Representa el mismo valor de la longitud.
+
+•	**Y**: Representa el mismo valor de la latitud.
+
+•	**OBJECTID**: Representa un valor de identificación.
+
+•	**RADICADO**: Representa un valor de identificación.
+
+•	**FECHA**: Indica la fecha (Año/Mes/Día). Para el año está entre 2014 y 2018, el mes está entre Enero y Diciembre, el día entre 1 y 31.
+
+•	**HORA**: Es la unidad de tiempo que está entre (1:00 A.M y 12:59 P.M)
+
+•	**DIA**: Es el número asignado al día, está entre el día 1 y 31 de cada mes. 
+
+•	**PERIODO**: Hace referencia al número del año está entre 2014 y 2018.
+
+•	**CLASE**: Es el tipo de accidente, tiene las siguientes categorías: 
+
+   - **Atropello**: Es el accidente donde un peatón es inicialmente impactado por un vehículo. (Prueba de ruta, s.f.)
+   
+   - **Caída Ocupante**: Esta se presenta cuando el ocupante pierde el equilibrio, ya sea al subir o bajar del vehículo en movimiento, precipitándose hacia la vía, sin que ello sea generado por choque o volcamiento. (Prueba de ruta, s.f.).
+   
+   - **Choque**: El impacto de un vehículo en movimiento contra otro u otros vehículos, estén o no en movimiento o contra un objeto fijo. (Prueba de ruta, s.f.).
+   - **Incendio**: Se produce como consecuencia de intervenciones mecánicas mal efectuadas, fallas eléctricas o mecánicas o similares, dando lugar a una conflagración o al incendio del vehículo, sin que ello sea consecuencia de un accidente previo. (Prueba de ruta, s.f.)
+   
+   - **Volcamiento**: Es el accidente en el cual las llantas de un vehículo dejan de estar en contacto con la superficie del suelo, por causas ajenas a la voluntad del conductor. Algunos de los volcamientos son producto de la maniobra que realizan los conductores antes de iniciar una frenada. (Prueba de ruta, s.f.).
+   - **Otro**: Son los accidentes que no se enmarcan dentro de las clases descritas, tales como el evento en el cual, con la llanta de un vehículo es expulsada una piedra u objeto, generando daños a otros vehículos o lesiones a las personas y otras situaciones diferentes a las expuestas en la clasificación anterior. (Prueba de ruta, s.f.).
+   
+•	**DIRECCION**:  Es la nomenclatura asignada al predio, acceso principal (se identifica con las vías que conforman la manzana). (Alcaldía de Medellín), encontramos (calles, carreras, avenidas, transversales, diagonales, entre otras).
+
+•	**DIRECCION_ENC**: Es también un sistema de ubicación, pero está expresado codificado diferente. 
+
+•	**CBML**: Código de ubicación del predio en la ciudad. Consta de 11 dígitos distribuidos en: Comuna (2 dígitos), Barrio (2 dígitos), Manzana (3 dígitos) y lote (4 dígitos). (Alcaldía de Medellín).
+
+•	**TIPO_GEOCOD**: Esta comprendida es su mayoría por una maya vial que es un conjunto de líneas que definen los ejes viales, de cada una de las vías de la ciudad. Estas líneas tienen estructurada como atributo la información de nomenclatura vial, el sentido del tránsito vehicular y su clasificación de acuerdo al tipo de tráfico que soporta. (Ideca, 2019)
+
+•	**GRAVEDAD**: Es la gravedad del accidente de tránsito, dejando a su vez las siguientes categorías:
+
+   - **Herido**: Persona queda lesionada a causa del accidente.
+   - **Muerto**: Persona que pierde la vida a causa del accidente.
+   - **Solo daños**: Son los daños materiales del vehículo a causa del accidente.
+   
+• **BARRIO**: Unidad territorial dotada con ciertas características propias y distintivas que marcan una relación de particularidad frente al conjunto de la ciudad. (Vivienda al Día, 2020). De las 16 comunas y 5 corregimientos, a continuación, se muestran los barrios por los cuales están conformados (Alcaldía de Medellín, 2020):
+
+   - Comuna 1 – Popular: Popular, San Pablo, Moscú No.2, Santo Domingo Savio No.1, El Compromiso, La Esperanza No.2, Carpinelo, Granizal, La Avanzada, Villa Guadalupe, Aldea Pablo VI, Santo Domingo Savio No.2.
+   - Comuna 2 – Santa Cruz: Moscú No.1, Santa Cruz, La Frontera, La Rosa, La Francia, Playón de Los Comuneros, Villa del Socorro, Pablo VI, Andalucía, Villa Niza, La Isla.
+   - Comuna 3 – Manrique: Manrique Oriental, Las Granjas, Santa Inés, El Raizal, El Pomar, Versalles No.1, Manrique Central No.2, Campo Valdés No.2, La Salle, Oriente, San José la Cima No.2, Versalles No.2, La Cruz, María Cano Carambolas, San José la Cima No.1, Manrique.
+   - Comuna 4 – Aranjuez: Berlín, Brasilia, Manrique Central No.1, San Isidro, Campo Valdés No.1, Sevilla, Jardín Botánico, Moravia, San Pedro, Universidad de Antioquia, Parque Norte, Miranda, Las Esmeraldas, Aranjuez, Palermo, Bermejal-Los Alamos, La Piñuela.
+   - Comuna 5 – Castilla: Terminal de Transporte, Las Brisas, Francisco Antonio Zea, Girardot, Cementerio Universal, El Progreso, Toscana, Tricentenario, Castilla, Caribe, Boyacá, Alfonso López, Florencia, Tejelo, Belalcázar, Héctor Abad Gómez, Oleoducto, Plaza de Ferias.
+   - Comuna 6 - Doce de octubre: Doce de Octubre No.2, La Esperanza, Kennedy, San Martín de Porres, Pedregal, Picacho, Doce de Octubre No.1, Picachito, El Progreso No.2, Mirador del Doce, Santander, El Triunfo.
+   - Comuna 7 – Robledo: Villa Flora, Aures No.1, Aures No.2, El Diamante, Bello Horizonte, La Pilarica, Cucaracho, Facultad de Minas U. Nacional, Pajarito, Córdoba, Universidad Nacional, Robledo, López de Mesa, San Germán, Altamira, Facultad Veterinaria y Zootecnia U.de.A., Nueva Villa de La Iguaná, Palenque, B. Cerro El Volador, Bosques de San Pablo, Olaya Herrera, Santa Margarita, Monteclaro, Fuente Clara.
+   - Comuna 8 - Villa Hermosa: San Miguel, Enciso, Las Estancias, El Pinal, Villa Hermosa, La Libertad, La Ladera, La Mansión, Sucre, Llanaditas, Villatina, Los Mangos, Villa Turbay, Trece de Noviembre, Villa Lilliam, San Antonio, La Sierra, Batallón Girardot.
+   - Comuna 9 - Buenos Aires: Barrio Caicedo, La Milagrosa, Asomadera No.2, Buenos Aires, Alejandro Echavarría, Bomboná No.2, Cataluña, Loreto, Asomadera No.1, Juan Pablo II, El Salvador, Barrios de Jesús, Gerona, Miraflores, Los Cerros El Vergel, Asomadera No.3, Ocho de Marzo.
+   - Comuna 10 - La Candelaria: Jesús Nazareno, Guayaquil, San Benito, La Candelaria, Barrio Colón, Estación Villa, Prado, San Diego, Calle Nueva, El Chagualo, Villa Nueva, Perpetuo Socorro, Boston, Corazón de Jesús, La Alpujarra, Los Ángeles, Bomboná No.1, Centro Administrativo, Hospital San Vicente de Paúl.
+   - Comuna 11 - Laureles—Estadio:  U.D. Atanasio Girardot, La Castellana, Carlos E. Restrepo, Naranjal, Florida Nueva, El Velódromo, Suramericana, San Joaquín, Los Conquistadores, Los Colores, Las Acacias, El Estadio, Bolivariana, Laureles, Lorena, Cuarta Brigada, U.P.B.
+   - Comuna 12 - La América: Calasanz Parte Alta, Barrio Cristóbal, La Floresta, La América, Santa Teresita, Ferrini, El Danubio, Campo Alegre, Santa Mónica, Santa Lucía, Los Pinos, Simón Bolívar, Calasanz.
+   - Comuna 13 - San Javier: Betania, La Pradera, El Corazón, San Javier No.2, El Pesebre, Veinte de Julio, Los Alcázares, San Javier No.1, Antonio Nariño, Las Independencias, Nuevos Conquistadores, El Salado, Belencito, Juan XXIII La Quiebra, Santa Rosa de Lima, Blanquizal, Eduardo Santos, El Socorro, Metropolitano, San Javier.
+   - Comuna 14 – Poblado: Villa Carlota, Altos del Poblado, Astorga, El Poblado, Las Lomas No.1, Manila, Los Balsos No.2, La Florida, Santa María de los Ángeles, Barrio Colombia, El Tesoro, La Aguacatala, Castropol, Los Balsos No.1, Los Naranjos, El Castillo, Alejandría, El Diamante No.2, Patio Bonito, Las Lomas No.2, San Lucas, Lalinde.
+   - Comuna 15 – Guayabal: Campo Amor, Cristo Rey, Guayabal, Parque Juan Pablo II, Santa Fé, Trinidad, Tenche, La Colina, El Rodeo.
+   - Comuna 16 – Belén: Las Mercedes, El Rincón, Altavista, Rosales, La Hondonada, San Bernardo, Belén, Fátima, Granada, La Palma, Cerro Nutibara, La Mota, Las Playas, La Gloria, Las Violetas, La Loma de Los Bernal, Diego Echavarría, El Nogal-Los Almendros, Los Alpes, Nueva Villa de Aburrá, Miravalle, Cerro Nutibara.
+   - 50 - Corregimiento San Sebastián de Palmitas: Suburbano Palmitas.
+   - 60 - Corregimiento San Cristóbal: Cabecera Urbana San Cristobal, Pedregal Alto, Corregimiento de San Cristóbal, Área de Expansión Pajarito, Pedregal Bajo, El Picacho, Área de Expansión Altos de Calasanz, Suburbano Travesias, Suburbano La Loma, Suburbano Pedregal alto, Suburbano Palma Patio, Yolombo, La Loma Oriental, Travesías, San José de la Montaña.
+   - 70 - Corregimiento de Altavista: Buga Patio Bonito, Area De Expansion Altavista, Altavista Sector Central, San Pablo, El Corazon El Morro, Aguas Frias, Suburbano Altavista, Area De Expansion Belen Rincon, La Esperanza.
+   - 80 - Corregimiento de San Antonio de Prado: Cabecera San Antonio de Prado, Área de Expansión San Antonio de Prado, La Florida, La Verde, Potrerito, La Oculta, El Vergel, Corregimiento de San Antonio de Prado, Suburbano Potrerito.
+   - 90 - Corregimiento Santa Elena: Las Palmas, Suburbano El Plan, Piedras Blancas, Ocho de Marzo, Media Luna, Suburbano El Llano, Piedras Blancas – Matasano, Piedra Gorda, Corregimiento de Santa Elena.
+   
+•	**COMUNA**: Unidad administrativa en la cual se subdivide el área urbana de una ciudad media o principal del país, que agrupa barrios o sectores determinados. (Wikipedia, 2020). En Medellín se cuenta con 16 comunas y 5 corregimientos, así (Alcaldía de Medellín, 2015):
+
+   - Comuna 1 – Popular
+   - Comuna 2 – Santa Cruz
+   - Comuna 3 - Manrique
+   - Comuna 4 – Aranjuez
+   - Comuna 5 - Castilla
+   - Comuna 6 - Doce de octubre
+   - Comuna 7 - Robledo
+   - Comuna 8 - Villa Hermosa
+   - Comuna 9 - Buenos Aires
+   - Comuna 10 - La Candelaria
+   - Comuna 11 - Laureles—Estadio
+   - Comuna 12 - La América
+   - Comuna 13 - San Javier
+   - Comuna 14 - Poblado
+   - Comuna 15 - Guayabal
+   - Comuna 16 - Belén
+   - 50 - Corregimiento San Sebastián de Palmitas
+   - 60 - Corregimiento San Cristóbal
+   - 70 - Corregimiento de Altavista
+   - 80 - Corregimiento de San Antonio de Prado
+   - 90 - Corregimiento Santa Elena
+
+•	**DISEÑO**: Es un glosario de algunos sitios donde ocurren accidentes.
+
+   - Ciclo ruta: vía o sección de la calzada destinada al tránsito de bicicletas en forma exclusiva. (Mintransporte, 2020)
+   - Tramo de vía: Zona de uso público o privado, abierta al público, destinada al transito de vehículos, personas y animales, que va de un punto a otro. (Mintransporte, 2020).
+   - Intersección: Dispositivos viales en los que dos o más carreteras se encuentran ya sea en un mismo nivelo bien en distintos, produciéndose cruces y cambios de trayectorias de los vehículos que por ellos circulan. (INVIAS , 2018).
+   - Puente: Estructura de drenaje cuya luz mayor, medida paralela al eje de la carretera, es mayor de diez metros (10 m). (INVIAS , 2018).
+   - Glorieta: intersección donde no hay cruces directos sino maniobras de entrecruzamientos y movimientos alrededor de una isleta o plazoleta central. (Mintransporte, 2020)
+   - Otro: Otros sitios que no están enmarados. 
+   - Paso Elevado: Diseñado especialmente para que se atraviese una vía por la parte superior. (Mintransporte, 2020).
+   - Paso Inferior: Diseñado especialmente para que se atraviese una vía por la parte inferior. (Mintransporte, 2020).
+   - Paso a Nivel: Intersección a un mismo nivel de una calle o carretera con una vía férrea. (Mintransporte, 2020).
+   - Vía peatonal: Zonas destinadas para el transito exclusivo de peatones. (Mintransporte, 2020).
+   - Lote o Predio: Es la característica que identifica el suelo de acuerdo al uso. (Alcaldía de Medellín).
+   - Túnel: Cavidad subterránea o subacuática que como solución vial implica una operación vehicular a cielo cerrado. (INVIAS , 2018).
+   - Pontón: Estructura de drenaje cuya luz medida paralela al eje de la carretera es menor o igual a diez metros (10m). (INVIAS , 2018).
+
+•	**DIA_NOMBRE**: Es el nombre asignado al día, así: Lunes, Martes, … , Sábado, Domingo.
+
+•	**MES**: Es el número del mes en el transcurso del año, va desde 1 hasta 12.
+
+•	**MES_NOMBRE**: Es el nombre del mes en el transcurso del año, así: Enero, Febrero, … , Noviembre, Diciembre.
+
+•	**X_MAGNAMED**: Se usa el sistema de referencia Magna Bogota Zone.
+
+•	**Y_MAGNAMED**: Se usa el sistema de referencia Magna Bogota Zone.
+
+El sistema de coordenadas geográficas es un sistema que referencia cualquier punto de la superficie terrestre y que utiliza para ello dos coordenadas angulares, latitud (norte o sur) y longitud (este u oeste), para determinar los ángulos laterales de la superficie terrestre con respecto al centro de la Tierra y alineadas con su eje de rotación. (AristaSur, 2010)
+
+•	**LONGITUD**: Se mide según los meridianos y es la distancia entre un punto del ecuador y el Meridiano de Greenwich, es medida en grados (°) que puede ir de 0° - 180° para el este (€) u oeste (W). (Significados, s.f.)
+•	**LATITUD**: Proporciona la localización de un lugar, en dirección Este u Oeste desde el meridiano de referencia 0º, o meridiano de Greenwich, expresándose en medidas angulares comprendidas desde los 0º hasta 180ºE (+180º) y 180ºW (-180º). (AristaSur, 2010)
+
+**VARIABLES ELIMINADAS**: Analizando la base de datos, se determinó la pertinencia de cada una de las variables mencionadas anteriormente y se llegó a la conclusión de eliminar las siguientes variables: 
+
+-	X, Y: Valor repetido de longitud y latitud.
+- OBJECTID, RADICADO: La identificación de un dato no es representativa para el análisis.
+- HORA: Está mal en la base de datos, solamente indica los accidentes en la hora de la mañana (AM) y tan solo 1 hora (PM), por lo tanto no era significativa.
+- DIRECCION, DIRECCION_ENC: Con los datos de longitud y latitud, se tiene la ubicación precisa para poder georreferenciar correctamente, por lo tanto no necesitamos más herramientas para esto.
+- CBML: Como es el código de ubicación del predio en la ciudad, no necesitamos más herramientas para georreferenciar 
+- TIPO_GEOCOD: Era una variable inconsistente y poco precisa, no aportaba información significativa para el análisis. 
+- X_MAGNAMED, Y_MAGNAMED: Con los datos de longitud y latitud, se tiene la ubicación precisa para poder georreferenciar correctamente, por lo tanto no necesitamos más herramientas para esto.
+
+**VARIABLES CONSIDERADAS**: Después de un análisis exhaustivo en la base de datos original, estas son las variables que finalmente conformaron la base de datos con la cual se trabajo: FECHA, DIA, PERIODO, CLASE, GRAVEDAD, BARRIO, COMUNA, DISENO, DIA_NOMBRE, MES, MES_NOMBRE,	 LONGITUD, LATITUD.
+
+**CREACIÓN DE NUEVAS VARIABLES A CONSIDERAR**:
+
+- NUMERO COMUNA: Es el número que le corresponde a la comuna, va entre 1 y 16 para todas las comunas de Medellín, para los corregimientos va entre 50 y 90.
+
+- SEMANA: Es el número que le corresponde a cada semana del año, su notación es de la siguiente manera:
+   - Semana 1: Enero 1 – Enero 7
+   - Semana 2: Enero 8 – Enero 14
+   - Semana 3: Enero 15 – Enero 21
+   - Semana 4: Enero 22 – Enero 28
+   - Semana 5: Enero 29 – Febrero 4
+   - Semana 6: Febrero 5 - Febrero 11
+   - Semana 7: Febrero 12 - Febrero 18
+   - Semana 8: Febrero 19 - Febrero 25
+   - Semana 9: Febrero 26 – Marzo 4
+   - Semana 10: Marzo 5 - Marzo 11
+   - Semana 11: Marzo 12 - Marzo 18
+   - Semana 12: Marzo 19 - Marzo 25
+   - Semana 13: Marzo 26 – Abril 1
+   - Semana 14: Abril 2 - Abril 8
+   - Semana 15: Abril 9 - Abril 15
+   - Semana 16: Abril 16 - Abril 22
+   - Semana 17: Abril 23 - Abril 29
+   - Semana 18: Abril 30 – Mayo 6
+   - Semana 19: Mayo 7 - Mayo 13
+   - Semana 20: Mayo 14 - Mayo 20
+   - Semana 21: Mayo 21 - Mayo 27
+   - Semana 22: Mayo 28 – Junio 3
+   - Semana 23: Junio 4 – Junio 10
+   - Semana 24: Junio 11 – Junio 17
+   - Semana 25: Junio 18 – Junio 24
+   - Semana 26: Junio 25 – Julio 1
+   - Semana 27: Julio 2 – Julio 8
+   - Semana 28: Julio 9 – Julio 15
+   - Semana 29: Julio 16 – Julio 22
+   - Semana 30: Julio 23 – Julio 29
+   - Semana 31: Julio 30 – Agosto 5
+   - Semana 32: Agosto 6 – Agosto 12
+   - Semana 33: Agosto 13 – Agosto 19
+   - Semana 34: Agosto 20 – Agosto 26
+   - Semana 35: Agosto 27 – Septiembre 2
+   - Semana 36: Septiembre 3 - Septiembre 9
+   - Semana 37: Septiembre 10 – Septiembre 16
+   - Semana 38: Septiembre 17 – Septiembre 23
+   - Semana 39: Septiembre 23 – Septiembre 30
+   - Semana 40: Octubre 1 – Octubre 7
+   - Semana 41: Octubre 8 – Octubre 14
+   - Semana 42: Octubre 15 – Octubre 21
+   - Semana 43: Octubre 22 – Octubre 28
+   - Semana 44: Octubre 29 – Noviembre 4
+   - Semana 45: Noviembre 5 – Noviembre 11
+   - Semana 46: Noviembre 12 – Noviembre 18
+   - Semana 47: Noviembre 19 – Noviembre 25
+   - Semana 48: Noviembre 26 – Diciembre 2 
+   - Semana 49: Diciembre 3 – Diciembre 9
+   - Semana 50: Diciembre 10 – Diciembre 16
+   - Semana 51: Diciembre 17 – Diciembre 23
+   - Semana 52 : Diciembre 24 – Diciembre 30 
+   - Semana 53 : Diciembre 31 
+   
+- DIA AÑO: Es el número del año al que le corresponde cada día, usualmente un año tiene 365 días a excepción del año bisiesto con 366 días.
+
+- DIA ESPECIAL: Es una variable categórica con 0 y 1, donde 0 representa un día normal y 1 se asocia a un día especial.
+
+- DIA FESTIVO: Es una variable categórica con 0 y 1, donde 0 representa un día cotidiano y 1 se asocia a un día festivo en Colombia.
+
+- CELEBRACION: Corresponde a los días con alguna celebración especial en Colombia, todos los días festivos son considerados días especiales, pero no necesariamente todos los días especiales corresponde a un día festivo. Se consideraron 31 celebraciones como se muestra a continuación (¿Cuando en el mundo?, s.f.): 
+   - Año Nuevo
+   - Día de los Reyes Magos
+   - Día de la Mujer
+   - Día de San José
+   - Domingo de Ramos
+   - Jueves Santo
+   - Viernes Santo
+   - Sábado Santo
+   - Domingo Santo
+   - Día del Trabajo
+   - Día de la Madre
+   - Ascensión del Señor
+   - Día del Padre
+   - Corphus Christi
+   - San Pedro y San Pablo
+   - Día de la Independencia
+   - Feria de las Flores
+   - Batalla de Boyacá
+   - La Asunción de la Virgen
+   - Día de Amor y Amistad
+   - Día de la Raza
+   - Halloween
+   - Todos los Santos
+   - Independencia de Cartagena
+   - Alborada
+   - Día de las velitas
+   - Día de la Inmaculada Concepción
+   - Víspera de Navidad
+   - Día de Navidad
+   - Fin de Año
+   - Sagrado Corazón de Jesús
+
+Finalmente, se muestra el encabezado del conjunto de datos a trabajar.
+
+```{r echo=FALSE}
+head(datos, 10)
 ```
 
-```{r}
-MENSUAL <- datos %>% group_by(CLASE, MES) %>% count(name = "NRO_ACC_MES")
-```
+#### Distribución de la accidentalidad por comunas
 
-## Análisis exploratorio
-```{r}
+Con la ayuda de un gráfico de barras, se identifica cuales son las comunas que presentan el mayor porcentaje de accidentalidad durante el periodo de estudio. 
+
+```{r include=FALSE}
 porcentaje <- function(x){
   (x*100)/208922
 }
@@ -571,16 +824,15 @@ ggplot(Comuna, aes(x = reorder(COMUNA, Porcentaje), y = Porcentaje,
   xlab("Comuna") + 
   ylab("Porcentaje [%]") + 
   ggtitle("Porcentaje de Accidentalidad por Comuna")
-
-
-
 ```
 
 Se observa que la comuna con mayor accidentalidad es La Candelaria que representa aproximadamente el 21%, las comunas Belén y Robledo cada una con $\approx$ 7%,  La América y Manrique poseen comportamientos similares cada una representa $\approx$ 4% de la población,  Doce de Octubre y Villa Hermosa presentan comportamientos similares con  $\approx$ 3% cada una, Popular y Santa Cruz representan un 1.5% de la población, finalmente el Corregimiento de San Sebastián de Palmitas representa un 0.01% lo que indica que presenta la menor cantidad de accidentes, por tanto no es representativo. 
 
+#### Distribución de la accidentalidad por barrios
 
+Se realizo un gráfico de barras con el fin de mostrar los 22 barrios que presentan la mayor accidentalidad. 
 
-```{r}
+```{r echo=FALSE}
 barrio <- datos %>% group_by(BARRIO) %>% count()
 barrio$Porcentaje <- round(porcentaje(barrio$n),2)
 barrio <- barrio %>% arrange(desc(Porcentaje), BARRIO)
@@ -598,6 +850,7 @@ ggplot(topbarrio, aes(x = reorder(BARRIO, Porcentaje), y = Porcentaje,
 En los registros del conjunto de datos existen 307 barrios, para la construcción de este gráfico solo se consideraron los 22 barrios con más accidentalidad, ya que los restantes (285) no llegan a representar el 1% del total de accidentes que se presenta en la ciudad de Medellín. 
 El barrio la candelaria presenta el mayor porcentaje de accidentalidad en todos los barrios de Medellín; Barrio Colón y San Benito presentan $\approx$ 1.6% de accidentalidad cada uno; Terminal de Transporte y Villa Nueva presentan comportamientos similares ya que cada uno representa el 1.4% del total de la población; Corazón de Jesús, Belén y Guayabal representan 1.2% cada uno; finalmente los barrios Villa Carlota y Chagualo son $\approx$ 1%. 
 
+#### Distribución de la accidentalidad por mes y año
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 conteo <- datos %>% group_by(PERIODO, MES) %>% count()
@@ -632,6 +885,8 @@ heatmap.2(t(heat),
 
 En el mes de Enero se presenta la menor cantidad de accidentes para todos los años considerados, el mes de Marzo presento una alta accidentalidad unicamente en el año 2014, en general el mes de Agosto es el mes con mayor accidentes pero fue aún más grave para los años 2016 y 2017, finalmente se observa que el mes de Octubre presento gran acidentalidad para el año 2016, los meses de Junio y Noviembre presentan comportamientos semejantes, el año con mayor cantidad de accidentes es 2016 y el año de menor accidentalidad fue 2018.
 
+#### Distribución de la accidentalidad por mes y día
+
 ```{r echo=FALSE}
 Mes <- datos %>% group_by(MES_NOMBRE) %>% count()
 Mes$Porcentaje <- round(porcentaje(Mes$n),2)
@@ -648,12 +903,15 @@ ggplot(Mes, aes(x = reorder(MES_NOMBRE, Porcentaje), y = Porcentaje,
 
 El mes que presenta mayor accidentalidad es Agosto con 8.93% cabe resaltar que este mes se derrolla la tradicional Feria de Flores de Medellín, los meses Septiembre, Mayo, Marzo, Julio y Octubre tienen un comportamiento muy similar con $\approx$ 8.6% cada uno, Noviembre, Febrero y Junio también se comportan de manera semejante con $\approx$ 8% cda uno; finalmente el mes de Enero presenta la menor cantidad de accidentes, esto puede deberse a que la mayoría de personas se encuentran fuera de la ciudad por vacaciones. 
 
+
 ```{r echo=FALSE, fig.align='center'}
 knitr::include_graphics("Graph.svg")
 ```
 se confirma que las primeras semanas del año presentan la menor accidentalidad, los días 10 y 14 de Marzo son los más accidentados, los días 30 y 31 de Octubre se presenta gran cantodad de accidentes, entre los días 11 a 18 de Septimebre también se presenta una cantidad alta de incidentes viales esto puede deberse a las celebraciones de amor y amistad, desde el 16 al 23 de Diciembre hay fuerte accidentalidad esto se corrobora con el gráfico semanal.
 
-```{r}
+#### Distribución de la accidentalidad por semana
+
+```{r echo=FALSE}
 semana <- datos %>% group_by(SEMANA) %>% count()
 semana$Porcentaje <- round(porcentaje(semana$n),2)
 semana <- semana%>% arrange(desc(Porcentaje), SEMANA)
@@ -671,7 +929,10 @@ ggplot(semana, aes(x = reorder(SEMANA, Porcentaje), y = Porcentaje,
 
 La semana 31 que va desde el 29 Julio al 05 de Agosto posee la mayor accidentalidad esto puede deberse a Feria de Flores; sigue la semana 51 comprendida entre el 17 y 23 de Diciembre, la accidentalidad presentada en esta semana puede deberse a las celebraciones de este mes, finalmente se observa que la dos primeras semanas del año son las menos accidentadas. Para este análisis se decidio juntar las semanas 52 y 53 ya que esta última solo comprendia dos días.
 
-```{r}
+#### Distribución de la accidentalidad por día de la semana
+
+```{r echo=FALSE}
+mis.colores <- colorRampPalette(c("blue", "red"))
 Diasemana <- datos %>% group_by(DIA_NOMBRE) %>% count()
 Diasemana$Porcentaje <- round(porcentaje(Diasemana$n),2)
 Diasemana <- Diasemana %>% arrange(desc(Porcentaje), DIA_NOMBRE)
@@ -687,7 +948,9 @@ ggplot(Diasemana, aes(x = reorder(DIA_NOMBRE, Porcentaje), y = Porcentaje,
 
 Los días Viernes y Martes se presenta la mayor cantidad de accidentes, para el día Viernes esto puede ser ocasionado por el inicio del fin de semana, repecto al día Martes se presenta un comportamiento poco esperado, se puede presentar por múltiples razones algunas de ellas los días festivos y el aforo vehicular por día. El Domingo se presenta 9.5% de accidentes, el menor de todos se siguiere que esto sucede por ser el día de descanso de la mayoría de las personas. 
 
-```{r}
+#### Distribución de la accidentalidad por clase
+
+```{r echo=FALSE}
 clase <- datos %>% group_by(CLASE) %>% count()
 clase$Porcentaje <- round(porcentaje(clase$n),2)
 clase <- clase %>% arrange(desc(Porcentaje), CLASE)
@@ -717,19 +980,12 @@ ggplot(clasegravedad, aes(x = reorder(CLASE, -n), y = n,
   ggtitle("Porcentaje de Accidentalidad por clase y gravedad")
 ```
 
-```{r}
-ggplot(clase, aes(x = reorder(CLASE, -n), y = n, 
-                   fill = reorder(CLASE, n))) + 
-  geom_bar(stat="identity", show.legend = F) + 
-  scale_fill_manual(values=mis.colores(6)) + 
-  xlab("Clase del accidente") + 
-  ylab("Porcentaje [%]") + 
-  ggtitle("Porcentaje de Accidentalidad por clase")
-```
+El tipo de accidente Choque en su gran mayoría deja como consecuencia Solo daños alrededor de un 70%, el 30% restante corresponde a Heridos; la clase Atropello y Caída Ocupante en su gran mayoría dejan Heridos con un porcentaje muy bajo de Muertes; respecto a Volcamiento y Otro.
 
-El tipo de accidente Choque en su gran mayoría deja como consecuencia Solo daños alrededor de un 70%, el 30% restante corresponde a Heridos; la clase Atropello y Caída Ocupante en su gran mayoría dejan Heridos con un porcentaje muy bajo de Muertes; respecto a Volcamiento y Otro 
+#### Distribución de la accidentalidad por diseño de vía
 
-```{r eval=FALSE, include=FALSE}
+```{r echo=FALSE}
+mis.colores <- colorRampPalette(c("blue", "red"))
 diseñovia <- datos %>% group_by(DISENO) %>% count()
 diseñovia$Porcentaje <- round(porcentaje(diseñovia$n),2)
 diseñovia <- diseñovia %>% arrange(desc(Porcentaje), DISENO)
@@ -742,7 +998,7 @@ ggplot(diseñovia, aes(x = reorder(DISENO, Porcentaje), y = Porcentaje,
   ylab("Porcentaje [%]") + 
   ggtitle("Porcentaje de Accidentalidad por diseño de la vía")
 ```
-La gran parte de los accidentes en la ciudad de Medellín ocurren en Tramo de Via e Intersecciones, algo que es de esperarse ya que estas Intersecciones son de alta preligrosidad. 
+La gran parte de los accidentes en la ciudad de Medellín ocurren en Tramo de Via e Intersecciones, algo que es de esperarse ya que estas Intersecciones son de alta preligrosidad.
 
 ## Datos históricos
 
@@ -750,12 +1006,11 @@ La gran parte de los accidentes en la ciudad de Medellín ocurren en Tramo de Vi
 historicos <- datos %>% group_by(PERIODO, MES_NOMBRE, MES, CLASE) %>% 
   count() %>% mutate(MES=as.integer(MES))
 
-
-data2014 <- historicos[lubridate::year(historicos$FECHA) %in% c(2014), ]
-data2015 <- historicos[lubridate::year(historicos$FECHA) %in% c(2015), ]
-data2016 <- historicos[lubridate::year(historicos$FECHA) %in% c(2016), ]
-data2017 <- historicos[lubridate::year(historicos$FECHA) %in% c(2017), ]
-data2018 <- historicos[lubridate::year(historicos$FECHA) %in% c(2018), ]
+data2014 <- historicos[historicos$PERIODO %in% c(2014), ]
+data2015 <- historicos[historicos$PERIODO %in% c(2015), ]
+data2016 <- historicos[historicos$PERIODO %in% c(2016), ]
+data2017 <- historicos[historicos$PERIODO %in% c(2017), ]
+data2018 <- historicos[historicos$PERIODO %in% c(2018), ]
 ```
 
 ```{r}
@@ -770,7 +1025,6 @@ for (Clase in unique(historicos$CLASE)) {
 }
 
 ```
-
 
 ## wordcloud
 ```{r}
@@ -1301,7 +1555,6 @@ res = pam(dis, 2)  #Según el método de la silueta el mejor k es 2, sin embargo
 sil = silhouette(res$clustering, dis)
 plot(sil)
 ```
-
 
 
 
