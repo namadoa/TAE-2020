@@ -1,5 +1,6 @@
 library(shiny)
 library(ggplot2)
+library(leaflet)
 
 Sys.setlocale(locale="spanish") # Idioma en Español para windows
 Sys.setlocale(locale="es") # Idioma en Español para linux
@@ -7,6 +8,7 @@ load("./model.RData") # Modelo para predecir
 load("./days_df.RData") # Dataframe de días pre-calculados para el modelo 
 load("./clases.RData") # Clases precargadas, usadas en el modelo
 load("./historicos_df.RData") # Datos históricos
+load("./mapaClusters.RData") # Mapa de los clusters
 
 # Función para obtener la fecha final
 resolveEnd <- function(dateStart, timeUnit, timeWindow){
@@ -144,15 +146,9 @@ ui <- fluidPage(
     # Agrupamiento
     tabPanel(
       title = "Agrupamiento",
-      sidebarPanel(
-        # Selección de Barrio
-        selectInput('neighborhood',
-                    label="Barrio",
-                    choices=list("Tipo 1" =1, "Tipo 2" = 2), 
-                    selected = 1)
-      ),
-      # TODO: Datos de barrios
-      mainPanel()
+      hr(),
+      helpText("Los “Barrios/Veredas sin información” son Barrios o Veredas de los cuales no hay datos en las bases de datos."),
+      leafletOutput("mapa")
     )
   )
 
@@ -229,6 +225,10 @@ server <- function(input, output, session) {
     })
     histPlot <- ggplot() + geom_point(mapping = aes(newValues$fecha, newValues$value)) + geom_line(mapping = aes(newValues$fecha, newValues$value))
     histPlot + ggtitle(sprintf("Número de accidentes de tipo %s por %s", accClass, timeString)) + xlab("Fecha") + ylab("Número de Accidentes")
+  })
+  
+  output$mapa <- renderLeaflet({ 
+    mapaClusters
   })
 }
 
