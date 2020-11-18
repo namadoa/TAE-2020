@@ -127,7 +127,7 @@ ui <- fluidPage(
         sliderInput('timeWindow',
                     label="Ventana de tiempo",
                     min=1,
-                    max=50,
+                    max=365,
                     value=7
         ),
         # Tipo de Accidente
