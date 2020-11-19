@@ -1362,7 +1362,7 @@ days_prod <- sapply(dates19_20,function(x_date){
 
 days_prod <- t(days_prod)
 days_df <- data.frame(days_prod)
-colnames(days_df) <- c("FECHA", "DIA_FESTIVO")
+colnames(days_df) <- c("FECHA", "DIA_FESTIVO", "DIA_NOMBRE")
 ```
 
 ```{r echo=FALSE}

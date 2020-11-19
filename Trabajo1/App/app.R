@@ -10,9 +10,7 @@ load("./clases.RData") # Clases precargadas, usadas en el modelo
 load("./historicos_df.RData") # Datos históricos
 load("./mapaClusters.RData") # Mapa de los clusters
 
-clases_p <- clases[- 4]
-print(clases_p)
-print(clases)
+clases_p <- clases
 # Función para obtener la fecha final
 resolveEnd <- function(dateStart, timeUnit, timeWindow){
   daysToSum <- timeUnit * timeWindow
@@ -67,6 +65,7 @@ ui <- fluidPage(
   
   # Título de la App
   titlePanel("Accidentalidad en Medellín"),
+  fixedPanel(helpText("Realizado por:Camila Acosta Ramírez, Nicolas Amado Aristizabal, Sergio Andrés Arboleda Zuluaga, Esteban Palacio Londoño, Natalia Ramírez Ossa, Carlos Alejandro Torres Albarracín"),bottom = 5,left=5),
   
   # Tres filas, para Datos Históricos, Predicción y Agrupamiento
   tabsetPanel(
