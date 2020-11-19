@@ -10,6 +10,9 @@ load("./clases.RData") # Clases precargadas, usadas en el modelo
 load("./historicos_df.RData") # Datos históricos
 load("./mapaClusters.RData") # Mapa de los clusters
 
+clases_p <- clases[- 4]
+print(clases_p)
+print(clases)
 # Función para obtener la fecha final
 resolveEnd <- function(dateStart, timeUnit, timeWindow){
   daysToSum <- timeUnit * timeWindow
@@ -133,7 +136,7 @@ ui <- fluidPage(
         # Tipo de Accidente
         selectInput('accidentClass',
                     label="Tipo de Accidente",
-                    choices=clases,
+                    choices=clases_p,
                     selected = "Atropello")
         
       ),

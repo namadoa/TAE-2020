@@ -41,6 +41,10 @@ El objetivo de este trabajo es que, a partir de técnicas en aprendizaje estadí
 custom_R2 <- function(glm){
   return((glm$null.deviance - glm$deviance)/ glm$null.deviance) 
 }
+
+R2pseudo <- function (modelo) {
+   R2pseudo <- (modelo$null.deviance - modelo$deviance)/modelo$null.deviance
+}
 ```
 
 ```{r echo=FALSE}
@@ -1169,10 +1173,6 @@ lm4_tr_1 <- lm4_tr[,-4]
 predicted <- round(predict(lm4, newdata=lm4_tr_1, type="response")) # Se usa type= 'response' por ser una regresion logística
 actual <- lm4_tr$NRO_ACC
 
-R2pseudo <- function (modelo) {
-   R2pseudo <- (modelo$null.deviance - modelo$deviance)/modelo$null.deviance
-}
-
 lm4_mse <- MSE(predicted, actual) # MSE
 lm4_mae <- MAE(predicted, actual) # MAE
 lm4_r2pseudo <- R2pseudo(lm4)
@@ -1235,7 +1235,7 @@ lm5_tmae <-  MAE(y_train, y_actual)
 lm5_rel <- lm5$deviance/lm5$df.residual # Se obtiene la sobredispersion
 sprintf("MSE: %f, MAE: %f, Sobredispersión: %f", lm5_tmse, lm5_tmae,lm5_rel)
 ```
-La diferencia entre el MSE de la predicción para los datos de entrenamiento y validación, fue de $\approx(1.87\%)$ y al estar debajo del 15%, no habría sobreajuste. Respecto a la varianza explicada por el modelo, resulta ser bastante buena ($\approx(94\%)$) y la sobredispersión que se definió como la proporción entre la desviación nula y la desviación de los residuales, se encuentra cercana a 1, indicando un ajuste razonable del modelo. Aún así, sigue existiendo una preocupación con el elevado valor del MSE.
+La diferencia entre el MSE de la predicción para los datos de entrenamiento y validación, fue de $\approx(1.87\%)$ y al estar debajo del 15%, no habría sobreajuste. Respecto a la varianza explicada por el modelo, resulta ser bastante buena ($\approx(94\%)$) y la sobredispersión que se definió como la proporción entre la desviación nula y la desviación de los residuales, se encuentra cercana a 1, indicando un ajuste razonable del modelo. Se elige este modelo al cumplir con todas las condiciones requeridas.
 
 ## Modelo generalizado | Adición variable **comuna**
 
@@ -1277,14 +1277,15 @@ sprintf("MSE: %f, MAE: %f, Sobredispersión: %f", lm6_tmse, lm6_tmae,lm6_rel)
 ```
 La diferencia entre el MSE de la predicción para los datos de entrenamiento y validación, fue de $\approx(0.82\%)$ que al estar debajo del 15%, no indicaría un sobreajuste.
 
-A manera de conclusión, al no encontrar mejores modelos que este, con una relación MSE-R2 superior, se decidió trabajar la predicción de accidentes con este modelo líneal generalizado, haciendo uso de las covariables (comuna, clase, dia_festivo y dia_nombre).
+A manera de conclusión, este modelo presenta el mejor MSE, pero aún así no es modelo viable ya que nos posible obtener la variable COMUNA para realizar un predicción sobre los requerimientos especificados
 
 
 
 ```{r echo=FALSE}
 #Guardar el modelo para su uso en la aplicación
-
-save(lm6, file="model.RData")
+datos_model <- datos_lm5
+model <- lm5
+save(model, file="./App/model.RData")
 ```
 
 
@@ -1335,14 +1336,17 @@ days_prod <- sapply(dates19_20,function(x_date){
 days_prod <- t(days_prod)
 days_df <- data.frame(days_prod)
 colnames(days_df) <- c("FECHA", "DIA_FESTIVO", "DIA_NOMBRE")
+```
+
+```{r}
 clases <- levels(datos_model$CLASE)
+save(clases, file="./App/clases.RData") # Clases pre-cargadas para el shiny
 ```
 
 
 
 ```{r echo=FALSE}
-save(days_df, file="days_df.RData") # Días pre-cargados para el modelo en producción
-save(clases, file="clases.RData") # Clases pre-cargadas para el shiny
+save(days_df, file="./App/days_df.RData") # Días pre-cargados para el modelo en producción
 ```
 
 
