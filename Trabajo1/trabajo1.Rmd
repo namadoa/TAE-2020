@@ -23,6 +23,9 @@ library(wordcloud)
 library(gplots)
 library(R.utils)
 library(tm)
+library(DescTools)
+library(raster)
+library(mclust)
 ```
 
 ## Introducción
@@ -544,7 +547,7 @@ colnames(holidays_df) <- c("DIA_ESPECIAL", "DIA_FESTIVO", "CELEBRACION")
 # Se agregan las columnas al DataFrame de 'datos'
 datos$SEMANA <- str_replace_all(datos$SEMANA, "53", "52")
 datos <- cbind(datos, holidays_df)
-summary(datos)
+
 ```
 
 ## Exploración de los datos 
@@ -802,6 +805,12 @@ head(datos, 10)
 
 #### Distribución de la accidentalidad por comunas
 
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+datosWordC <- str_replace_all(datos$COMUNA, "\\s", "-")
+wordcloud(datosWordC,colors=brewer.pal(6,"Dark2"),random.order=FALSE)
+```
+"ESPERAME UN SEGUNDO"<------------------
 Con la ayuda de un gráfico de barras, se identifica cuales son las comunas que presentan el mayor porcentaje de accidentalidad durante el periodo de estudio. 
 
 ```{r include=FALSE}
@@ -1026,34 +1035,63 @@ for (Clase in unique(historicos$CLASE)) {
 
 ```
 
-## wordcloud
-```{r}
-datosWordC <- str_replace_all(datos$COMUNA, "\\s", "-")
-wordcloud(datosWordC,colors=brewer.pal(6,"Dark2"),random.order=FALSE)
-```
 
-# Planteamiento de modelos
-## Hasta acá datos tiene los datos de los años 2014-2017, lo que se usará para el entrenamiento, y se usaran los datos de 2018 para validación
 
-```{r}
-datos_vl <- subset(datos, (PERIODO == '2018'))
+## Planteamiento de modélos | Predicción de accidentalidad.
+
+Para la etapa de entrenamiento se hizo uso del registro historico de accidentes, desde el año 2014, hasta el año 2017 y para la etapa de validación se hizo uso de los registros del año 2018. Esto se realizó de esta forma y no con un método aleatorio, debido a que el conjunto de datos posee una estructura temporal.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+datos_vl <- subset(datos, (PERIODO == '2018')) 
 datos_tr <- subset(datos, (PERIODO != '2018'))
 ```
 
-# Se corre un modelo lineal teniendo en cuenta las variables de DIA_ESPECIAL, DIA_NOMBRE, DISENO
+Se decide omitir la categoría incendio de la variable **clase** para la etapa de entrenamiento, ya que, como se describió previamente en el análisis descriptivo, el número de registros es casi nulo.
+
+```{r}
+datos_tr <- datos[datos$CLASE!="Incendio", ]
+datos_tr$CLASE <- as.factor(as.character(datos_tr$CLASE))
+datos_vl <- subset(datos_tr, (PERIODO == '2018'))
+datos_tr <- subset(datos_tr, (PERIODO != '2018'))
+```
+
+## Modelo líneal 
+
+Inicialmente se hizo uso de un modélo lineal, con el fin de obtener las variables más significativas, para su realización se tuvieron en cuenta las variables, dia_nombre, dia_especial y diseño. Sin embargo, se observó que la significancia de la variable "diseño" es muy baja, por lo que decide eliminarse. 
 ```{r}
 # Agrupación de los datos para el modelo lineal, cada registro contiene las condiciones únicas de las 4 columnas,y se agrega la variable ded 'NRO_ACC', que son el número de accidentes cuando se cumplen esas condiciones
 datos_lm1 <- datos_tr %>% group_by(FECHA, DIA_ESPECIAL, DIA_NOMBRE, DISENO) %>% count(name = "NRO_ACC") 
 lm1 <- lm(NRO_ACC ~ DIA_ESPECIAL+DIA_NOMBRE+DISENO, data = datos_lm1) # Modelo lineal
-
+promedio <- mean(datos_lm1$NRO_ACC)
+TSS <- sum((datos_lm1$NRO_ACC - promedio)^2)
+r2 <- 1-RSS/TSS
+TSS
+RSS <- RSS(lm1)
+RSS
 summary(lm1) # Se observa que el modelo lineal tiene un buen ajuste de R-cuadrado
 ```
-# El análisis de significancia obtenido por el 'summary' sugiere que las variables DIA_ESPECIAL, y DIA_NOMBRE son de mucha
-# significancia
+
+Se realizó el cálculo de la desviación estandar de los residuales (MSE) y del $R^2$, para "cuantificar" la calidad del modelo. Sin embargo, el modelo presenta un alto MSE (102.13), lo que daría lugar a una alta variabilidad en las predicciones, esta variable viene a jugar el papel de una función de riesgo, correspondiente al valor esperado de la pérdida de los errores cuadráticos. Sin embargo, la variabilidad explicada por el modelo llega a ser $\approx(91\%)$. En este modelo un alto $R^2$ y un alto MSE, podría estar asociado a una alta variabilidad inherente de los datos, lo que se puede validar con el calculo del RSS(791500.6) del modelo lineal y el TSS(8869272) de los datos de entrenamiento.
+
+### Predicción y evaluación para los datos de entrenamiento.
+```{r}
+
+lm1_data <- datos_tr %>% group_by(FECHA, DIA_ESPECIAL, DIA_NOMBRE, DISENO) %>% count(name = "NRO_ACC")
+lm1_tr <- lm1_data[,-c(5)]
+
+predicted <- round(predict(lm1, newdata=lm1_tr))
+actual <- lm1_data$NRO_ACC
+
+lm1_mse <- MSE(predicted, actual) # MSE
+lm1_mae <- MAE(predicted, actual) # MAE
+lm1_r2 <- R2_Score(predicted, actual) # R2
+
+sprintf("MSE: %f, MAE: %f, R2: %f", lm1_mse, lm1_mae, lm1_r2)
+lm1_mse
+```
+### Predicción y evaluación para los datos de validación.
 
 ```{r}
-# Se crea el conjunto de datos para la validación
-
 lm1_2018 <- datos_vl %>% group_by(FECHA, DIA_ESPECIAL, DIA_NOMBRE, DISENO) %>% count(name = "NRO_ACC")
 
 
@@ -1066,19 +1104,34 @@ lm1_r2 <- R2_Score(predicted, actual) # R2
 
 sprintf("MSE: %f, MAE: %f, R2: %f", lm1_mse, lm1_mae, lm1_r2)
 ```
-# El primer modelo tiene buenas métricas, a excepción de la diferencia entre los R2 que indica que existe un sobre ajuste, pero #tiene un problema al tener la variable DISENO, ya que no tenemos una forma fácil de obtener esta variable para la predicción
+La diferencia del MSE entre los datos de entrenamiento y validación es del 39.9%, que al ser mayor que el 15% nos indicaría un posible sobreajuste, que de hecho es corroborado con el $R^2$, ya que este disminuye en casi un 20% para los datos de validación.
+
+
+## Modelo líneal 2 | Disminución y cambio de variables.
 
 ```{r}
-# Modelo a partir del anterior teniendo en cuenta el DIA_FESTIVO y no DÍA ESPECIAL
-datos_lm2 <- datos_tr %>% group_by(FECHA,DIA_FESTIVO, DIA_NOMBRE, DISENO) %>% count(name = "NRO_ACC")
-lm2 <- lm(NRO_ACC ~ DIA_FESTIVO+DIA_NOMBRE+DISENO, data = datos_lm2)
-
+datos_lm2 <- datos_tr %>% group_by(FECHA,DIA_FESTIVO, DIA_NOMBRE) %>% count(name = "NRO_ACC")
+lm2 <- lm(NRO_ACC ~ DIA_FESTIVO+DIA_NOMBRE, data = datos_lm2)
 summary(lm2)
-
 ```
 
+### Predicción y evaluación para los datos de entrenamiento.
 ```{r}
-lm2_2018 <- datos_vl %>% group_by(FECHA,DIA_FESTIVO, DIA_NOMBRE, DISENO) %>% count(name = "NRO_ACC")
+lm2_tr <- datos_tr %>% group_by(FECHA,DIA_FESTIVO, DIA_NOMBRE) %>% count(name = "NRO_ACC")
+
+predicted <- round(predict(lm2, newdata=lm2_tr))
+actual <- lm2_tr$NRO_ACC
+
+lm2_mse <- MSE(predicted, actual) # MSE
+lm2_mae <- MAE(predicted, actual) # MAE
+lm2_r2 <- R2_Score(predicted, actual) # R2
+
+sprintf("MSE: %f, MAE: %f, R2: %f", lm2_mse, lm2_mae, lm2_r2)
+```
+
+### Predicción y evaluación para los datos de validación.
+```{r}
+lm2_2018 <- datos_vl %>% group_by(FECHA,DIA_FESTIVO, DIA_NOMBRE) %>% count(name = "NRO_ACC")
 
 predicted <- round(predict(lm2, newdata=lm2_2018))
 actual <- lm2_2018$NRO_ACC
@@ -1089,36 +1142,45 @@ lm2_r2 <- R2_Score(predicted, actual) # R2
 
 sprintf("MSE: %f, MAE: %f, R2: %f", lm2_mse, lm2_mae, lm2_r2)
 ```
+Para la realización de este segundo modelo, se quito la variable **diseño** y se cambio la variable **dia_especial** por **dia_festivo**, sin embargo, no se obtuvieron resultados positivos, ya que el $R^2$ disminuyó notablemente y el MSE aumentó, indicandonos una alta variabilidad en las predicciones y una baja variabilidad explicada por el modelo. Así, se decide realizar un modelo lineal generalizado.
 
-```{r}
-# Modelo lineal sin la variable DISENO
-datos_lm3 <- datos_tr %>% group_by(FECHA,DIA_FESTIVO, DIA_NOMBRE) %>% count(name = "NRO_ACC")
-lm3 <- lm(NRO_ACC ~ DIA_FESTIVO+DIA_NOMBRE, data = datos_lm3)
 
-summary(lm3)
-```
-# Se puede notar que el R2 Ajustado baja drásticamente al quitar la variable DISENO
+## Modelo líneal generalizado
 
-```{r}
-lm3_2018 <- datos_vl %>% group_by(FECHA,DIA_FESTIVO, DIA_NOMBRE) %>% count(name = "NRO_ACC")
+Se realizó un modelo líneal generalizado de la familia poisson, con el fin de generar un recuento del número de accidentes, iniciando con las variables **dia_festivo** y  **dia_nombre**.
 
-predicted <- round(predict(lm3, newdata=lm3_2018))
-actual <- lm3_2018$NRO_ACC
+En el modelo **glm** se usa habitualmente el logaritmo de la media para la función link, de modo que el modelo log-lineal con una variable explicativa X se puede expresar como $\log(\mu) = \alpha + \beta*x$, de modo que $\mu = e^{\alpha + \beta*x} = e^{\alpha}*(e^{\beta})^{x}$
 
-lm3_mse <- MSE(predicted, actual) # MSE
-lm3_mae <- MAE(predicted, actual) # MAE
-lm3_r2 <- R2_Score(predicted, actual) # R2
+En este caso se hizo uso de la famillia poisson, debido a que la variable respuesta funciona como un recuento, en este caso de accidentes. Cabe aclarar, que existen otro tipo de familias y funciones de enlace, que son usadas dependiendo del tipo de variable respuesta.
 
-sprintf("MSE: %f, MAE: %f, R2: %f", lm3_mse, lm3_mae, lm3_r2)
-```
-# Al quitar la variable las métricas de validación también empeoran
 
-# Se intenta ahora con un modelo lineal generalizado, considerando las variables DIA_NOMBRE, DIA_FESTIVO 
 ```{r}
 datos_lm4 <- datos_tr %>% group_by(FECHA,DIA_FESTIVO, DIA_NOMBRE) %>% count(name = "NRO_ACC")
 lm4 <- glm(NRO_ACC ~ DIA_FESTIVO+DIA_NOMBRE, family = "poisson", data = datos_lm4) # Modelo lineal generalizado, con familia poisson
 summary(lm4)
 ```
+
+
+### Predicción y evaluación para los datos de validación.
+
+```{r}
+lm4_tr <- datos_tr %>% group_by(FECHA,DIA_FESTIVO, DIA_NOMBRE) %>% count(name = "NRO_ACC")
+lm4_tr_1 <- lm4_tr[,-4]
+predicted <- round(predict(lm4, newdata=lm4_tr_1, type="response")) # Se usa type= 'response' por ser una regresion logística
+actual <- lm4_tr$NRO_ACC
+
+R2pseudo <- function (modelo) {
+   R2pseudo <- (modelo$null.deviance - modelo$deviance)/modelo$null.deviance
+}
+
+lm4_mse <- MSE(predicted, actual) # MSE
+lm4_mae <- MAE(predicted, actual) # MAE
+lm4_r2pseudo <- R2pseudo(lm4)
+sprintf("MSE: %f, MAE: %f, Pseudo R2: %f", lm4_mse, lm4_mae, lm4_r2pseudo)
+```
+
+
+### Predicción y evaluación para los datos de validación.
 
 ```{r}
 lm4_2018 <- datos_vl %>% group_by(FECHA,DIA_FESTIVO, DIA_NOMBRE) %>% count(name = "NRO_ACC")
@@ -1128,166 +1190,106 @@ actual <- lm4_2018$NRO_ACC
 
 lm4_mse <- MSE(predicted, actual) # MSE
 lm4_mae <- MAE(predicted, actual) # MAE
-lm4_r2 <- R2_Score(predicted, actual) # Pseudo R2
 
-sprintf("MSE: %f, MAE: %f, Pseudo R2: %f", lm4_mse, lm4_mae, lm4_r2)
+sprintf("MSE: %f, MAE: %f", lm4_mse, lm4_mae)
 ```
-# El anterior consituye un modelo logístico similar al modelo lineal # 3, a partir de este se ira puliendo
-# Se agrega la variable clase al siguiente modelo, ya que es necesario predecir el número de accidentes según el tipo
-# Según la salida obtenida, todas las variables son significantes.
+En este caso, se quizó iniciar con estas variables en base a su alta significancia obtenida en modelos previos, sin embargo, es claro que aunque llegan a explicar $\approx(60%)$ de la variabilidad del modelo, sigue siendo un modelo muy regular, por otro lado, la variabilidad de las predicciones es muy alta, se obtuvo un MSE de 273.013.
+
+La diferencia entre el MSE de la predicción para los datos de entrenamiento y validación, fue de $\approx(11.83\%)$, esto es bueno, en el sentido de que no hay un sobreajuste, lo cual se evidenció desde un principio en el pseudo-R2 del modelo para los datos de entrenamiento. Aún asi, es claro que el modelo sigue siendo bastante regular, por lo que se decide hacer uso de la variable **clase**.
+
+
+## Modelo líneal generalizado | Adición de la variable clase. 
+
+
 ```{r}
-# Modelo linealk generalizado, agregando la variable Clase
-datos_lm5 <- datos_tr %>% group_by(FECHA,DIA_FESTIVO, DIA_NOMBRE,CLASE) %>% count(name = "NRO_ACC")
+datos_lm5 <- datos_tr %>% group_by(FECHA, DIA_FESTIVO, DIA_NOMBRE, CLASE) %>% count(name = "NRO_ACC")
+
 lm5 <- glm(NRO_ACC ~ DIA_FESTIVO+DIA_NOMBRE+CLASE, family = "poisson", data = datos_lm5)
 summary(lm5)
 ```
 
+
+### Predicción y evaluación para los datos de entrenamiento.
+
 ```{r}
-# Análisis sobre los coeficientes
-exp_c <- exp(lm5$coefficients)
-exp_c
-
-# Los días Festivos tienen aproximadamente 0.56 veces el número promedio de accidentes de un día normal
-# El número promedio de Accidentes de Los días Jueves es aproximadamente 1.59 veces el número de accidentes de un Domingo
-# El número promedio de Accidentes de Los días Lunes es aproximadamente 1.63 veces el número de accidentes de un Domingo
-# El número promedio de Accidentes de Los días Martes es aproximadamente 1.62 veces el número de accidentes de un Domingo
-# El número promedio de Accidentes de Los días Miércoles es aproximadamente 1.58 veces el número de accidentes de un Domingo
-# El número promedio de Accidentes de Los días Sábado es aproximadamente 1.49 veces el número de accidentes de un Domingo
-# El número promedio de Accidentes de Los días Viernes es aproximadamente 1.49 veces el número de accidentes de un Domingo
-# El número promedio de Accidentes que son 'Caída Ocupante' es aproximadamente 0.87 veces el número de accidentes que son 'Atropello'
-# El número promedio de Accidentes que son 'Choque' es aproximadamente 6.62 veces el número de accidentes que son 'Atropello'
-# El número promedio de Accidentes que son 'Incendio' es aproximadamente 0.086 veces el número de accidentes que son 'Atropello'
-# El número promedio de Accidentes que son 'Volcamiento' es aproximadamente 0.34 veces el número de accidentes que son 'Atropello'
-# El número promedio de Accidentes que son 'Otro' es aproximadamente 1.07 veces el número de accidentes que son 'Atropello'
-
-```
-
-
-# El modelo se comporta bien porque:
-# - El R2 de Entrenamiento, calculado con la función 'custom_R2' tiene un buen valor, que significa que
-#   el modelo explica el 93% de la variabilidad del número de accidentes por día, de una clase en especifico
-#   en el Valle de Aburrá
-# - La sobredispersión del modelo se encuentra en un valor cercano a 1, es decir, la sobredispersión de los
-#   datos frente al modelo es baja, indicando un ajuste razonable del modelo.
-```{r}
-# Se computan métricas de entrenamiento
-y_train <- round(predict(lm5, newdata= datos_lm5, type="response"))
+datos_lm5_p <- datos_lm5[,-5]
+y_train <- round(predict(lm5, newdata= datos_lm5_p, type="response"))
 y_actual <- datos_lm5$NRO_ACC
 lm5_tmse <- MSE(y_train, y_actual)
 lm5_tmae <-  MAE(y_train, y_actual)
-lm5_tr2 <- custom_R2(lm5)
+lm5_tr2 <- R2pseudo(lm5)
 lm5_rel <- lm5$deviance/lm5$df.residual # Se obtiene la sobredispersion
-sprintf("Entrenamiento, MSE: %f, MAE: %f, R2 Entrenamiento: %f, Sobredispersión: %f", lm5_tmse, lm5_tmae, lm5_tr2,lm5_rel)
+sprintf("MSE: %f, MAE: %f, R2 Entrenamiento: %f, Sobredispersión: %f", lm5_tmse, lm5_tmae, lm5_tr2,lm5_rel)
 ```
 
+### Predicción y evaluación para los datos de validación.
+
 ```{r}
-lm5_2018 <- datos_vl %>% group_by(FECHA,DIA_FESTIVO, DIA_NOMBRE,CLASE) %>% count(name = "NRO_ACC")
+datos_lm5_v1 <- datos_vl %>% group_by(FECHA, DIA_FESTIVO, DIA_NOMBRE, CLASE) %>% count(name = "NRO_ACC")
+datos_lm5_v2 <- datos_lm5_v1[,-5]
 
-predicted <- round(predict(lm5, newdata=lm5_2018, type="response")) # Se usa type= 'response' por ser una regresion logística
-actual <- lm5_2018$NRO_ACC
-
-lm5_mse <- MSE(predicted, actual) # MSE
-lm5_mae <- MAE(predicted, actual) # MAE
-lm5_r2 <- R2_Score(predicted, actual) # Pseudo R2
-
-sprintf("MSE: %f, MAE: %f, Pseudo R2: %f", lm5_mse, lm5_mae, lm5_r2)
+y_train <- round(predict(lm5, newdata= datos_lm5_v2, type="response"))
+y_actual <- datos_lm5_v1$NRO_ACC
+lm5_tmse <- MSE(y_train, y_actual)
+lm5_tmae <-  MAE(y_train, y_actual)
+lm5_rel <- lm5$deviance/lm5$df.residual # Se obtiene la sobredispersion
+sprintf("MSE: %f, MAE: %f, Sobredispersión: %f", lm5_tmse, lm5_tmae,lm5_rel)
 ```
-# Este modelo da resultados bastantes prometedores en las métricas utilizadas
+La diferencia entre el MSE de la predicción para los datos de entrenamiento y validación, fue de $\approx(1.87\%)$ y al estar debajo del 15%, no habría sobreajuste. Respecto a la varianza explicada por el modelo, resulta ser bastante buena ($\approx(94\%)$) y la sobredispersión que se definió como la proporción entre la desviación nula y la desviación de los residuales, se encuentra cercana a 1, indicando un ajuste razonable del modelo. Aún así, sigue existiendo una preocupación con el elevado valor del MSE.
+
+## Modelo generalizado | Adición variable **comuna**
 
 ```{r}
-# Por ahora nos quedamos con el Modelo 5 que ha mostrado los mejores resultados y computamos más métricas
+datos_lm6 <- datos_tr %>% group_by(FECHA, DIA_FESTIVO, DIA_NOMBRE, CLASE, COMUNA) %>% count(name = "NRO_ACC")
 
-# Suma de los cuadrados de los residuales
-
-lm5_2018$predicted <- predicted
-
-# TO DO: Mejorar esta gráfica
-lm5_plot <- ggplot(lm5_2018[1:50,]) + geom_point(mapping = aes(c(1:50),NRO_ACC, col="Reales")) + geom_line(mapping = aes(c(1:50),NRO_ACC, col="Reales")) + geom_point(mapping = aes(c(1:50),predicted, col="Predichos")) + geom_line(mapping = aes(c(1:50),predicted, col="Predichos")) + scale_color_manual("Datos", values = c("Predichos" = "red", "Reales" = "darkgreen"))
-
-lm5_plot + ggtitle("Accidentalidad en 2018", subtitle="Clase, Dia Festivo, Dia de la Semana (50 Registros)")+ ylab("No. de Accidentes") + xlab("Registros")
-
-```
-# Por ahora este es un buen modelo
-```{r}
-plot(lm5)
-```
-
-```{r}
-w <- abs(rstudent(lm5)) < 5 & abs(cooks.distance(lm5)) < 4/nrow(lm5$model)
-lm6 <- update(lm5, weights=as.numeric(w))
-```
-
-```{r}
+lm6 <- glm(NRO_ACC ~ DIA_FESTIVO+DIA_NOMBRE+CLASE+COMUNA, family = "poisson", data = datos_lm6)
 summary(lm6)
 ```
 
+### Predicción y evaluación para los datos de entrenamiento.
+
 ```{r}
-# Se computan métricas de entrenamiento
-y_train <- round(predict(lm6, newdata= datos_lm5, type="response"))
-y_actual <- datos_lm5$NRO_ACC
+datos_lm6_p <- datos_lm6[,-6]
+y_train <- round(predict(lm6, newdata= datos_lm6_p, type="response"))
+y_actual <- datos_lm6$NRO_ACC
 lm6_tmse <- MSE(y_train, y_actual)
 lm6_tmae <-  MAE(y_train, y_actual)
-lm6_tr2 <- R2_Score(y_train, y_actual)
-sprintf("Entrenamiento, MSE: %f, MAE: %f, Pseudo R2: %f", lm6_tmse, lm6_tmae, lm6_tr2)
+lm6_tr2 <- R2pseudo(lm6)
+lm6_rel <- lm6$deviance/lm6$df.residual # Se obtiene la sobredispersion
+sprintf("MSE: %f, MAE: %f, R2 Entrenamiento: %f, Sobredispersión: %f", lm6_tmse, lm6_tmae, lm6_tr2,lm6_rel)
 ```
 
+En este caso, el MSE es de 3.8, lo que nos indica una baja varianza de los residuales, recordemos que esta varianza se mide como una distancia vertical entre los residuales y el modelo, por otro lado, tenemos un pseudo-R2 de 0.71, explicando $\approx(71\%)$ de la varianza del número de accidentes en el área metropolitana y una sobredispersión moderada (0.810124), indicando un ajuste razonable del modelo.
+
+
+### Predicción y evaluación para los datos de validación.
+
 ```{r}
-predicted <- round(predict(lm6, newdata=lm5_2018, type="response")) # Se usa type= 'response' por ser una regresion logística
-actual <- lm5_2018$NRO_ACC
+datos_lm6_v1 <- datos_vl %>% group_by(FECHA, DIA_FESTIVO, DIA_NOMBRE, CLASE, COMUNA) %>% count(name = "NRO_ACC")
+datos_lm6_v2 <- datos_lm6_v1[,-6]
 
-lm6_mse <- MSE(predicted, actual) # MSE
-lm6_mae <- MAE(predicted, actual) # MAE
-lm6_r2 <- R2_Score(predicted, actual) # Pseudo R2
-
-sprintf("MSE: %f, MAE: %f, Pseudo R2: %f", lm6_mse, lm6_mae, lm6_r2)
+y_train <- round(predict(lm6, newdata= datos_lm6_v2, type="response"))
+y_actual <- datos_lm6_v1$NRO_ACC
+lm6_tmse <- MSE(y_train, y_actual)
+lm6_tmae <-  MAE(y_train, y_actual)
+lm6_rel <- lm6$deviance/lm6$df.residual # Se obtiene la sobredispersion
+sprintf("MSE: %f, MAE: %f, Sobredispersión: %f", lm6_tmse, lm6_tmae,lm6_rel)
 ```
-```{r}
-# Modelo lineal con la misma fórmula y datos del modelo lineal generalizado (lm5)
-lm7 <- lm(NRO_ACC ~ DIA_FESTIVO+DIA_NOMBRE+CLASE, data = datos_lm5)
-summary(lm7)
-```
-# La regresión lineal aunque buena, no mejora los resultados del modelo 5
-```{r}
-predicted <- round(predict(lm7, newdata=lm5_2018)) 
-actual <- lm5_2018$NRO_ACC
+La diferencia entre el MSE de la predicción para los datos de entrenamiento y validación, fue de $\approx(0.82\%)$ que al estar debajo del 15%, no indicaría un sobreajuste.
 
-lm7_mse <- MSE(predicted, actual) # MSE
-lm7_mae <- MAE(predicted, actual) # MAE
-lm7_r2 <- R2_Score(predicted, actual) # R2
+A manera de conclusión, al no encontrar mejores modelos que este, con una relación MSE-R2 superior, se decidió trabajar la predicción de accidentes con este modelo líneal generalizado, haciendo uso de las covariables (comuna, clase, dia_festivo y dia_nombre).
 
-sprintf("MSE: %f, MAE: %f, R2: %f", lm7_mse, lm7_mae, lm7_r2)
-```
 
-# Se decide que se usará el Modelo #5, que consiste en un modelo lineal generalizado, de la familia poisson
-# Con las variables CLASE, DIA_NORMAL, DIA_FESTIVO
-```{r}
-datos_model <- datos %>% group_by(FECHA,DIA_FESTIVO, DIA_NOMBRE,CLASE) %>% count(name = "NRO_ACC") #Tomar todos los datos
 
-model <- glm(NRO_ACC ~ DIA_FESTIVO+DIA_NOMBRE+CLASE, family = "poisson", data = datos_model)
-summary(model)
-```
-
-```{r}
-# Se computan métricas de entrenamiento
-y_train <- round(predict(model, newdata= datos_model, type="response"))
-y_actual <- datos_model$NRO_ACC
-model_tmse <- MSE(y_train, y_actual)
-model_tmae <-  MAE(y_train, y_actual)
-model_tr2 <- custom_R2(lm5)
-model_rel <- model$deviance/model$df.residual # Se obtiene la sobredispersion
-sprintf("Entrenamiento, MSE: %f, MAE: %f, R2 Entrenamiento: %f, Sobredispersión: %f", model_tmse, model_tmae, model_tr2,model_rel)
-
-# De no poder agregarse los datos del 2018 para entrenar el modelo final, usar esto
-# model <- lm5
-```
-
-```{r}
+```{r echo=FALSE}
 #Guardar el modelo para su uso en la aplicación
 
-save(model, file="model.RData")
+save(lm6, file="model.RData")
 ```
 
-```{r}
+
+
+```{r echo=FALSE}
 
 # Generar el set de datos que usará en producción
 start <- as.Date("2019-01-01")
@@ -1315,7 +1317,7 @@ weekdays_es <- function(weekday_en){
 }
 ```
 
-```{r}
+```{r echo=FALSE}
 days_prod <- sapply(dates19_20,function(x_date){
   holiday <- subset(holidays19_20, (date == format(x_date,"%Y-%m-%d")), select=c(celebration,is_holiday))
   
@@ -1338,31 +1340,35 @@ clases <- levels(datos_model$CLASE)
 
 
 
-```{r}
+```{r echo=FALSE}
 save(days_df, file="days_df.RData") # Días pre-cargados para el modelo en producción
 save(clases, file="clases.RData") # Clases pre-cargadas para el shiny
 ```
 
 
-```{r}
+```{r echo=FALSE}
 historicos_df <- datos %>% group_by(FECHA, CLASE) %>% count(name = "NRO_ACC")
 save(historicos_df, file="./App/historicos_df.RData") # Datos historicos pre-cargados para el shiny
 ```
 
-## Clustering por latitud y longitud, k = 15. - Visualización previa de la clusterización por comunas.
+
+## Agrupamiento
+
+### Clustering por latitud y longitud, k = 15. - Visualización previa a la clusterización por barrios. | Realizado en ArcgisPro
 
 ```{r echo=FALSE, fig.align='center'}
 knitr::include_graphics("Mapa.svg")
 ```
 
-## Diagrama de barras - Clusters por numero de puntos.
+### Diagrama de barras - Agrupamientos por número de puntos.
 
 ```{r echo=FALSE, fig.align='center'}
 knitr::include_graphics("Clusters.svg")
 ```
 
-## Función para el calculo de distancias de datos geoespaciales, haciendo uso de la libería geosphere
-```{r}
+
+```{r echo=FALSE}
+### Función | Cálculo de distancias para datos geoespaciales, haciendo uso de la libería geosphere
 geo.dist = function(df) {
   require(geosphere)
   d <- function(i,z){         # z[1:2] contain long, lat
@@ -1374,22 +1380,27 @@ geo.dist = function(df) {
   return(as.dist(dm))
 }
 ```
-## Conversión a numerico
-```{r}
+
+```{r echo=FALSE}
+#Conversión a númerico de la latitud y longitud.
 datos_t$LATITUD <- as.numeric(as.character(datos_t$LATITUD))
 datos_t$LONGITUD<- as.numeric(as.character(datos_t$LONGITUD))
 
 ```
 
-## Creación nuevo data frame para clusering
-```{r}
+
+```{r echo=FALSE}
+## Creación nuevo set de datos para el agrupamiento, según longitud, latitud y barrio.
+
 df <- data.frame(long = datos_t$LONGITUD, lat = datos_t$LATITUD, barrios = datos_t$BARRIO)
 
 ```
 
 
 ## Creación matriz de distancias con la función geo.dist
-```{r}
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+## Creación matriz de distancias con la función geo.dist.
+
 df1 <- df[1:1000, ]
 d <- geo.dist(df1)
 hc <- hclust(d)
@@ -1402,8 +1413,9 @@ df1
 
 
 
-## Mapa de clusterización según latitud y longitud.
-```{r}
+### Mapa de agrupamiento según latitud y longitud.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
 s <- shapefile("C:/Users/ofaa/Documents/data/TAE-2020/Trabajo1/L%C3%ADmite_Catastral_de__Comunas_y_Corregimientos.shp")
 map.df1 <- (s)
 ggplot(map.df1)+
@@ -1414,58 +1426,57 @@ ggplot(map.df1)+
   
 ```
 
-## Mapa de clusterización teniendo en cuenta no latitud y longitud, sino numero de accidentes totales según barrio.
 
+### Mapa de clusterización | Número de accidentes por gravedad y barrio.
 
-```{r}
+```{r echo=FALSE}
 datos_cluster <- datos_tr %>% group_by(BARRIO) %>% count(name = "TOTAL_ACCIDENTES") ## Numero de accidentes por barrio
 ```
-```{r}
 
-df <- as.matrix(table(datos_t$BARRIO, datos_t$GRAVEDAD))  #Numero deaccidentes por barrio segun categoría 
+
+```{r echo=FALSE}
+
+df <- as.matrix(table(datos_t$BARRIO, datos_t$GRAVEDAD))  #Número de accidentes por barrio segun gravedad. 
+
 df <- data.frame(HERIDO = df[,1], MUERTO = df[,2], SOLO_DAÑOS = df[,3])
-df
 ```
-## Clustering haciendo uso del algoritmo - k means - busqueda del numero optimo de clusters.
 
 
+### Clustering haciendo uso del algoritmo - k means - búsqueda del número óptimo de clusters.
+
+Una vez se tuvieron los datos preprocesados y el subset de datos seleccionados, se procedió a realizar un escalamiento y centrado de la base de datos.
 ```{r}
-#Una vez tenemos los datos preprocesados y el subset de datos seleccionados, procedemos a realizar un scalamiento y centrado del dataset.
-
 scaled_data = as.matrix(scale(df))
 ```
-## Clustering haciendo uso del algoritmo - k means - busqueda del numero optimo de clusters.
 
+En un principio se seleccionó un número aleatorio de clusters con el fin de realizar una observación previa del agrupamiento, seleccionando un k = 3.
 
-```{r}
-#En un principio seleccionaremos un numero aleatorio de clusters y observaremos como son creados, empezaremos con  k = 3.
-
+```{r echo=FALSE}
 kmm = kmeans(scaled_data, 3, nstart = 50, iter.max = 15 )
-kmm
 ```
-# En este caso debemos corroborar el valor (between_SS/total_SS), el cual es ~77%. Lo que realmente representa esta proporción es la relación entre la cantidad de la suma de los cuadrados totales de los data points que estan en los clusters. Nosotros queremos aumentar este valor a medida que aumentamos el numero de clusters, sin embargo, tampoco queremos llegar al overfitting, por ejemplo si usaramos un k igual al numero de barrios, tendría serios problemas de sobreajuste.
+
+En este caso se corroboró el valor (between_SS/total_SS), el cual fue de $\approx(~77\%)$. Lo que realmente representa esta proporción es la relación entre la cantidad de la suma de los cuadrados totales de los datos que estan en los agrupamientos. Se quiere aumentar este valor a medida que se incrementa el número de agrupamientos, pero sin llegar al sobreajuste. Si se usa un **k** igual al número de barrios, habrían serios problemas de sobreajuste.
 
 
+### Método del codo (Elbow Method).
+
+Se encontrará un valor de k con el cual el modélo no se sobreajuste y al mismo tiempo agrupe los datos según su distribución real. 
+
+Este método considera el porcentaje de varianza explicada en función del número de agrupamientos. Lo ideal es elegir un número de agrupamientos de tal forma, que al agregar uno más, no se obtenga un mejor modelado de los datos.
 
 
-
-# Metodo del codo (Elbow Method)
-```{r}
-## Encontremos un valor de k para el cual el modelo no se sobreajuste y al mismo tiempo agrupe los datos según la distribución real.
-
-## Este metodo considera el porcentaje de varianza explicada en función del número de grupos (clusters).
-
-## Lo ideal es elegir un número de clusters de tal forma que al agregar uno más, no se obtenga un mejor modelado de los datos.
-
+```{r echo=FALSE, message=FALSE, warning=FALSE}
 set.seed(123)
-#Vamos a calcular y gráficar WSS(total within - cluster sum of square) para k = 2 to k = 10
+
+
+#cálculo y graficación de WSS(total within - cluster sum of square) para k = 2 hasta k = 10
 
 k.max <- 10
 datos <- scaled_data
-wss <- sapply(1:k.max, 
+wss <- sapply(2:k.max, 
               function(k){kmeans(datos, k, nstart = 50, iter.max = 15 )$tot.withinss})
 
-plot(1:k.max, wss, 
+plot(2:k.max, wss, 
      type = "b", pch = 19, frame = FALSE,
      xlab = "Numero de clusters (k)",
      ylab = "Total WSS", 
@@ -1473,42 +1484,43 @@ plot(1:k.max, wss,
      sub = "Elbow method")
 ```
 
-# En este caso, para k = 4 el between_ss/total_ss ratio tiende a cambiar lentamente y a ser menos cambiante en comparación con otros k, como 1 o 2., k = 5 también parece ser un candidato potencial.
+En este caso para **k** = 4, la proporción  between_ss/total_ss  presenta un cambio más suave, en comparación con otros **k**, como 1 o 2., **k** = 5 también parece ser un candidato potencial.
 
 
-# ¿Cómo decidimos cuál será la elección óptima?
-```{r}
-#El modelo k-means es "casi" un modelo de mezcla Gaussiana (Gaussiana mixture model) y se puede construir una probabilidad para el modelo de mezcla gaussiana y, por tanto determinar valores de criterio de información.
+### ¿Cómo decidir cuál será la elección del k óptimo?
 
+El modelo k-means es "casi" un modelo de mezcla Gaussiana (Gaussiana mixture model) y se puede construir una probabilidad para el modelo de mezcla gaussiana y, por tanto determinar valores de criterio de información.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
 d_clust <- Mclust(as.matrix(scaled_data), G = 1:15, modelNames = mclust.options("emModelNames"))
 help("Mclust")
 d_clust$BIC
 plot(d_clust)
 ```
-# En este caso, los 3 mejores modelos son para un  k = (7, 8, 12).
+En este caso, los 3 mejores modélos estan asociados a unos valores de k = (7, 8, 12).
 
+Existen otras técnicas para determinar el numero optimo de clusters, el paquete NbClust provee 30 indices para la determinación del número de clusters.
 
-
-# ¿Cómo decidimos cuál será la elección óptima?
-```{r}
-# Existen otras técnicas para determinar el numero optimo de clusters, el paquete NbClust provee 30 indices para la determinación del número de clusters.
-#install.packages("NbClust",dependencies = TRUE)
-#library(NbClust)
+```{r echo=FALSE, message=FALSE, warning=FALSE}
 nb <- NbClust(scaled_data, diss=NULL, distance = "euclidean", 
               min.nc=4, max.nc=8, method = "kmeans", 
               index = "all", alphaBeale = 0.1)
 ```
-```{r}
-hist(nb$Best.nc[1,], breaks = max(na.omit(nb$Best.nc[1,])))
+### Frecuencia con que el k = i.
+
+En este caso, es claro que el k óptimo es 5, sin embargo, 4 continua al igual que en los métodos previos, siendo un candidato potencial.
+
+```{r echo=FALSE}
+hist(nb$Best.nc[1,], breaks = max(na.omit(nb$Best.nc[1,])), main = "Histograma - k", xlab = "k", ylab = "Frecuencia")
+
 #Según este método el mejor sería 5, podrían usarse 4.
 ```
 
-## Por último vamos a hacer uso del criterio Calinski.
-```{r}
-#Este criterio es similar a la busqueda de la relación entre la varianza entre-cluster/varianza intra-cluster, se hace uso de la libería vegan.
+### Por último vamos a hacer uso del criterio Calinski.
 
-library(vegan)
+Este criterio es similar a la busqueda de la relación entre la varianza entre-cluster/varianza intra-cluster, se hace uso de la libería vegan.
 
+```{r echo=FALSE, message=FALSE, warning=FALSE}
 model <- cascadeKM(scaled_data, 1, 10, iter = 100)
 plot(model, sortg = TRUE)
 
@@ -1516,48 +1528,100 @@ model$results[2, ]
 which.max(model$result[2,]) #Según este método los mejores k, serían 2, 3 y 4.
 ```
 
+### Resumén de métodos.
 
-```{r}
-#Método de la silueta.
+### Método de la silueta.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
 fviz_nbclust(scaled_data, kmeans, method = c("silhouette"))
-
 ```
-```{r}
-#Método del codo.
-fviz_nbclust(scaled_d, kmeans, method = "wss") +
+
+### Método del codo.
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+fviz_nbclust(scaled_data, kmeans, method = "wss") +
     geom_vline(xintercept = 4, linetype = 2)+
   labs(subtitle = "Elbow method")
 
 ```
-```{r}
-#Gap statistic.
+###Gap statistic.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
 set.seed(123)
 fviz_nbclust(scaled_data, kmeans, nstart = 25,  method = "gap_stat", nboot = 50)+
   labs(subtitle = "Gap statistic method")
 
 ```
-## Generación de clusterización según los k optimos 
-```{r}
-# Según los diferentes métodos k = 4, parece ser muy optimo para la generación de la clusterización.
-#Generación de clusterización con k = 4.
 
+
+### Generación de clusterización según el k óptimo seleccionado
+
+Según los diferentes métodos k = 4, parecía ser muy óptimo para la generación de la clusterización.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
 kmm = kmeans(scaled_data, 4, nstart = 50, iter.max = 15 )
-kmm
 df_clust <- data.frame(HERIDO = df[,1], MUERTO = df[,2], SOLO_DAÑOS = df[,3], kmm$cluster)
-df_clust
-```
-## Método de la silueta.
-
-```{r}
-library(cluster)
-dis = dist(df)^2
-res = pam(dis, 2)  #Según el método de la silueta el mejor k es 2, sin embargo, 3 y 4 arrojan buenos resultados.
-sil = silhouette(res$clustering, dis)
-plot(sil)
+head(df_clust, 10)
 ```
 
+## Análisis descriptivo de los agrupamientos.
+
+### Accidentalidad baja.
+```{r warning=FALSE, include=FALSE}
+dfclust_clust1 <- df_clust[df_clust$kmm.cluster == 1, ]
+dfclust_clust1$TOTAL <- rowSums(dfclust_clust1[,1:3])
+sum(dfclust_clust1$HERIDO)
+sum(dfclust_clust1$MUERTO)
+sum(dfclust_clust1$SOLO_DAÑOS)
+sum(dfclust_clust1$TOTAL)
+```
+Los barrios que pertenecen a este agrupamiento, se caracterizan por presentar un total de 23087 accidentes, en el periodo de tiempo considerado para la realización de este agrupamiento que fue entre el 2014 y 2017, además hay un predominio de accidentes con una gravedad leve (solo daños), seguida de un número también considerable de heridos (10424) y muy pocos muertos (143). 
 
 
 
+### Accidentalidad moderada.
+```{r include=FALSE}
+dfclust_clust2 <- df_clust[df_clust$kmm.cluster == 2, ]
+dfclust_clust2$TOTAL <- rowSums(dfclust_clust2[,1:3])
+sum(dfclust_clust2$HERIDO)
+sum(dfclust_clust2$MUERTO)
+sum(dfclust_clust2$SOLO_DAÑOS)
+sum(dfclust_clust2$TOTAL)
+```
+
+Los barrios que pertenecen al grupo de accidentalidad moderada, se caracterizan por presentar un total de 34055 accidentes, en el periodo de tiempo considerado para la realización de este agrupamiento que fue entre el 2014 y 2017, además hay un predominio de accidentes con una gravedad moderada (heridos), seguida de un número también considerable de gravedad por solo daños (112767) y muy pocos muertos (176).
+
+
+### Accidentalidad media-alta
+```{r include=FALSE}
+dfclust_clust3 <- df_clust[df_clust$kmm.cluster == 3, ]
+dfclust_clust3$TOTAL <- rowSums(dfclust_clust3[,1:3])
+sum(dfclust_clust3$HERIDO)
+sum(dfclust_clust3$MUERTO)
+sum(dfclust_clust3$SOLO_DAÑOS)
+sum(dfclust_clust3$TOTAL)
+```
+Los barrios que pertenecen al grupo de accidentalidad media-alta, se caracterizan por presentar un total de 39429 accidentes, en el periodo de tiempo considerado para la realización de este agrupamiento que fue entre el 2014 y 2017, además hay un predominio de accidentes con una gravedad leve (solo daños) | 19670, seguido de un número también considerable de gravedad por heridos (19510) y muy pocos muertos (249).
+
+
+### Accidentalidad alta
+```{r include=FALSE}
+dfclust_clust4 <- df_clust[df_clust$kmm.cluster == 4, ]
+dfclust_clust4$TOTAL <- rowSums(dfclust_clust4[,1:3])
+sum(dfclust_clust4$HERIDO)
+sum(dfclust_clust4$MUERTO)
+sum(dfclust_clust4$SOLO_DAÑOS)
+sum(dfclust_clust4$TOTAL)
+```
+Los barrios que pertenecen al grupo de accidentalidad alta, se caracterizan por presentar un total de 72066 accidentes, en el periodo de tiempo considerado para la realización de este agrupamiento que fue entre el 2014 y 2017, además hay un predominio de accidentes con una gravedad moderada (heridos) | 41929 , seguido de un número también considerable de gravedad por solo daños (29747) y muy pocos muertos (390).
+
+
+
+```{r echo=FALSE}
+df_clust$kmm.cluster <- str_replace_all(df_clust$kmm.cluster, "1", "Accidentalidad baja")
+df_clust$kmm.cluster <- str_replace_all(df_clust$kmm.cluster, "2", "Accidentalidad media")
+df_clust$kmm.cluster <- str_replace_all(df_clust$kmm.cluster, "3", "Accidentalidad media-alta")
+df_clust$kmm.cluster <- str_replace_all(df_clust$kmm.cluster, "4", "Accidentalidad alta")
+write.csv(df_clust, "Agrupamiento_final.csv", row.names = FALSE)
+```
 
 
