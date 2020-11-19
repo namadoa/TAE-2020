@@ -1,12 +1,13 @@
 ---
-title: "Trabajo 1 Técnicas en aprendizaje estadístico"
+title: "Análisis y predicción de la accidentalidad en Medellín (2014-2018)"
 author: 
 - "Camila Acosta Ramírez"
+- "Nicolás Amado Aristizabal"
 - "Sergio Andrés Arboleda Zuluaga"
 - "Esteban Palacio Londoño"
 - "Natalia Ramírez Ossa"
 - "Carlos Alejandro Torres Albarracín"
-date: "13/10/2020"
+date: "19/11/2020"
 output: html_document
 ---
 
@@ -26,6 +27,13 @@ library(tm)
 library(DescTools)
 library(raster)
 library(mclust)
+library(rgdal)
+library(raster)
+library(geosphere)
+library(NbClust)
+library(factoextra)
+library(vegan)
+library(qpcR)
 ```
 
 ## Introducción
@@ -62,7 +70,7 @@ holidays <- read.csv("./BasesDeDatos/holidays.csv", header = T, sep=",", encodin
 
 ```
 
-```{r}
+```{r include=FALSE}
 #UNION DE BASES
 datos <- rbind(datos_2014,datos_2015, datos_2016, datos_2017)
 
@@ -621,7 +629,7 @@ La base de datos que proporciona la Alcaldía de Medellín, (Alcaldía de Medell
    - Comuna 5 – Castilla: Terminal de Transporte, Las Brisas, Francisco Antonio Zea, Girardot, Cementerio Universal, El Progreso, Toscana, Tricentenario, Castilla, Caribe, Boyacá, Alfonso López, Florencia, Tejelo, Belalcázar, Héctor Abad Gómez, Oleoducto, Plaza de Ferias.
    - Comuna 6 - Doce de octubre: Doce de Octubre No.2, La Esperanza, Kennedy, San Martín de Porres, Pedregal, Picacho, Doce de Octubre No.1, Picachito, El Progreso No.2, Mirador del Doce, Santander, El Triunfo.
    - Comuna 7 – Robledo: Villa Flora, Aures No.1, Aures No.2, El Diamante, Bello Horizonte, La Pilarica, Cucaracho, Facultad de Minas U. Nacional, Pajarito, Córdoba, Universidad Nacional, Robledo, López de Mesa, San Germán, Altamira, Facultad Veterinaria y Zootecnia U.de.A., Nueva Villa de La Iguaná, Palenque, B. Cerro El Volador, Bosques de San Pablo, Olaya Herrera, Santa Margarita, Monteclaro, Fuente Clara.
-   - Comuna 8 - Villa Hermosa: San Miguel, Enciso, Las Estancias, El Pinal, Villa Hermosa, La Libertad, La Ladera, La Mansión, Sucre, Llanaditas, Villatina, Los Mangos, Villa Turbay, Trece de Noviembre, Villa Lilliam, San Antonio, La Sierra, Batallón Girardot.
+   - Comuna $8$ - Villa Hermosa: San Miguel, Enciso, Las Estancias, El Pinal, Villa Hermosa, La Libertad, La Ladera, La Mansión, Sucre, Llanaditas, Villatina, Los Mangos, Villa Turbay, Trece de Noviembre, Villa Lilliam, San Antonio, La Sierra, Batallón Girardot.
    - Comuna 9 - Buenos Aires: Barrio Caicedo, La Milagrosa, Asomadera No.2, Buenos Aires, Alejandro Echavarría, Bomboná No.2, Cataluña, Loreto, Asomadera No.1, Juan Pablo II, El Salvador, Barrios de Jesús, Gerona, Miraflores, Los Cerros El Vergel, Asomadera No.3, Ocho de Marzo.
    - Comuna 10 - La Candelaria: Jesús Nazareno, Guayaquil, San Benito, La Candelaria, Barrio Colón, Estación Villa, Prado, San Diego, Calle Nueva, El Chagualo, Villa Nueva, Perpetuo Socorro, Boston, Corazón de Jesús, La Alpujarra, Los Ángeles, Bomboná No.1, Centro Administrativo, Hospital San Vicente de Paúl.
    - Comuna 11 - Laureles—Estadio:  U.D. Atanasio Girardot, La Castellana, Carlos E. Restrepo, Naranjal, Florida Nueva, El Velódromo, Suramericana, San Joaquín, Los Conquistadores, Los Colores, Las Acacias, El Estadio, Bolivariana, Laureles, Lorena, Cuarta Brigada, U.P.B.
@@ -638,15 +646,15 @@ La base de datos que proporciona la Alcaldía de Medellín, (Alcaldía de Medell
    
 •	**COMUNA**: Unidad administrativa en la cual se subdivide el área urbana de una ciudad media o principal del país, que agrupa barrios o sectores determinados. (Wikipedia, 2020). En Medellín se cuenta con 16 comunas y 5 corregimientos, así (Alcaldía de Medellín, 2015):
 
-   - Comuna 1 – Popular
-   - Comuna 2 – Santa Cruz
-   - Comuna 3 - Manrique
-   - Comuna 4 – Aranjuez
-   - Comuna 5 - Castilla
-   - Comuna 6 - Doce de octubre
-   - Comuna 7 - Robledo
-   - Comuna 8 - Villa Hermosa
-   - Comuna 9 - Buenos Aires
+   - Comuna 1– Popular
+   - Comuna 2– Santa Cruz
+   - Comuna 3- Manrique
+   - Comuna 4– Aranjuez
+   - Comuna 5- Castilla
+   - Comuna 6- Doce de octubre
+   - Comuna 7- Robledo
+   - Comuna 8- Villa Hermosa
+   - Comuna 9- Buenos Aires
    - Comuna 10 - La Candelaria
    - Comuna 11 - Laureles—Estadio
    - Comuna 12 - La América
@@ -696,12 +704,12 @@ El sistema de coordenadas geográficas es un sistema que referencia cualquier pu
 -	X, Y: Valor repetido de longitud y latitud.
 - OBJECTID, RADICADO: La identificación de un dato no es representativa para el análisis.
 - HORA: Está mal en la base de datos, solamente indica los accidentes en la hora de la mañana (AM) y tan solo 1 hora (PM), por lo tanto no era significativa.
-- DIRECCION, DIRECCION_ENC: Con los datos de longitud y latitud, se tiene la ubicación precisa para poder georreferenciar correctamente, por lo tanto no necesitamos más herramientas para esto.
-- CBML: Como es el código de ubicación del predio en la ciudad, no necesitamos más herramientas para georreferenciar 
+- DIRECCION, DIRECCION_ENC: Con los datos de longitud y latitud, se tiene la ubicación precisa para poder georreferenciar correctamente, por lo tanto no se necesitaron más herramientas para esto.
+- CBML: Como es el código de ubicación del predio en la ciudad, no se necesitaron más herramientas para georreferenciar 
 - TIPO_GEOCOD: Era una variable inconsistente y poco precisa, no aportaba información significativa para el análisis. 
-- X_MAGNAMED, Y_MAGNAMED: Con los datos de longitud y latitud, se tiene la ubicación precisa para poder georreferenciar correctamente, por lo tanto no necesitamos más herramientas para esto.
+- X_MAGNAMED, Y_MAGNAMED: Con los datos de longitud y latitud, se tiene la ubicación precisa para poder georreferenciar correctamente, por lo tanto no se necesitaron más herramientas para esto.
 
-**VARIABLES CONSIDERADAS**: Después de un análisis exhaustivo en la base de datos original, estas son las variables que finalmente conformaron la base de datos con la cual se trabajo: FECHA, DIA, PERIODO, CLASE, GRAVEDAD, BARRIO, COMUNA, DISENO, DIA_NOMBRE, MES, MES_NOMBRE,	 LONGITUD, LATITUD.
+**VARIABLES CONSIDERADAS**: Después de un análisis exhaustivo en la base de datos original, estas son las variables que finalmente conformaron en el conjunto de datos con la cual se trabajo: FECHA, DIA, PERIODO, CLASE, GRAVEDAD, BARRIO, COMUNA, DISENO, DIA_NOMBRE, MES, MES_NOMBRE,	 LONGITUD, LATITUD.
 
 **CREACIÓN DE NUEVAS VARIABLES A CONSIDERAR**:
 
@@ -809,22 +817,21 @@ head(datos, 10)
 
 #### Distribución de la accidentalidad por comunas
 
-
-```{r echo=FALSE, message=FALSE, warning=FALSE}
+```{r echo=FALSE, message=FALSE, warning=FALSE, fig.aling='center'}
 datosWordC <- str_replace_all(datos$COMUNA, "\\s", "-")
 wordcloud(datosWordC,colors=brewer.pal(6,"Dark2"),random.order=FALSE)
 ```
-"ESPERAME UN SEGUNDO"<------------------
+
 Con la ayuda de un gráfico de barras, se identifica cuales son las comunas que presentan el mayor porcentaje de accidentalidad durante el periodo de estudio. 
 
-```{r include=FALSE}
+```{r include=FALSE, fig.aling='center'}
 porcentaje <- function(x){
   (x*100)/208922
 }
 mis.colores <- colorRampPalette(c("blue", "red"))
 ```
 
-```{r echo=FALSE}
+```{r echo=FALSE, fig.aling='center'}
 Comuna <- datos %>% group_by(COMUNA) %>% count()
 Comuna$Porcentaje <- round(porcentaje(Comuna$n),2)
 Comuna <- Comuna %>% arrange(desc(Porcentaje), COMUNA)
@@ -839,13 +846,13 @@ ggplot(Comuna, aes(x = reorder(COMUNA, Porcentaje), y = Porcentaje,
   ggtitle("Porcentaje de Accidentalidad por Comuna")
 ```
 
-Se observa que la comuna con mayor accidentalidad es La Candelaria que representa aproximadamente el 21%, las comunas Belén y Robledo cada una con $\approx$ 7%,  La América y Manrique poseen comportamientos similares cada una representa $\approx$ 4% de la población,  Doce de Octubre y Villa Hermosa presentan comportamientos similares con  $\approx$ 3% cada una, Popular y Santa Cruz representan un 1.5% de la población, finalmente el Corregimiento de San Sebastián de Palmitas representa un 0.01% lo que indica que presenta la menor cantidad de accidentes, por tanto no es representativo. 
+Se observa que la comuna con mayor accidentalidad es La Candelaria que representa aproximadamente el $21\%$, las comunas Belén y Robledo cada una con $\approx 7\%$,  La América y Manrique poseen comportamientos similares cada una representa $\approx 4\%$ de la población,  Doce de Octubre y Villa Hermosa presentan comportamientos similares con  $\approx 3\%$ cada una, Popular y Santa Cruz representan un 1.5% de la población, finalmente el Corregimiento de San Sebastián de Palmitas representa un $0.01\%$ lo que indica que presenta la menor cantidad de accidentes, por tanto no es representativo. 
 
 #### Distribución de la accidentalidad por barrios
 
-Se realizo un gráfico de barras con el fin de mostrar los 22 barrios que presentan la mayor accidentalidad. 
+Se realizo un gráfico de barras con el fin de mostrar los $224 barrios que presentan la mayor accidentalidad. 
 
-```{r echo=FALSE}
+```{r echo=FALSE, fig.aling='center'}
 barrio <- datos %>% group_by(BARRIO) %>% count()
 barrio$Porcentaje <- round(porcentaje(barrio$n),2)
 barrio <- barrio %>% arrange(desc(Porcentaje), BARRIO)
@@ -860,12 +867,12 @@ ggplot(topbarrio, aes(x = reorder(BARRIO, Porcentaje), y = Porcentaje,
   ggtitle("Porcentaje de Accidentalidad por barrio")
 ```
 
-En los registros del conjunto de datos existen 307 barrios, para la construcción de este gráfico solo se consideraron los 22 barrios con más accidentalidad, ya que los restantes (285) no llegan a representar el 1% del total de accidentes que se presenta en la ciudad de Medellín. 
-El barrio la candelaria presenta el mayor porcentaje de accidentalidad en todos los barrios de Medellín; Barrio Colón y San Benito presentan $\approx$ 1.6% de accidentalidad cada uno; Terminal de Transporte y Villa Nueva presentan comportamientos similares ya que cada uno representa el 1.4% del total de la población; Corazón de Jesús, Belén y Guayabal representan 1.2% cada uno; finalmente los barrios Villa Carlota y Chagualo son $\approx$ 1%. 
+En los registros del conjunto de datos existen $307$ barrios, para la construcción de este gráfico solo se consideraron los $22$ barrios con más accidentalidad, ya que los restantes $(285)$ no llegan a representar el $1\%$ del total de accidentes que se presenta en la ciudad de Medellín. 
+El barrio la candelaria presenta el mayor porcentaje de accidentalidad en todos los barrios de Medellín; Barrio Colón y San Benito presentan $\approx 1.6\%$ de accidentalidad cada uno; Terminal de Transporte y Villa Nueva presentan comportamientos similares ya que cada uno representa el $1.4\%$ del total de la población; Corazón de Jesús, Belén y Guayabal representan $1.2\%$ cada uno; finalmente los barrios Villa Carlota y Chagualo son $\approx 1\%$. 
 
 #### Distribución de la accidentalidad por mes y año
 
-```{r echo=FALSE, message=FALSE, warning=FALSE}
+```{r echo=FALSE, message=FALSE, warning=FALSE, fig.aling='center'}
 conteo <- datos %>% group_by(PERIODO, MES) %>% count()
 accidentes <- conteo$n
 
@@ -896,11 +903,11 @@ heatmap.2(t(heat),
           )
 ```
 
-En el mes de Enero se presenta la menor cantidad de accidentes para todos los años considerados, el mes de Marzo presento una alta accidentalidad unicamente en el año 2014, en general el mes de Agosto es el mes con mayor accidentes pero fue aún más grave para los años 2016 y 2017, finalmente se observa que el mes de Octubre presento gran acidentalidad para el año 2016, los meses de Junio y Noviembre presentan comportamientos semejantes, el año con mayor cantidad de accidentes es 2016 y el año de menor accidentalidad fue 2018.
+En el mes de Enero se presenta la menor cantidad de accidentes para todos los años considerados, el mes de Marzo presento una alta accidentalidad unicamente en el año $2014$, en general el mes de Agosto es el mes con mayor accidentes pero fue aún más grave para los años $2016$ y $2017$, finalmente se observa que el mes de Octubre presento gran acidentalidad para el año $2016$, los meses de Junio y Noviembre presentan comportamientos semejantes, el año con mayor cantidad de accidentes es $2016$ y el año de menor accidentalidad fue $2018$.
 
 #### Distribución de la accidentalidad por mes y día
 
-```{r echo=FALSE}
+```{r echo=FALSE, fig.aling='center'}
 Mes <- datos %>% group_by(MES_NOMBRE) %>% count()
 Mes$Porcentaje <- round(porcentaje(Mes$n),2)
 Mes <- Mes %>% arrange(desc(Porcentaje), MES_NOMBRE)
@@ -914,17 +921,17 @@ ggplot(Mes, aes(x = reorder(MES_NOMBRE, Porcentaje), y = Porcentaje,
   ggtitle("Porcentaje de Accidentalidad por mes")
 ```
 
-El mes que presenta mayor accidentalidad es Agosto con 8.93% cabe resaltar que este mes se derrolla la tradicional Feria de Flores de Medellín, los meses Septiembre, Mayo, Marzo, Julio y Octubre tienen un comportamiento muy similar con $\approx$ 8.6% cada uno, Noviembre, Febrero y Junio también se comportan de manera semejante con $\approx$ 8% cda uno; finalmente el mes de Enero presenta la menor cantidad de accidentes, esto puede deberse a que la mayoría de personas se encuentran fuera de la ciudad por vacaciones. 
+El mes que presenta mayor accidentalidad es Agosto con $8.93\%$ cabe resaltar que este mes se derrolla la tradicional Feria de Flores de Medellín, los meses Septiembre, Mayo, Marzo, Julio y Octubre tienen un comportamiento muy similar con $\approx 8.6\%$ cada uno, Noviembre, Febrero y Junio también se comportan de manera semejante con $\approx 8\%$ cda uno; finalmente el mes de Enero presenta la menor cantidad de accidentes, esto puede deberse a que la mayoría de personas se encuentran fuera de la ciudad por vacaciones. 
 
 
 ```{r echo=FALSE, fig.align='center'}
 knitr::include_graphics("Graph.svg")
 ```
-se confirma que las primeras semanas del año presentan la menor accidentalidad, los días 10 y 14 de Marzo son los más accidentados, los días 30 y 31 de Octubre se presenta gran cantodad de accidentes, entre los días 11 a 18 de Septimebre también se presenta una cantidad alta de incidentes viales esto puede deberse a las celebraciones de amor y amistad, desde el 16 al 23 de Diciembre hay fuerte accidentalidad esto se corrobora con el gráfico semanal.
+se confirma que las primeras semanas del año presentan la menor accidentalidad, los días $10$ y $14$ de Marzo son los más accidentados, los días $30$ y $31$ de Octubre se presenta gran cantodad de accidentes, entre los días $11$ a $18$ de Septimebre también se presenta una cantidad alta de incidentes viales esto puede deberse a las celebraciones de amor y amistad, desde el $16$ al $23$ de Diciembre hay fuerte accidentalidad esto se corrobora con el gráfico semanal.
 
 #### Distribución de la accidentalidad por semana
 
-```{r echo=FALSE}
+```{r echo=FALSE, fig.aling='center'}
 semana <- datos %>% group_by(SEMANA) %>% count()
 semana$Porcentaje <- round(porcentaje(semana$n),2)
 semana <- semana%>% arrange(desc(Porcentaje), SEMANA)
@@ -940,11 +947,11 @@ ggplot(semana, aes(x = reorder(SEMANA, Porcentaje), y = Porcentaje,
   ggtitle("Porcentaje de Accidentalidad por semana")
 ```
 
-La semana 31 que va desde el 29 Julio al 05 de Agosto posee la mayor accidentalidad esto puede deberse a Feria de Flores; sigue la semana 51 comprendida entre el 17 y 23 de Diciembre, la accidentalidad presentada en esta semana puede deberse a las celebraciones de este mes, finalmente se observa que la dos primeras semanas del año son las menos accidentadas. Para este análisis se decidio juntar las semanas 52 y 53 ya que esta última solo comprendia dos días.
+La semana $31$ que va desde el $29$ Julio al $05$ de Agosto posee la mayor accidentalidad esto puede deberse a Feria de Flores; sigue la semana $51$ comprendida entre el $17$ y $23$ de Diciembre, la accidentalidad presentada en esta semana puede deberse a las celebraciones de este mes, finalmente se observa que la dos primeras semanas del año son las menos accidentadas. Para este análisis se decidio juntar las semanas $52$ y $53$ ya que esta última solo comprendia dos días.
 
 #### Distribución de la accidentalidad por día de la semana
 
-```{r echo=FALSE}
+```{r echo=FALSE, fig.aling='center'}
 mis.colores <- colorRampPalette(c("blue", "red"))
 Diasemana <- datos %>% group_by(DIA_NOMBRE) %>% count()
 Diasemana$Porcentaje <- round(porcentaje(Diasemana$n),2)
@@ -959,11 +966,11 @@ ggplot(Diasemana, aes(x = reorder(DIA_NOMBRE, Porcentaje), y = Porcentaje,
   ggtitle("Porcentaje de Accidentalidad por día")
 ```
 
-Los días Viernes y Martes se presenta la mayor cantidad de accidentes, para el día Viernes esto puede ser ocasionado por el inicio del fin de semana, repecto al día Martes se presenta un comportamiento poco esperado, se puede presentar por múltiples razones algunas de ellas los días festivos y el aforo vehicular por día. El Domingo se presenta 9.5% de accidentes, el menor de todos se siguiere que esto sucede por ser el día de descanso de la mayoría de las personas. 
+Los días Viernes y Martes se presenta la mayor cantidad de accidentes, para el día Viernes esto puede ser ocasionado por el inicio del fin de semana, repecto al día Martes se presenta un comportamiento poco esperado, se puede presentar por múltiples razones algunas de ellas los días festivos y el aforo vehicular por día. El Domingo se presenta $9.5\%$ de accidentes, el menor de todos se siguiere que esto sucede por ser el día de descanso de la mayoría de las personas. 
 
 #### Distribución de la accidentalidad por clase
 
-```{r echo=FALSE}
+```{r echo=FALSE, fig.aling='center'}
 clase <- datos %>% group_by(CLASE) %>% count()
 clase$Porcentaje <- round(porcentaje(clase$n),2)
 clase <- clase %>% arrange(desc(Porcentaje), CLASE)
@@ -977,9 +984,9 @@ ggplot(clase, aes(x = reorder(CLASE, Porcentaje), y = Porcentaje,
   ggtitle("Porcentaje de Accidentalidad por clase")
 ```
 
-El tipo más frecuente de accidente es Choque con alrededor de 67%, Incendio representa el 0.01% del total de la población, por tanto no es significativo.
+El tipo más frecuente de accidente es Choque con alrededor de $67\%$, Incendio representa el $0.01\%$ del total de la población, por tanto no es significativo.
 
-```{r echo=FALSE}
+```{r echo=FALSE, fig.aling='center'}
 clasegravedad <- datos %>% group_by(CLASE, GRAVEDAD) %>% count()
 clasegravedad <- clasegravedad %>% arrange(CLASE, GRAVEDAD)
 mis.colores <- c("#D0002E", "#8B0073","#4500B9")
@@ -993,11 +1000,11 @@ ggplot(clasegravedad, aes(x = reorder(CLASE, -n), y = n,
   ggtitle("Porcentaje de Accidentalidad por clase y gravedad")
 ```
 
-El tipo de accidente Choque en su gran mayoría deja como consecuencia Solo daños alrededor de un 70%, el 30% restante corresponde a Heridos; la clase Atropello y Caída Ocupante en su gran mayoría dejan Heridos con un porcentaje muy bajo de Muertes; respecto a Volcamiento y Otro.
+El tipo de accidente Choque en su gran mayoría deja como consecuencia Solo daños alrededor de un $70\%$, el $30\%$ restante corresponde a Heridos; la clase Atropello y Caída Ocupante en su gran mayoría dejan Heridos con un porcentaje muy bajo de Muertes; respecto a Volcamiento y Otro.
 
 #### Distribución de la accidentalidad por diseño de vía
 
-```{r echo=FALSE}
+```{r echo=FALSE, fig.aling='center'}
 mis.colores <- colorRampPalette(c("blue", "red"))
 diseñovia <- datos %>% group_by(DISENO) %>% count()
 diseñovia$Porcentaje <- round(porcentaje(diseñovia$n),2)
@@ -1011,11 +1018,12 @@ ggplot(diseñovia, aes(x = reorder(DISENO, Porcentaje), y = Porcentaje,
   ylab("Porcentaje [%]") + 
   ggtitle("Porcentaje de Accidentalidad por diseño de la vía")
 ```
+
 La gran parte de los accidentes en la ciudad de Medellín ocurren en Tramo de Via e Intersecciones, algo que es de esperarse ya que estas Intersecciones son de alta preligrosidad.
 
 ## Datos históricos
 
-```{r}
+```{r include=FALSE}
 historicos <- datos %>% group_by(PERIODO, MES_NOMBRE, MES, CLASE) %>% 
   count() %>% mutate(MES=as.integer(MES))
 
@@ -1026,7 +1034,7 @@ data2017 <- historicos[historicos$PERIODO %in% c(2017), ]
 data2018 <- historicos[historicos$PERIODO %in% c(2018), ]
 ```
 
-```{r}
+```{r echo=FALSE, fig.aling='center'}
 for (Clase in unique(historicos$CLASE)) {
   p <- ggplot(historicos[historicos$CLASE == Clase, ], 
        aes(x=MES, y=n, col=PERIODO)) + 
@@ -1036,12 +1044,10 @@ for (Clase in unique(historicos$CLASE)) {
   scale_x_continuous(breaks = seq(1,12,1))
   print(p)
 }
-
 ```
 
 
-
-## Planteamiento de modélos | Predicción de accidentalidad.
+## Planteamiento de modelos | Predicción de accidentalidad.
 
 Para la etapa de entrenamiento se hizo uso del registro historico de accidentes, desde el año 2014, hasta el año 2017 y para la etapa de validación se hizo uso de los registros del año 2018. Esto se realizó de esta forma y no con un método aleatorio, debido a que el conjunto de datos posee una estructura temporal.
 
@@ -1062,25 +1068,24 @@ datos_tr <- subset(datos_tr, (PERIODO != '2018'))
 ## Modelo líneal 
 
 Inicialmente se hizo uso de un modélo lineal, con el fin de obtener las variables más significativas, para su realización se tuvieron en cuenta las variables, dia_nombre, dia_especial y diseño. Sin embargo, se observó que la significancia de la variable "diseño" es muy baja, por lo que decide eliminarse. 
-```{r}
-# Agrupación de los datos para el modelo lineal, cada registro contiene las condiciones únicas de las 4 columnas,y se agrega la variable ded 'NRO_ACC', que son el número de accidentes cuando se cumplen esas condiciones
-datos_lm1 <- datos_tr %>% group_by(FECHA, DIA_ESPECIAL, DIA_NOMBRE, DISENO) %>% count(name = "NRO_ACC") 
+```{r echo=TRUE}
+datos_lm1 <- datos_tr %>% group_by(FECHA, DIA_ESPECIAL, DIA_NOMBRE, 
+                                   DISENO) %>% count(name = "NRO_ACC") 
 lm1 <- lm(NRO_ACC ~ DIA_ESPECIAL+DIA_NOMBRE+DISENO, data = datos_lm1) # Modelo lineal
 promedio <- mean(datos_lm1$NRO_ACC)
 TSS <- sum((datos_lm1$NRO_ACC - promedio)^2)
-r2 <- 1-RSS/TSS
-TSS
+sprintf("TSS: %f", TSS)
 RSS <- RSS(lm1)
-RSS
-summary(lm1) # Se observa que el modelo lineal tiene un buen ajuste de R-cuadrado
+sprintf("RSS: %f", RSS)
+r2 <- 1-RSS/TSS
 ```
 
-Se realizó el cálculo de la desviación estandar de los residuales (MSE) y del $R^2$, para "cuantificar" la calidad del modelo. Sin embargo, el modelo presenta un alto MSE (102.13), lo que daría lugar a una alta variabilidad en las predicciones, esta variable viene a jugar el papel de una función de riesgo, correspondiente al valor esperado de la pérdida de los errores cuadráticos. Sin embargo, la variabilidad explicada por el modelo llega a ser $\approx(91\%)$. En este modelo un alto $R^2$ y un alto MSE, podría estar asociado a una alta variabilidad inherente de los datos, lo que se puede validar con el calculo del RSS(791500.6) del modelo lineal y el TSS(8869272) de los datos de entrenamiento.
+Se realizó el cálculo de la desviación estandar de los residuales $(MSE)$ y del $R^2$, para "cuantificar" la calidad del modelo. Sin embargo, el modelo presenta un alto $MSE$ $(102.13)$, lo que daría lugar a una alta variabilidad en las predicciones, esta variable viene a jugar el papel de una función de riesgo, correspondiente al valor esperado de la pérdida de los errores cuadráticos. Sin embargo, la variabilidad explicada por el modelo llega a ser $\approx(91\%)$. En este modelo un alto $R^2$ y un alto $MSE$, podría estar asociado a una alta variabilidad inherente de los datos, lo que se puede validar con el cálculo del $RSS(791500.6)$ del modelo lineal y el $TSS(8869272)$ de los datos de entrenamiento.
 
 ### Predicción y evaluación para los datos de entrenamiento.
 ```{r}
-
-lm1_data <- datos_tr %>% group_by(FECHA, DIA_ESPECIAL, DIA_NOMBRE, DISENO) %>% count(name = "NRO_ACC")
+lm1_data <- datos_tr %>% group_by(FECHA, DIA_ESPECIAL, DIA_NOMBRE, 
+                                  DISENO) %>% count(name = "NRO_ACC")
 lm1_tr <- lm1_data[,-c(5)]
 
 predicted <- round(predict(lm1, newdata=lm1_tr))
@@ -1091,13 +1096,13 @@ lm1_mae <- MAE(predicted, actual) # MAE
 lm1_r2 <- R2_Score(predicted, actual) # R2
 
 sprintf("MSE: %f, MAE: %f, R2: %f", lm1_mse, lm1_mae, lm1_r2)
-lm1_mse
 ```
+
 ### Predicción y evaluación para los datos de validación.
 
 ```{r}
-lm1_2018 <- datos_vl %>% group_by(FECHA, DIA_ESPECIAL, DIA_NOMBRE, DISENO) %>% count(name = "NRO_ACC")
-
+lm1_2018 <- datos_vl %>% group_by(FECHA, DIA_ESPECIAL, DIA_NOMBRE, 
+                                  DISENO) %>% count(name = "NRO_ACC")
 
 predicted <- round(predict(lm1, newdata=lm1_2018))
 actual <- lm1_2018$NRO_ACC
@@ -1108,20 +1113,24 @@ lm1_r2 <- R2_Score(predicted, actual) # R2
 
 sprintf("MSE: %f, MAE: %f, R2: %f", lm1_mse, lm1_mae, lm1_r2)
 ```
-La diferencia del MSE entre los datos de entrenamiento y validación es del 39.9%, que al ser mayor que el 15% nos indicaría un posible sobreajuste, que de hecho es corroborado con el $R^2$, ya que este disminuye en casi un 20% para los datos de validación.
+
+La diferencia del $MSE$ entre los datos de entrenamiento y validación es del $39.9\%$, que al ser mayor que el $15\%$ nos indicaría un posible sobreajuste, que de hecho es corroborado con el $R^2$, ya que este disminuye en casi un $20\%$ para los datos de validación.
 
 
 ## Modelo líneal 2 | Disminución y cambio de variables.
 
 ```{r}
-datos_lm2 <- datos_tr %>% group_by(FECHA,DIA_FESTIVO, DIA_NOMBRE) %>% count(name = "NRO_ACC")
+datos_lm2 <- datos_tr %>% group_by(FECHA,DIA_FESTIVO, DIA_NOMBRE) %>% 
+  count(name = "NRO_ACC")
+
 lm2 <- lm(NRO_ACC ~ DIA_FESTIVO+DIA_NOMBRE, data = datos_lm2)
-summary(lm2)
 ```
 
 ### Predicción y evaluación para los datos de entrenamiento.
+
 ```{r}
-lm2_tr <- datos_tr %>% group_by(FECHA,DIA_FESTIVO, DIA_NOMBRE) %>% count(name = "NRO_ACC")
+lm2_tr <- datos_tr %>% group_by(FECHA,DIA_FESTIVO, DIA_NOMBRE) %>% 
+  count(name = "NRO_ACC")
 
 predicted <- round(predict(lm2, newdata=lm2_tr))
 actual <- lm2_tr$NRO_ACC
@@ -1134,8 +1143,10 @@ sprintf("MSE: %f, MAE: %f, R2: %f", lm2_mse, lm2_mae, lm2_r2)
 ```
 
 ### Predicción y evaluación para los datos de validación.
+
 ```{r}
-lm2_2018 <- datos_vl %>% group_by(FECHA,DIA_FESTIVO, DIA_NOMBRE) %>% count(name = "NRO_ACC")
+lm2_2018 <- datos_vl %>% group_by(FECHA,DIA_FESTIVO, DIA_NOMBRE) %>% 
+  count(name = "NRO_ACC")
 
 predicted <- round(predict(lm2, newdata=lm2_2018))
 actual <- lm2_2018$NRO_ACC
@@ -1146,7 +1157,8 @@ lm2_r2 <- R2_Score(predicted, actual) # R2
 
 sprintf("MSE: %f, MAE: %f, R2: %f", lm2_mse, lm2_mae, lm2_r2)
 ```
-Para la realización de este segundo modelo, se quito la variable **diseño** y se cambio la variable **dia_especial** por **dia_festivo**, sin embargo, no se obtuvieron resultados positivos, ya que el $R^2$ disminuyó notablemente y el MSE aumentó, indicandonos una alta variabilidad en las predicciones y una baja variabilidad explicada por el modelo. Así, se decide realizar un modelo lineal generalizado.
+
+Para la realización de este segundo modelo, se quito la variable **diseño** y se cambio la variable **dia_especial** por **dia_festivo**, sin embargo, no se obtuvieron resultados positivos, ya que el $R^2$ disminuyó notablemente y el $MSE$ aumentó, indicandonos una alta variabilidad en las predicciones y una baja variabilidad explicada por el modelo. Así, se decide realizar un modelo lineal generalizado.
 
 
 ## Modelo líneal generalizado
@@ -1159,23 +1171,27 @@ En este caso se hizo uso de la famillia poisson, debido a que la variable respue
 
 
 ```{r}
-datos_lm4 <- datos_tr %>% group_by(FECHA,DIA_FESTIVO, DIA_NOMBRE) %>% count(name = "NRO_ACC")
+datos_lm4 <- datos_tr %>% group_by(FECHA,DIA_FESTIVO, DIA_NOMBRE) %>% 
+  count(name = "NRO_ACC")
+
 lm4 <- glm(NRO_ACC ~ DIA_FESTIVO+DIA_NOMBRE, family = "poisson", data = datos_lm4) # Modelo lineal generalizado, con familia poisson
-summary(lm4)
 ```
 
-
-### Predicción y evaluación para los datos de validación.
+### Predicción y evaluación para los datos de entrenamiento.
 
 ```{r}
-lm4_tr <- datos_tr %>% group_by(FECHA,DIA_FESTIVO, DIA_NOMBRE) %>% count(name = "NRO_ACC")
+lm4_tr <- datos_tr %>% group_by(FECHA,DIA_FESTIVO, DIA_NOMBRE) %>% 
+  count(name = "NRO_ACC")
+
 lm4_tr_1 <- lm4_tr[,-4]
-predicted <- round(predict(lm4, newdata=lm4_tr_1, type="response")) # Se usa type= 'response' por ser una regresion logística
+
+predicted <- round(predict(lm4, newdata=lm4_tr_1, type="response"))
 actual <- lm4_tr$NRO_ACC
 
 lm4_mse <- MSE(predicted, actual) # MSE
 lm4_mae <- MAE(predicted, actual) # MAE
 lm4_r2pseudo <- R2pseudo(lm4)
+
 sprintf("MSE: %f, MAE: %f, Pseudo R2: %f", lm4_mse, lm4_mae, lm4_r2pseudo)
 ```
 
@@ -1183,9 +1199,10 @@ sprintf("MSE: %f, MAE: %f, Pseudo R2: %f", lm4_mse, lm4_mae, lm4_r2pseudo)
 ### Predicción y evaluación para los datos de validación.
 
 ```{r}
-lm4_2018 <- datos_vl %>% group_by(FECHA,DIA_FESTIVO, DIA_NOMBRE) %>% count(name = "NRO_ACC")
+lm4_2018 <- datos_vl %>% group_by(FECHA,DIA_FESTIVO, DIA_NOMBRE) %>% 
+  count(name = "NRO_ACC")
 
-predicted <- round(predict(lm4, newdata=lm4_2018, type="response")) # Se usa type= 'response' por ser una regresion logística
+predicted <- round(predict(lm4, newdata=lm4_2018, type="response")) 
 actual <- lm4_2018$NRO_ACC
 
 lm4_mse <- MSE(predicted, actual) # MSE
@@ -1193,19 +1210,21 @@ lm4_mae <- MAE(predicted, actual) # MAE
 
 sprintf("MSE: %f, MAE: %f", lm4_mse, lm4_mae)
 ```
-En este caso, se quizó iniciar con estas variables en base a su alta significancia obtenida en modelos previos, sin embargo, es claro que aunque llegan a explicar $\approx(60%)$ de la variabilidad del modelo, sigue siendo un modelo muy regular, por otro lado, la variabilidad de las predicciones es muy alta, se obtuvo un MSE de 273.013.
 
-La diferencia entre el MSE de la predicción para los datos de entrenamiento y validación, fue de $\approx(11.83\%)$, esto es bueno, en el sentido de que no hay un sobreajuste, lo cual se evidenció desde un principio en el pseudo-R2 del modelo para los datos de entrenamiento. Aún asi, es claro que el modelo sigue siendo bastante regular, por lo que se decide hacer uso de la variable **clase**.
+En este caso, se quizó iniciar con estas variables en base a su alta significancia obtenida en modelos previos, sin embargo, es claro que aunque llegan a explicar $\approx(60\%)$ de la variabilidad del modelo, sigue siendo un modelo muy regular, por otro lado, la variabilidad de las predicciones es muy alta, se obtuvo un $MSE$ de $273.013$.
+
+La diferencia entre el $MSE$ de la predicción para los datos de entrenamiento y validación, fue de $\approx(11.83\%)$, esto es bueno, en el sentido de que no hay un sobreajuste, lo cual se evidenció desde un principio en el $pseudo-R^2$ del modelo para los datos de entrenamiento. Aún asi, es claro que el modelo sigue siendo bastante regular, por lo que se decide hacer uso de la variable **clase**.
 
 
-## Modelo líneal generalizado | Adición de la variable clase. 
+## Modelo líneal generalizado | Adición de la variable **clase**. 
 
 
 ```{r}
-datos_lm5 <- datos_tr %>% group_by(FECHA, DIA_FESTIVO, DIA_NOMBRE, CLASE) %>% count(name = "NRO_ACC")
+datos_lm5 <- datos_tr %>% group_by(FECHA, DIA_FESTIVO, DIA_NOMBRE, 
+                                   CLASE) %>% count(name = "NRO_ACC")
 
-lm5 <- glm(NRO_ACC ~ DIA_FESTIVO+DIA_NOMBRE+CLASE, family = "poisson", data = datos_lm5)
-summary(lm5)
+lm5 <- glm(NRO_ACC ~ DIA_FESTIVO+DIA_NOMBRE+CLASE, family = "poisson", 
+           data = datos_lm5)
 ```
 
 
@@ -1219,13 +1238,15 @@ lm5_tmse <- MSE(y_train, y_actual)
 lm5_tmae <-  MAE(y_train, y_actual)
 lm5_tr2 <- R2pseudo(lm5)
 lm5_rel <- lm5$deviance/lm5$df.residual # Se obtiene la sobredispersion
-sprintf("MSE: %f, MAE: %f, R2 Entrenamiento: %f, Sobredispersión: %f", lm5_tmse, lm5_tmae, lm5_tr2,lm5_rel)
+sprintf("MSE: %f, MAE: %f, R2 Entrenamiento: %f, Sobredispersión: %f", 
+        lm5_tmse, lm5_tmae, lm5_tr2,lm5_rel)
 ```
 
 ### Predicción y evaluación para los datos de validación.
 
 ```{r}
-datos_lm5_v1 <- datos_vl %>% group_by(FECHA, DIA_FESTIVO, DIA_NOMBRE, CLASE) %>% count(name = "NRO_ACC")
+datos_lm5_v1 <- datos_vl %>% group_by(FECHA, DIA_FESTIVO, DIA_NOMBRE, 
+                                      CLASE) %>% count(name = "NRO_ACC")
 datos_lm5_v2 <- datos_lm5_v1[,-5]
 
 y_train <- round(predict(lm5, newdata= datos_lm5_v2, type="response"))
@@ -1235,15 +1256,18 @@ lm5_tmae <-  MAE(y_train, y_actual)
 lm5_rel <- lm5$deviance/lm5$df.residual # Se obtiene la sobredispersion
 sprintf("MSE: %f, MAE: %f, Sobredispersión: %f", lm5_tmse, lm5_tmae,lm5_rel)
 ```
-La diferencia entre el MSE de la predicción para los datos de entrenamiento y validación, fue de $\approx(1.87\%)$ y al estar debajo del 15%, no habría sobreajuste. Respecto a la varianza explicada por el modelo, resulta ser bastante buena ($\approx(94\%)$) y la sobredispersión que se definió como la proporción entre la desviación nula y la desviación de los residuales, se encuentra cercana a 1, indicando un ajuste razonable del modelo. Se elige este modelo al cumplir con todas las condiciones requeridas.
+
+La diferencia entre el $MSE$ de la predicción para los datos de entrenamiento y validación, fue de $\approx(1.87\%)$ y al estar debajo del $15\%$, no habría sobreajuste. Respecto a la varianza explicada por el modelo, resulta ser bastante buena ($\approx(94\%)$) y la sobredispersión que se definió como la proporción entre la desviación nula y la desviación de los residuales, se encuentra cercana a $1$, indicando un ajuste razonable del modelo. Se elige este modelo al cumplir con todas las condiciones requeridas.
 
 ## Modelo generalizado | Adición variable **comuna**
 
 ```{r}
-datos_lm6 <- datos_tr %>% group_by(FECHA, DIA_FESTIVO, DIA_NOMBRE, CLASE, COMUNA) %>% count(name = "NRO_ACC")
+datos_lm6 <- datos_tr %>% group_by(FECHA, DIA_FESTIVO, DIA_NOMBRE, 
+                                   CLASE, COMUNA) %>% count(name = "NRO_ACC")
 
-lm6 <- glm(NRO_ACC ~ DIA_FESTIVO+DIA_NOMBRE+CLASE+COMUNA, family = "poisson", data = datos_lm6)
-summary(lm6)
+lm6 <- glm(NRO_ACC ~ DIA_FESTIVO+DIA_NOMBRE+CLASE+COMUNA, family = "poisson",
+           data = datos_lm6)
+
 ```
 
 ### Predicción y evaluación para los datos de entrenamiento.
@@ -1256,16 +1280,18 @@ lm6_tmse <- MSE(y_train, y_actual)
 lm6_tmae <-  MAE(y_train, y_actual)
 lm6_tr2 <- R2pseudo(lm6)
 lm6_rel <- lm6$deviance/lm6$df.residual # Se obtiene la sobredispersion
-sprintf("MSE: %f, MAE: %f, R2 Entrenamiento: %f, Sobredispersión: %f", lm6_tmse, lm6_tmae, lm6_tr2,lm6_rel)
+sprintf("MSE: %f, MAE: %f, R2 Entrenamiento: %f, Sobredispersión: %f", 
+        lm6_tmse, lm6_tmae, lm6_tr2,lm6_rel)
 ```
 
-En este caso, el MSE es de 3.8, lo que nos indica una baja varianza de los residuales, recordemos que esta varianza se mide como una distancia vertical entre los residuales y el modelo, por otro lado, tenemos un pseudo-R2 de 0.71, explicando $\approx(71\%)$ de la varianza del número de accidentes en el área metropolitana y una sobredispersión moderada (0.810124), indicando un ajuste razonable del modelo.
+En este caso, el $MSE$ es de $3.8$, lo que nos indica una baja varianza de los residuales, recordemos que esta varianza se mide como una distancia vertical entre los residuales y el modelo, por otro lado, tenemos un $pseudo-R^2$ de $0.71$, explicando $\approx(71\%)$ de la varianza del número de accidentes en el área metropolitana y una sobredispersión moderada $(0.810124)$, indicando un ajuste razonable del modelo.
 
 
 ### Predicción y evaluación para los datos de validación.
 
 ```{r}
-datos_lm6_v1 <- datos_vl %>% group_by(FECHA, DIA_FESTIVO, DIA_NOMBRE, CLASE, COMUNA) %>% count(name = "NRO_ACC")
+datos_lm6_v1 <- datos_vl %>% group_by(FECHA, DIA_FESTIVO, DIA_NOMBRE, 
+                                      CLASE, COMUNA) %>% count(name = "NRO_ACC")
 datos_lm6_v2 <- datos_lm6_v1[,-6]
 
 y_train <- round(predict(lm6, newdata= datos_lm6_v2, type="response"))
@@ -1273,12 +1299,13 @@ y_actual <- datos_lm6_v1$NRO_ACC
 lm6_tmse <- MSE(y_train, y_actual)
 lm6_tmae <-  MAE(y_train, y_actual)
 lm6_rel <- lm6$deviance/lm6$df.residual # Se obtiene la sobredispersion
-sprintf("MSE: %f, MAE: %f, Sobredispersión: %f", lm6_tmse, lm6_tmae,lm6_rel)
+sprintf("MSE: %f, MAE: %f, Sobredispersión: %f", lm6_tmse, lm6_tmae,
+        lm6_rel)
 ```
-La diferencia entre el MSE de la predicción para los datos de entrenamiento y validación, fue de $\approx(0.82\%)$ que al estar debajo del 15%, no indicaría un sobreajuste.
 
-A manera de conclusión, este modelo presenta el mejor MSE, pero aún así no es modelo viable ya que nos posible obtener la variable COMUNA para realizar un predicción sobre los requerimientos especificados
+La diferencia entre el $MSE$ de la predicción para los datos de entrenamiento y validación, fue de $\approx(0.82\%)$ que al estar debajo del $15\%$, no indicaría un sobreajuste.
 
+A manera de conclusión, este modelo presenta el mejor $MSE$, pero aún así no es un modelo viable ya que no es posible obtener la variable COMUNA para realizar una predicción sobre los requerimientos especificados.
 
 
 ```{r echo=FALSE}
@@ -1335,26 +1362,22 @@ days_prod <- sapply(dates19_20,function(x_date){
 
 days_prod <- t(days_prod)
 days_df <- data.frame(days_prod)
-colnames(days_df) <- c("FECHA", "DIA_FESTIVO", "DIA_NOMBRE")
+colnames(days_df) <- c("FECHA", "DIA_FESTIVO")
 ```
 
-```{r}
+```{r echo=FALSE}
 clases <- levels(datos_model$CLASE)
 save(clases, file="./App/clases.RData") # Clases pre-cargadas para el shiny
 ```
-
-
 
 ```{r echo=FALSE}
 save(days_df, file="./App/days_df.RData") # Días pre-cargados para el modelo en producción
 ```
 
-
 ```{r echo=FALSE}
 historicos_df <- datos %>% group_by(FECHA, CLASE) %>% count(name = "NRO_ACC")
 save(historicos_df, file="./App/historicos_df.RData") # Datos historicos pre-cargados para el shiny
 ```
-
 
 ## Agrupamiento
 
@@ -1364,12 +1387,12 @@ save(historicos_df, file="./App/historicos_df.RData") # Datos historicos pre-car
 knitr::include_graphics("Mapa.svg")
 ```
 
-### Diagrama de barras - Agrupamientos por número de puntos.
+### Diagrama de barras - Agrupamientos por número de accidentes.
 
 ```{r echo=FALSE, fig.align='center'}
 knitr::include_graphics("Clusters.svg")
 ```
-
+En el gráfico anterior se ilustra el número de puntos (accidentes) por cluster. 
 
 ```{r echo=FALSE}
 ### Función | Cálculo de distancias para datos geoespaciales, haciendo uso de la libería geosphere
@@ -1387,51 +1410,45 @@ geo.dist = function(df) {
 
 ```{r echo=FALSE}
 #Conversión a númerico de la latitud y longitud.
-datos_t$LATITUD <- as.numeric(as.character(datos_t$LATITUD))
-datos_t$LONGITUD<- as.numeric(as.character(datos_t$LONGITUD))
+datos_tr$LATITUD <- as.numeric(as.character(datos_tr$LATITUD))
+datos_tr$LONGITUD<- as.numeric(as.character(datos_tr$LONGITUD))
 
 ```
-
 
 ```{r echo=FALSE}
 ## Creación nuevo set de datos para el agrupamiento, según longitud, latitud y barrio.
 
-df <- data.frame(long = datos_t$LONGITUD, lat = datos_t$LATITUD, barrios = datos_t$BARRIO)
+df <- data.frame(long = datos_tr$LONGITUD, lat = datos_tr$LATITUD, barrios = datos_tr$BARRIO)
 
 ```
 
+### Creación matriz de distancias con la función geo.dist
 
-## Creación matriz de distancias con la función geo.dist
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 ## Creación matriz de distancias con la función geo.dist.
-
 df1 <- df[1:1000, ]
 d <- geo.dist(df1)
 hc <- hclust(d)
 plot(hc)
 df1$clust <- cutree(hc, k = 5)
-df1
-
+head(df1,10)
 
 ```
-
-
 
 ### Mapa de agrupamiento según latitud y longitud.
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
-s <- shapefile("C:/Users/ofaa/Documents/data/TAE-2020/Trabajo1/L%C3%ADmite_Catastral_de__Comunas_y_Corregimientos.shp")
+s <- shapefile("C:/Users/camil/Documentos/GitHub/TAE-2020/Trabajo1/L%C3%ADmite_Catastral_de__Comunas_y_Corregimientos.shp")
 map.df1 <- (s)
 ggplot(map.df1)+
   geom_path(aes(x=long, y=lat, group=group))+
   geom_point(data=df1, aes(x=long, y=lat, color=factor(clust)), size=4)+
   scale_color_discrete("Cluster")+
   coord_fixed()
-  
 ```
+Según las medidas geoespaciales de latitud y longitud de los accidentes es posible obtener la agrupación mostrada anteriormente. Sin embargo, se acalara que este agrupamiento tiene un uso neto como base de referenciación, ya que no se hizo uso de ningún método para la elección del $K$ óptimo. 
 
-
-### Mapa de clusterización | Número de accidentes por gravedad y barrio.
+### Clusterización | Número de accidentes por gravedad y barrio.
 
 ```{r echo=FALSE}
 datos_cluster <- datos_tr %>% group_by(BARRIO) %>% count(name = "TOTAL_ACCIDENTES") ## Numero de accidentes por barrio
@@ -1440,20 +1457,21 @@ datos_cluster <- datos_tr %>% group_by(BARRIO) %>% count(name = "TOTAL_ACCIDENTE
 
 ```{r echo=FALSE}
 
-df <- as.matrix(table(datos_t$BARRIO, datos_t$GRAVEDAD))  #Número de accidentes por barrio segun gravedad. 
+df <- as.matrix(table(datos_tr$BARRIO, datos_tr$GRAVEDAD))  #Número de accidentes por barrio segun gravedad. 
 
 df <- data.frame(HERIDO = df[,1], MUERTO = df[,2], SOLO_DAÑOS = df[,3])
 ```
 
 
-### Clustering haciendo uso del algoritmo - k means - búsqueda del número óptimo de clusters.
+#### Clustering haciendo uso del algoritmo - k means - búsqueda del número óptimo de clusters.
 
 Una vez se tuvieron los datos preprocesados y el subset de datos seleccionados, se procedió a realizar un escalamiento y centrado de la base de datos.
-```{r}
-scaled_data = as.matrix(scale(df))
-```
 
-En un principio se seleccionó un número aleatorio de clusters con el fin de realizar una observación previa del agrupamiento, seleccionando un k = 3.
+```{r echo=FALSE}
+scaled_data = as.matrix(scale(df))
+head(scaled_data, 10)
+```
+En un principio se seleccionó un número aleatorio de clusters con el fin de realizar una observación previa del agrupamiento, seleccionando un $k = 3$.
 
 ```{r echo=FALSE}
 kmm = kmeans(scaled_data, 3, nstart = 50, iter.max = 15 )
@@ -1462,24 +1480,20 @@ kmm = kmeans(scaled_data, 3, nstart = 50, iter.max = 15 )
 En este caso se corroboró el valor (between_SS/total_SS), el cual fue de $\approx(~77\%)$. Lo que realmente representa esta proporción es la relación entre la cantidad de la suma de los cuadrados totales de los datos que estan en los agrupamientos. Se quiere aumentar este valor a medida que se incrementa el número de agrupamientos, pero sin llegar al sobreajuste. Si se usa un **k** igual al número de barrios, habrían serios problemas de sobreajuste.
 
 
-### Método del codo (Elbow Method).
+#### Método del codo (Elbow Method).
 
-Se encontrará un valor de k con el cual el modélo no se sobreajuste y al mismo tiempo agrupe los datos según su distribución real. 
+Se encontrará un valor de $k$ con el cual el modélo no se sobreajuste y al mismo tiempo agrupe los datos según su distribución real. 
 
 Este método considera el porcentaje de varianza explicada en función del número de agrupamientos. Lo ideal es elegir un número de agrupamientos de tal forma, que al agregar uno más, no se obtenga un mejor modelado de los datos.
 
 
-```{r echo=FALSE, message=FALSE, warning=FALSE}
+```{r echo=FALSE, message=FALSE, warning=FALSE, fig.align='center'}
 set.seed(123)
-
-
 #cálculo y graficación de WSS(total within - cluster sum of square) para k = 2 hasta k = 10
-
 k.max <- 10
 datos <- scaled_data
 wss <- sapply(2:k.max, 
               function(k){kmeans(datos, k, nstart = 50, iter.max = 15 )$tot.withinss})
-
 plot(2:k.max, wss, 
      type = "b", pch = 19, frame = FALSE,
      xlab = "Numero de clusters (k)",
@@ -1488,7 +1502,7 @@ plot(2:k.max, wss,
      sub = "Elbow method")
 ```
 
-En este caso para **k** = 4, la proporción  between_ss/total_ss  presenta un cambio más suave, en comparación con otros **k**, como 1 o 2., **k** = 5 también parece ser un candidato potencial.
+En este caso para **k** = $4$, la proporción  between_ss/total_ss  presenta un cambio más suave, en comparación con otros **k**, como $1$ o $2$., **k** = $5$ también parece ser un candidato potencial.
 
 
 ### ¿Cómo decidir cuál será la elección del k óptimo?
@@ -1497,59 +1511,59 @@ El modelo k-means es "casi" un modelo de mezcla Gaussiana (Gaussiana mixture mod
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 d_clust <- Mclust(as.matrix(scaled_data), G = 1:15, modelNames = mclust.options("emModelNames"))
-help("Mclust")
 d_clust$BIC
 plot(d_clust)
 ```
-En este caso, los 3 mejores modélos estan asociados a unos valores de k = (7, 8, 12).
 
-Existen otras técnicas para determinar el numero optimo de clusters, el paquete NbClust provee 30 indices para la determinación del número de clusters.
+En este caso, los $3$ mejores modelos estan asociados a unos valores de $k = (6, 9)$.
 
-```{r echo=FALSE, message=FALSE, warning=FALSE}
+Existen otras técnicas para determinar el número óptimo de clusters, el paquete NbClust provee 30 indices para la determinación del número de clusters.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, fig.align='center'}
 nb <- NbClust(scaled_data, diss=NULL, distance = "euclidean", 
               min.nc=4, max.nc=8, method = "kmeans", 
               index = "all", alphaBeale = 0.1)
 ```
+En este caso es claro que el valor de $k$ óptimo es $4$.
+
 ### Frecuencia con que el k = i.
 
-En este caso, es claro que el k óptimo es 5, sin embargo, 4 continua al igual que en los métodos previos, siendo un candidato potencial.
+Se sigue evidenciando que el valor óptimo de $k$ es $4$.
 
-```{r echo=FALSE}
+```{r echo=FALSE, fig.align='center'}
 hist(nb$Best.nc[1,], breaks = max(na.omit(nb$Best.nc[1,])), main = "Histograma - k", xlab = "k", ylab = "Frecuencia")
 
 #Según este método el mejor sería 5, podrían usarse 4.
 ```
 
-### Por último vamos a hacer uso del criterio Calinski.
+### Por último se hace uso del criterio Calinski.
 
-Este criterio es similar a la busqueda de la relación entre la varianza entre-cluster/varianza intra-cluster, se hace uso de la libería vegan.
+Este criterio es similar a la busqueda de la relación entre la varianza entre-cluster/varianza intra-cluster, se hace uso de la librería vegan.
 
-```{r echo=FALSE, message=FALSE, warning=FALSE}
+```{r echo=FALSE, message=FALSE, warning=FALSE, fig.align='center'}
 model <- cascadeKM(scaled_data, 1, 10, iter = 100)
 plot(model, sortg = TRUE)
-
-model$results[2, ]
-which.max(model$result[2,]) #Según este método los mejores k, serían 2, 3 y 4.
 ```
 
-### Resumén de métodos.
+### Resmen de métodos.
 
-### Método de la silueta.
+#### Método de la silueta.
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 fviz_nbclust(scaled_data, kmeans, method = c("silhouette"))
 ```
 
-### Método del codo.
+#### Método del codo.
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 fviz_nbclust(scaled_data, kmeans, method = "wss") +
     geom_vline(xintercept = 4, linetype = 2)+
   labs(subtitle = "Elbow method")
 
 ```
-###Gap statistic.
 
-```{r echo=FALSE, message=FALSE, warning=FALSE}
+#### Gap statistic.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, fig.align='center'}
 set.seed(123)
 fviz_nbclust(scaled_data, kmeans, nstart = 25,  method = "gap_stat", nboot = 50)+
   labs(subtitle = "Gap statistic method")
@@ -1559,7 +1573,7 @@ fviz_nbclust(scaled_data, kmeans, nstart = 25,  method = "gap_stat", nboot = 50)
 
 ### Generación de clusterización según el k óptimo seleccionado
 
-Según los diferentes métodos k = 4, parecía ser muy óptimo para la generación de la clusterización.
+Según los diferentes métodos $k = 4$, parecía ser muy óptimo para la generación de la clusterización.
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 kmm = kmeans(scaled_data, 4, nstart = 50, iter.max = 15 )
@@ -1569,20 +1583,38 @@ head(df_clust, 10)
 
 ## Análisis descriptivo de los agrupamientos.
 
-### Accidentalidad baja.
-```{r warning=FALSE, include=FALSE}
-dfclust_clust1 <- df_clust[df_clust$kmm.cluster == 1, ]
-dfclust_clust1$TOTAL <- rowSums(dfclust_clust1[,1:3])
-sum(dfclust_clust1$HERIDO)
-sum(dfclust_clust1$MUERTO)
-sum(dfclust_clust1$SOLO_DAÑOS)
-sum(dfclust_clust1$TOTAL)
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+df_clust$HERIDOporc <- df_clust$HERIDO / nrow(df_clust)
+df_clust$SOLODAÑOporc <- df_clust$SOLO_DAÑOS / nrow(df_clust)
+df_clust$MUERTOporc <- df_clust$MUERTO / nrow(df_clust)
 ```
-Los barrios que pertenecen a este agrupamiento, se caracterizan por presentar un total de 23087 accidentes, en el periodo de tiempo considerado para la realización de este agrupamiento que fue entre el 2014 y 2017, además hay un predominio de accidentes con una gravedad leve (solo daños), seguida de un número también considerable de heridos (10424) y muy pocos muertos (143). 
 
 
+```{r echo=FALSE}
+ggplot(df_clust, aes(x= factor(kmm.cluster), 
+                     y = SOLODAÑOporc, fill=factor(kmm.cluster))) + 
+  geom_boxplot(show.legend = F) + 
+  labs(x = "Cluster", y="Porcentaje de accidentalidad", col="Cluster",
+       title = "Porcentaje de accidentes de la gravedad Solo Daños")
 
-### Accidentalidad moderada.
+ggplot(df_clust, aes(x= factor(kmm.cluster), 
+                     y = HERIDOporc, fill=factor(kmm.cluster))) +
+   geom_boxplot(show.legend = F) + 
+  labs(x = "Cluster", y="Porcentaje de accidentalidad", col="Cluster",
+       title = "Pocentaje de accidentes de la gravedad Herido")
+
+ggplot(df_clust, aes(x= factor(kmm.cluster), 
+                     y = MUERTOporc, fill=factor(kmm.cluster))) +
+  geom_boxplot(show.legend = F) + 
+  labs(x = "Cluster", y="Porcentaje de accidentalidad", col="Cluster",
+       title = "Porcentaje de accidentes de la gravedad Muerte")
+```
+
+El mayor porcentaje de accidentalidad en todas las cetegorías de gravedad lo presenta el Cluster $3$, seguido del cluster $4$, el tercero con mayor accidentalidad es el grupo $1$ y finalmente los barrios que pertenecen al grupo $2$ presentan el menor porcentaje de accidentalidad. 
+
+
+### Accidentalidad baja.
+
 ```{r include=FALSE}
 dfclust_clust2 <- df_clust[df_clust$kmm.cluster == 2, ]
 dfclust_clust2$TOTAL <- rowSums(dfclust_clust2[,1:3])
@@ -1592,22 +1624,24 @@ sum(dfclust_clust2$SOLO_DAÑOS)
 sum(dfclust_clust2$TOTAL)
 ```
 
-Los barrios que pertenecen al grupo de accidentalidad moderada, se caracterizan por presentar un total de 34055 accidentes, en el periodo de tiempo considerado para la realización de este agrupamiento que fue entre el 2014 y 2017, además hay un predominio de accidentes con una gravedad moderada (heridos), seguida de un número también considerable de gravedad por solo daños (112767) y muy pocos muertos (176).
+Los barrios que pertenecen al grupo de accidentalidad baja, se caracterizan por presentar un total de $34055$ accidentes, en el periodo de tiempo considerado para la realización de este agrupamiento que fue entre el 2014 y 2017, además hay un predominio de accidentes con una gravedad moderada (heridos), seguida de un número también considerable de gravedad por solo daños $(112767)$ y muy pocos muertos $(176)$.
 
+### Accidentalidad moderada.
+
+```{r warning=FALSE, include=FALSE}
+dfclust_clust1 <- df_clust[df_clust$kmm.cluster == 1, ]
+dfclust_clust1$TOTAL <- rowSums(dfclust_clust1[,1:3])
+sum(dfclust_clust1$HERIDO)
+sum(dfclust_clust1$MUERTO)
+sum(dfclust_clust1$SOLO_DAÑOS)
+sum(dfclust_clust1$TOTAL)
+dfclust_clust1
+```
+
+Los barrios que pertenecen a este agrupamiento, se caracterizan por presentar un total de $23087$ accidentes, en el periodo de tiempo considerado para la realización de este agrupamiento que fue entre el 2014 y 2017, además hay un predominio de accidentes con una gravedad leve (solo daños), seguida de un número también considerable de heridos $(10424)$ y muy pocos muertos $(143)$. 
 
 ### Accidentalidad media-alta
-```{r include=FALSE}
-dfclust_clust3 <- df_clust[df_clust$kmm.cluster == 3, ]
-dfclust_clust3$TOTAL <- rowSums(dfclust_clust3[,1:3])
-sum(dfclust_clust3$HERIDO)
-sum(dfclust_clust3$MUERTO)
-sum(dfclust_clust3$SOLO_DAÑOS)
-sum(dfclust_clust3$TOTAL)
-```
-Los barrios que pertenecen al grupo de accidentalidad media-alta, se caracterizan por presentar un total de 39429 accidentes, en el periodo de tiempo considerado para la realización de este agrupamiento que fue entre el 2014 y 2017, además hay un predominio de accidentes con una gravedad leve (solo daños) | 19670, seguido de un número también considerable de gravedad por heridos (19510) y muy pocos muertos (249).
 
-
-### Accidentalidad alta
 ```{r include=FALSE}
 dfclust_clust4 <- df_clust[df_clust$kmm.cluster == 4, ]
 dfclust_clust4$TOTAL <- rowSums(dfclust_clust4[,1:3])
@@ -1615,17 +1649,79 @@ sum(dfclust_clust4$HERIDO)
 sum(dfclust_clust4$MUERTO)
 sum(dfclust_clust4$SOLO_DAÑOS)
 sum(dfclust_clust4$TOTAL)
+
+nrow(dfclust_clust4)
 ```
-Los barrios que pertenecen al grupo de accidentalidad alta, se caracterizan por presentar un total de 72066 accidentes, en el periodo de tiempo considerado para la realización de este agrupamiento que fue entre el 2014 y 2017, además hay un predominio de accidentes con una gravedad moderada (heridos) | 41929 , seguido de un número también considerable de gravedad por solo daños (29747) y muy pocos muertos (390).
+
+Los barrios que pertenecen al grupo de accidentalidad media-alta, se caracterizan por presentar un total de $72066$ accidentes, en el periodo de tiempo considerado para la realización de este agrupamiento que fue entre el 2014 y 2017, además hay un predominio de accidentes con una gravedad moderada (heridos) | $41929$ , seguido de un número también considerable de gravedad por solo daños $(29747)$ y muy pocos muertos $(390)$.
 
 
+### Accidentalidad alta
+
+```{r include=FALSE}
+dfclust_clust3 <- df_clust[df_clust$kmm.cluster == 3, ]
+dfclust_clust3$TOTAL <- rowSums(dfclust_clust3[,1:3])
+sum(dfclust_clust3$HERIDO)
+sum(dfclust_clust3$MUERTO)
+sum(dfclust_clust3$SOLO_DAÑOS)
+sum(dfclust_clust3$TOTAL)
+
+nrow(dfclust_clust3)
+```
+
+Los barrios que pertenecen al grupo de accidentalidad alta, se caracterizan por presentar un total de $39429$ accidentes, en el periodo de tiempo considerado para la realización de este agrupamiento que fue entre el 2014 y 2017, además hay un predominio de accidentes con una gravedad leve (solo daños) | $19670$, seguido de un número también considerable de gravedad por heridos $(19510)$ y muy pocos muertos $(249)$.
 
 ```{r echo=FALSE}
-df_clust$kmm.cluster <- str_replace_all(df_clust$kmm.cluster, "1", "Accidentalidad baja")
-df_clust$kmm.cluster <- str_replace_all(df_clust$kmm.cluster, "2", "Accidentalidad media")
-df_clust$kmm.cluster <- str_replace_all(df_clust$kmm.cluster, "3", "Accidentalidad media-alta")
-df_clust$kmm.cluster <- str_replace_all(df_clust$kmm.cluster, "4", "Accidentalidad alta")
+df_clust$kmm.cluster <- str_replace_all(df_clust$kmm.cluster, "1", "Accidentalidad moderada")
+df_clust$kmm.cluster <- str_replace_all(df_clust$kmm.cluster, "2", "Accidentalidad baja")
+df_clust$kmm.cluster <- str_replace_all(df_clust$kmm.cluster, "3", "Accidentalidad alta")
+df_clust$kmm.cluster <- str_replace_all(df_clust$kmm.cluster, "4", "Accidentalidad media-alta")
 write.csv(df_clust, "Agrupamiento_final.csv", row.names = FALSE)
 ```
 
+## Material de apoyo
+
+[Video Promocional](https://www.youtube.com/watch?v=LLs7qh-ILCA&feature=youtu.be)
+
+[App Shiny](https://saarboledaz.shinyapps.io/Accidentes/)
+
+[Repositorio Git Hub](https://github.com/Epalaciol/TAE-2020)
+
+### Referencias
+- ¿Cuando en el mundo? (s.f.). Calendario del 2014 Colombia. [Obtenido de ¿Cuando en el mundo? Fechas y horas](https://www.cuandoenelmundo.com/calendario/colombia/2014)
+
+- Alcaldía de Medellín. (2015). PERSONAS ENCUESTADAS Y CLASIFICADAS EN EL SISBÉN POR GÉNERO Y ESTADO CIVIL DEL JEFE DEL HOGAR SEGÚN COMUNA O CORREGIMIENTO BASE DE DATOS CERTIFICADA POR EL D.N.P. [Obtenido de Alcaldía de Medellín](https://medellin.gov.co/irj/go/km/docs/pccdesign/SubportaldelCiudadano_2/PlandeDesarrollo_0_17/Publicaciones/Shared%20Content/sisben/01NA_PoblComunaBarrioVeredaSexoEstCivilJefeHogar_Certificada_17122015.pdf)
+
+- Alcaldía de Medellín. (2020). Incidentes georreferenciados. [Obtenido de Alcaldía de Medellín OpenData](https://geomedellin-m-medellin.opendata.arcgis.com/search?tags=movilidad)
+
+- Alcaldía de Medellín. (s.f.). Glosario Certificado Catastral.[ Obtenido de Medellín un hogar para la vida](https://www.medellin.gov.co/irj/go/km/docs/wpccontent/Sites/Subportal%20del%20Ciudadano/Hacienda/Secciones/Publicaciones/Documentos/2012/Glosario%20C%C3%A9dulas%20Catastrales.pdf)
+
+- ArcGis. (2020). [Software de ordenador](https://www.arcgis.com/index.html)
+
+- AristaSur. (2010). Sistema de Coordenadas Geográficas: Longitud y Latitud. [Obtenido de AristaSur](https://www.aristasur.com/contenido/sistema-de-coordenadas-geograficas-longitud-y-latitud)
+
+- ARL SURA. (2020). La accidentalidad vial: un problema mundial. [Obtenido de ARL SURA - Riesgos Laborales - ARL](https://www.arlsura.com/index.php/component/content/article?id=1474:la-#:~:text=La%20principal%20causa%20de%20muerte,cada%20100%20mil%20habitantes%2C%20respectivamente)
+
+- Concejo de Medellín. (2020). LA ALTA ACCIDENTALIDAD EN MEDELLÍN SE CONVIRTIÓ EN UN PROBLEMA DE SALUD PÚBLICA .[Obtenido de Concejo de Medellín](https://www.concejodemedellin.gov.co/es/node/1024?language_content_entity=es)
+
+- Google Earth Pro. (2020). [Software de ordenador](https://www.google.com/search?q=google+earth+pro&rlz=1C1GCEB_enCO906CO906&oq=goo&aqs=chrome.0.69i59l3j69i57j69i60l2j69i61j69i60.1530j0j7&sourceid=chrome&ie=UTF-8))
+
+- Ideca. (2019). Malla Vial Integral. Bogotá D.C. [Obtenido de Ideca](https://www.ideca.gov.co/recursos/mapas/malla-vial-integral-bogota-dc#:~:text=Malla%20vial%20intermedia%3A%20Red%20constituida,la%20ciudad%20a%20escala%20zonal)
+
+- INVIAS . (2018). Glosario de Manual de diseño geométrico de carreteras. [Obtenido de INVIAS (INSTITUTO NACIONAL DE VIAS)](https://www.invias.gov.co/index.php/servicios-al-ciudadano/glosario/130-glosario-manual-diseno-geometrico-carreteras)
+
+- Mintransporte. (2020). Glosario. Obtenido de Mintransporte: https://www.mintransporte.gov.co/glosario/genPag=5
+
+- Pedro A. Torres-Saavedra, P. (2018). Modelos Estadísticos Avanzados. En P. A. Torres-Saavedra, Modelos Estadísticos Avanzados (ESMA6995).
+Prueba de ruta. (s.f.). Tipos de accidentes de tránsito. [Obtenido de Prueba de ruta](https://www.pruebaderuta.com/tipos-de-accidentes-de-transito.php)
+
+- R Studio. (2020). [Software de ordenador](https://rstudio.com/)
+
+- Significados. (s.f.). Qué es Latitud. [Obtenido de Significado de Latitud](https://www.significados.com/latitud/)
+
+- Sistemas y Comunicaciones FODC. (s.f.). Accidentalidad vial: la segunda causa que más muerte genera en nuestro país. [Obtenido de Oleoducto de Colombia](http://www.fodc.org.co/index.php/accidentalidad-vial#:~:text=Cuidarnos%2C%20prevenir%20y%20aportar%20a,de%20los%20accidentes%20de%20tr%C3%A1nsito)
+
+- Vivienda al Día. (2020). Barrio. [Obtenido de Vivienda al Día](https://infoinvi.uchilefau.cl/glosario/barrio/)
+
+- Wikipedia. (2020). Comunas de Colombia.[ Obtenido de Wikipedia La enciclopedia libre](https://es.wikipedia.org/wiki/Comunas_de_Colombia)
 
