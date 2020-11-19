@@ -1381,18 +1381,12 @@ save(historicos_df, file="./App/historicos_df.RData") # Datos historicos pre-car
 
 ## Agrupamiento
 
-### Clustering por latitud y longitud, k = 15. - Visualización previa a la clusterización por barrios. | Realizado en ArcgisPro
-
-```{r echo=FALSE, fig.align='center'}
-knitr::include_graphics("Mapa.svg")
-```
-
 ### Diagrama de barras - Agrupamientos por número de accidentes.
 
 ```{r echo=FALSE, fig.align='center'}
 knitr::include_graphics("Clusters.svg")
 ```
-En el gráfico anterior se ilustra el número de puntos (accidentes) por cluster. 
+En el gráfico anterior se ilustra el número de puntos (accidentes) por cluster. El mapa se realizó haciendo uso de ArcgisPro, pero al intentar adjuntarlo en HTML, no permite subir el archivo, debido a su peso.  
 
 ```{r echo=FALSE}
 ### Función | Cálculo de distancias para datos geoespaciales, haciendo uso de la libería geosphere
