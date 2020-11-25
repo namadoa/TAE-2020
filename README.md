@@ -8,4 +8,4 @@ Gracias a los datos abiertos presentados por la Alcaldía de Medellín, se puede
 [Informe del análisis](https://www.quora.com)
 
 
-![alt text](https://github.com/namadoa/TAE/blob/main/Graph.svg?raw=true)
+![alt text](https://github.com/namadoa/TAE-2020/blob/main/Trabajo1/Graph.svg?raw=true)
